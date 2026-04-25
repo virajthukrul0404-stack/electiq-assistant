@@ -38,7 +38,7 @@
   };
 
   const sessionCache = new Map();
-  let lastRequestAt = 0;
+  let lastRequestTime = 0;
   let activeModel = MODEL_CANDIDATES[0];
 
   function normalizeText(value) {
@@ -118,13 +118,8 @@
     });
   }
 
-  function isRateLimited(now) {
-    const comparison = typeof now === "number" ? now : Date.now();
-    return comparison - lastRequestAt < 2000;
-  }
-
   function resetRateLimitForTests() {
-    lastRequestAt = 0;
+    lastRequestTime = 0;
   }
 
   function getStorage(storage) {
@@ -239,10 +234,9 @@
       return simulateStream(sessionCache.get(cacheKey), onChunk);
     }
 
-    if (isRateLimited()) {
-      const retryAfter = Math.max(0, 2000 - (Date.now() - lastRequestAt));
+    if (!canMakeRequest()) {
       const rateLimitError = new Error("Please wait a moment before sending another question.");
-      rateLimitError.retryAfter = retryAfter;
+      rateLimitError.retryAfter = 2000;
       throw rateLimitError;
     }
 
@@ -254,7 +248,7 @@
     }
 
     const payload = buildRequestPayload(history, message, persona);
-    lastRequestAt = Date.now();
+    lastRequestTime = Date.now();
 
     const modelsToTry = [activeModel]
       .concat(
@@ -400,7 +394,7 @@
     },
     getSystemPrompt: getSystemPrompt,
     hasApiKey: hasApiKey,
-    isRateLimited: isRateLimited,
+    canMakeRequest: canMakeRequest,
     resetRateLimitForTests: resetRateLimitForTests,
     setApiKey: setApiKey,
     shouldTryNextModel: shouldTryNextModel,

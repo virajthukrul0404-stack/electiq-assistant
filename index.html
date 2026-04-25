@@ -62,6 +62,7 @@
             <a href="#timeline-section">Timeline</a>
             <a href="#quiz-section">Quiz</a>
             <a href="#knowledge-section">Knowledge</a>
+            <a href="#eligibility-checker">Eligibility</a>
             <a href="#footer">Resources</a>
           </nav>
           <div class="header-actions">
@@ -247,6 +248,41 @@
         </section>
       </main>
 
+      <section id="eligibility-checker" style="padding: 3rem 1.5rem; max-width: 800px; margin: 0 auto;">
+        <div class="eligibility-card" style="background: var(--bg-surface, rgba(255,255,255,0.05)); border: 1px solid var(--border-color, rgba(255,255,255,0.1)); border-radius: 12px; padding: 2rem; backdrop-filter: blur(10px);">
+          <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Am I Eligible to Vote?</h2>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 150px;">
+              <label for="eligibility-age" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">Age</label>
+              <input type="number" id="eligibility-age" min="1" max="120" placeholder="e.g. 18" style="width: 100%; box-sizing: border-box; padding: 0.75rem; border: 1px solid var(--border-color, #ccc); border-radius: 6px; background: transparent; color: inherit;" />
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <label for="eligibility-country" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">Country</label>
+              <select id="eligibility-country" style="width: 100%; box-sizing: border-box; padding: 0.75rem; border: 1px solid var(--border-color, #ccc); border-radius: 6px; background: var(--bg-primary, #fff); color: inherit;">
+                <option value="India">India</option>
+                <option value="USA">USA</option>
+                <option value="UK">UK</option>
+                <option value="Australia">Australia</option>
+                <option value="Canada">Canada</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Japan">Japan</option>
+                <option value="Brazil">Brazil</option>
+                <option value="South Africa">South Africa</option>
+                <option value="Other">Other democracies</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button id="check-eligibility-btn" style="background: var(--primary-color, #0056b3); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Check Eligibility</button>
+            </div>
+          </div>
+          <div id="eligibility-result" style="display: none; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; transition: all 0.3s ease; transform: scale(0.8); opacity: 0;"></div>
+          <button id="eligibility-ask-ai" style="display: none; background: transparent; border: 1px solid var(--primary-color, #0056b3); color: var(--primary-color, #0056b3); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; align-items: center; gap: 0.5rem;">
+            Ask AI more about voting here &rarr;
+          </button>
+        </div>
+      </section>
+
       <footer class="footer" id="footer">
         <div class="footer-shell footer-grid">
           <article class="footer-card">
@@ -266,9 +302,9 @@
             <h3>Accessibility Controls</h3>
             <p>Adjust font size or boost contrast. Your settings are saved on this device.</p>
             <div class="accessibility-controls" id="font-controls" aria-label="Font size controls">
-              <button class="control-chip" data-font="0.92" type="button" aria-label="Set small font size">A-</button>
-              <button class="control-chip is-active" data-font="1" type="button" aria-label="Set medium font size">A</button>
-              <button class="control-chip" data-font="1.08" type="button" aria-label="Set large font size">A+</button>
+              <button class="control-chip" data-font="0.9" type="button" aria-label="Set small font size">A-</button>
+              <button class="control-chip is-active" data-font="1.0" type="button" aria-label="Set medium font size">A</button>
+              <button class="control-chip" data-font="1.15" type="button" aria-label="Set large font size">A+</button>
               <button class="control-chip" id="contrast-toggle" type="button" aria-label="Toggle high contrast mode">High Contrast</button>
             </div>
           </article>
@@ -299,6 +335,21 @@
             <option value="genz">Gen Z Guide</option>
             <option value="anchor">News Anchor</option>
           </select>
+          <div style="position: relative; display: inline-block;">
+            <button class="icon-toggle" id="api-key-toggle" type="button" aria-label="Open Gemini API key settings">
+              <span class="material-symbols-outlined" aria-hidden="true">vpn_key</span>
+            </button>
+            <div id="api-key-popover" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #ccc); padding: 12px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 260px; z-index: 100; color: var(--text-main, #333);">
+              <input type="password" id="popover-api-key-input" placeholder="Paste your new Gemini API key..." style="width: 100%; box-sizing: border-box; margin-bottom: 8px; padding: 6px 8px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 14px;" />
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <a href="https://aistudio.google.com" target="_blank" style="font-size: 12px; color: var(--primary-color, #0056b3); text-decoration: none;">Get free key &rarr; aistudio.google.com</a>
+                <button type="button" id="popover-api-key-save" style="background: var(--primary-color, #0056b3); color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 13px;">Save</button>
+              </div>
+              <div id="popover-api-key-success" style="display: none; color: #0f9d58; font-size: 13px; text-align: center; margin-top: 8px; font-weight: 500;">
+                ✓ API key saved! AI is ready.
+              </div>
+            </div>
+          </div>
 
           <button class="icon-toggle" id="voice-mode-toggle" type="button" aria-label="Toggle voice mode">
             <span class="material-symbols-outlined" aria-hidden="true">mic</span>
@@ -341,7 +392,10 @@
               </button>
             </div>
             <div class="chat-footer-row">
-              <span id="input-status">Max 500 characters. Requests are rate-limited for safety.</span>
+              <span id="input-status" style="display: flex; gap: 8px;">
+                <span id="char-counter">0 / 500</span> 
+                <span>Requests are rate-limited.</span>
+              </span>
               <span id="voice-status">Voice mode off</span>
             </div>
           </form>

@@ -21,14 +21,15 @@
   }
 
   function sanitizeText(value) {
-    const unsafe = String(value || "");
+    return escapeHtmlEntities(String(value || ""));
+  }
+
+  function renderHTML(wrapper, rawHtml) {
     if (window.DOMPurify) {
-      return window.DOMPurify.sanitize(unsafe, {
-        ALLOWED_TAGS: [],
-        ALLOWED_ATTR: []
-      });
+      wrapper.innerHTML = window.DOMPurify.sanitize(rawHtml);
+    } else {
+      wrapper.textContent = rawHtml;
     }
-    return escapeHtmlEntities(unsafe);
   }
 
   function getStorage(storage) {
@@ -88,7 +89,12 @@
 
     const bubble = document.createElement("div");
     bubble.className = "message-bubble";
-    bubble.textContent = sanitizeText(message);
+    
+    if (role === "user") {
+      bubble.textContent = message;
+    } else {
+      renderHTML(bubble, message);
+    }
 
     const meta = document.createElement("div");
     meta.className = "message-meta";
@@ -247,6 +253,7 @@
     const voiceStatus = document.getElementById("voice-status");
     const micToggle = document.getElementById("mic-toggle");
     const voiceModeToggle = document.getElementById("voice-mode-toggle");
+    const apiKeyToggle = document.getElementById("api-key-toggle");
     const personaSelect = document.getElementById("persona-select");
 
     const messages = loadChatHistory();
@@ -540,6 +547,15 @@
       chatWindow.classList.toggle("is-fullscreen");
     });
 
+    const input = document.getElementById("chat-input");
+    const charCounter = document.getElementById("char-counter");
+
+    if (input && charCounter) {
+      input.addEventListener("input", function() {
+        charCounter.textContent = input.value.length + " / 500";
+      });
+    }
+
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       sendQuestion(input.value);
@@ -547,6 +563,45 @@
 
     clearButton.addEventListener("click", clearChat);
     downloadButton.addEventListener("click", downloadChat);
+
+    if (apiKeyToggle) {
+      apiKeyToggle.addEventListener("click", function () {
+        const popover = document.getElementById("api-key-popover");
+        if (popover) {
+          popover.style.display = popover.style.display === "none" ? "block" : "none";
+          const popoverInput = document.getElementById("popover-api-key-input");
+          if (popoverInput && popover.style.display === "block") {
+            popoverInput.value = namespace.gemini.getApiKey() || "";
+            popoverInput.focus();
+          }
+        }
+      });
+    }
+
+    const popoverSave = document.getElementById("popover-api-key-save");
+    if (popoverSave) {
+      popoverSave.addEventListener("click", function () {
+        const popoverInput = document.getElementById("popover-api-key-input");
+        const popoverSuccess = document.getElementById("popover-api-key-success");
+        if (popoverInput && popoverSuccess) {
+          const val = popoverInput.value.trim();
+          if (val) {
+            localStorage.setItem("electiq_gemini_key", val);
+            if (typeof ELECTIQ_CONFIG !== "undefined") {
+              ELECTIQ_CONFIG.GEMINI_API_KEY = val;
+            }
+            popoverSuccess.style.display = "block";
+            status.textContent = "✓ API key saved! AI is ready.";
+            
+            setTimeout(function () {
+              popoverSuccess.style.display = "none";
+              const popover = document.getElementById("api-key-popover");
+              if (popover) popover.style.display = "none";
+            }, 1500);
+          }
+        }
+      });
+    }
 
     voiceModeToggle.addEventListener("click", function () {
       voiceModeEnabled = !voiceModeEnabled;
@@ -573,7 +628,7 @@
 
     renderMessages();
     if (!namespace.gemini.hasApiKey()) {
-      status.textContent = "API Key missing in config.";
+      status.textContent = "Add your Gemini API key in chat settings to enable AI answers.";
     }
 
     return {

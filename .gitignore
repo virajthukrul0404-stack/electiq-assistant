@@ -8,3 +8,4 @@ coverage/
 
 
 scripts/config.js
+.env

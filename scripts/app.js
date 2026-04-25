@@ -2,8 +2,8 @@
   const namespace = (window.ElectIQ = window.ElectIQ || {});
   const STORAGE_KEYS = {
     theme: "electiq-theme",
-    contrast: "electiq-contrast",
-    fontScale: "electiq-font-scale"
+    contrast: "electiq_high_contrast",
+    fontScale: "electiq_font_scale"
   };
   const DEMO_ELECTIONS = [
     { name: "Bihar Assembly Election", date: "2026-10-28T08:00:00+05:30", note: "Demo date for the next major state-level election cycle." },
@@ -207,54 +207,65 @@
       "</p>";
   }
 
-  function evaluateEligibility(age, country) {
-    const minimumAge = {
-      India: 18,
-      "United States": 18,
-      "United Kingdom": 18,
-      Canada: 18,
-      Australia: 18
-    };
-    const requiredAge = minimumAge[country] || 18;
-    const numericAge = Number(age);
-    const eligible = numericAge >= requiredAge;
-
-    return {
-      eligible: eligible,
-      title: eligible ? "Likely eligible to vote" : "Likely not eligible yet",
-      summary: eligible
-        ? "At " + numericAge + ", you meet the sample voting-age threshold for " + country + "."
-        : "At " + numericAge + ", you are below the sample voting-age threshold for " + country + ".",
-      pills: eligible
-        ? ["Verify registration status", "Check local ID rules", "Confirm polling location"]
-        : ["Track registration age rules", "Review residency rules", "Follow official election updates"],
-      nextStep: eligible
-        ? "Next, confirm that your name appears on the official voter list and check your constituency details."
-        : "Next, review the official registration rules for your country so you know when and how to enroll."
-    };
-  }
-
   function setupEligibilityChecker() {
-    const form = $("eligibility-form");
-    const result = $("eligibility-result");
-    const pillsHost = $("eligibility-pills");
+    const btn = document.getElementById("check-eligibility-btn");
+    const ageInput = document.getElementById("eligibility-age");
+    const countrySelect = document.getElementById("eligibility-country");
+    const resultDiv = document.getElementById("eligibility-result");
+    const askAiBtn = document.getElementById("eligibility-ask-ai");
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const formData = new FormData(form);
-      const age = formData.get("age");
-      const country = formData.get("country");
-      const evaluation = evaluateEligibility(age, country);
+    if (!btn || !ageInput || !countrySelect || !resultDiv || !askAiBtn) return;
 
-      result.innerHTML =
-        "<strong>" + evaluation.title + "</strong><p>" + evaluation.summary + "</p><p>" + evaluation.nextStep + "</p>";
-      pillsHost.innerHTML = "";
-      evaluation.pills.forEach(function (pill) {
-        const badge = document.createElement("span");
-        badge.className = "feedback-pill";
-        badge.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">task_alt</span>' + pill;
-        pillsHost.appendChild(badge);
-      });
+    const votingAge = { India: 18, USA: 18, UK: 18, Australia: 18, Canada: 18, Germany: 18, France: 18, Japan: 18, Brazil: 16, "South Africa": 18 };
+    const defaultAge = 18;
+
+    btn.addEventListener("click", function () {
+      const age = parseInt(ageInput.value, 10);
+      const country = countrySelect.value;
+      
+      if (isNaN(age) || age < 1 || age > 120) {
+        resultDiv.textContent = "Please enter a valid age between 1 and 120.";
+        resultDiv.style.background = "var(--bg-warning, #fff3cd)";
+        resultDiv.style.color = "#856404";
+        resultDiv.style.display = "block";
+        resultDiv.style.opacity = "1";
+        resultDiv.style.transform = "scale(1)";
+        return;
+      }
+
+      const required = votingAge[country] || defaultAge;
+      
+      resultDiv.style.display = "block";
+      resultDiv.style.opacity = "0";
+      resultDiv.style.transform = "scale(0.8)";
+
+      setTimeout(function() {
+        if (age >= required) {
+          resultDiv.innerHTML = "✓ You are eligible to vote in " + country + "! Voting age is " + required + "+. Register today.";
+          resultDiv.style.background = "rgba(15, 157, 88, 0.15)";
+          resultDiv.style.color = "var(--text-main, #0f9d58)";
+          resultDiv.style.border = "1px solid rgba(15, 157, 88, 0.3)";
+        } else {
+          resultDiv.innerHTML = "You need to be " + required + " to vote in " + country + ". You are " + (required - age) + " years away from being eligible. Learn the process now!";
+          resultDiv.style.background = "rgba(244, 180, 0, 0.15)";
+          resultDiv.style.color = "var(--text-main, #b38500)";
+          resultDiv.style.border = "1px solid rgba(244, 180, 0, 0.3)";
+        }
+        
+        resultDiv.style.opacity = "1";
+        resultDiv.style.transform = "scale(1)";
+
+        askAiBtn.innerHTML = "Ask AI more about voting in " + country + " &rarr;";
+        askAiBtn.style.display = "inline-flex";
+        
+        askAiBtn.onclick = function() {
+          const chatLauncher = document.getElementById("chat-launcher");
+          if (chatLauncher) chatLauncher.click();
+          if (window.ElectIQ && window.ElectIQ.chatInstance) {
+            window.ElectIQ.chatInstance.prefill("Tell me about voting rights and process in " + country, true);
+          }
+        };
+      }, 50);
     });
   }
 
@@ -289,6 +300,11 @@
   }
 
   async function init() {
+    const saved = localStorage.getItem("electiq_gemini_key");
+    if (saved && typeof ELECTIQ_CONFIG !== "undefined") {
+      ELECTIQ_CONFIG.GEMINI_API_KEY = saved;
+    }
+
     if (!$("hero-stats") || !$("timeline-track") || !$("quiz-app")) {
       return;
     }
