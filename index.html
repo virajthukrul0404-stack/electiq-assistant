@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://translate.google.com https://translate.googleapis.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com; frame-src https://translate.google.com https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+    />
+    <meta
+      name="description"
+      content="ElectIQ is an AI-powered civic education assistant that explains election processes, voting, timelines, and democratic participation in a clear non-partisan way."
+    />
+    <title>ElectIQ | AI Election Process Education Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0"
+    />
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/timeline.css" />
+    <link rel="stylesheet" href="styles/chat.css" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELECTIQ2026"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-ELECTIQ2026");
+    </script>
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,bn,ta,te,ml,kn,mr,gu,pa,ur",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="sr-live" id="sr-live" aria-live="polite" aria-atomic="true"></div>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="nav-row">
+          <a class="brand-lockup" href="#top" aria-label="ElectIQ home">
+            <img src="assets/icons/ballot-ai.svg" alt="Ballot box and AI spark ElectIQ logo" />
+            <span class="brand-mark">Elect<span>IQ</span></span>
+          </a>
+          <nav class="nav-links" aria-label="Primary">
+            <a href="#timeline-section">Timeline</a>
+            <a href="#quiz-section">Quiz</a>
+            <a href="#knowledge-section">Knowledge</a>
+            <a href="#footer">Resources</a>
+          </nav>
+          <div class="header-actions">
+            <button class="voice-shortcut" id="voice-shortcut" type="button" aria-label="Open voice mode in chatbot">
+              <span class="material-symbols-outlined" aria-hidden="true">graphic_eq</span>
+              <span>Voice Assistant</span>
+            </button>
+            <button class="icon-toggle" id="theme-toggle" type="button" aria-label="Toggle dark and light mode">
+              <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main id="main-content">
+        <section class="hero" id="top">
+          <div class="section-shell hero-grid">
+            <div class="hero-copy">
+              <div class="eyebrow">
+                <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+                Neutral civic education powered by Gemini 1.5 Flash
+              </div>
+              <h1>Elect<span>IQ</span></h1>
+              <p class="tagline">Your AI Guide to the Democratic Process</p>
+              <p>
+                Understand every stage of elections, ask neutral questions in plain language, practice with
+                interactive quizzes, and explore how Indian general elections compare with other democracies.
+              </p>
+              <div class="hero-actions">
+                <a class="primary-button" href="#timeline-section">
+                  <span class="material-symbols-outlined" aria-hidden="true">school</span>
+                  Start Learning
+                </a>
+                <button class="secondary-button" id="open-chat-hero" type="button" aria-label="Open the ElectIQ AI chatbot">
+                  <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+                  Ask AI
+                </button>
+              </div>
+              <div class="hero-stats" id="hero-stats" aria-label="Key ElectIQ statistics"></div>
+            </div>
+
+            <div class="hero-side">
+              <div class="hero-panel">
+                <div class="visual-stage" aria-hidden="true">
+                  <div class="ballot-orb">
+                    <div class="spark-star"></div>
+                    <img src="assets/icons/ballot-ai.svg" alt="" />
+                  </div>
+                  <div class="ticker-wrap" aria-label="Live vote counter ticker">
+                    <div class="ticker-track" id="vote-ticker"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="countdown-card" id="countdown-card" aria-live="polite"></div>
+              <div class="panel-grid">
+                <article>
+                  <strong>AI persona switch</strong>
+                  <p>Swap between Professor, Gen Z Guide, and News Anchor voices without losing your chat history.</p>
+                </article>
+                <article>
+                  <strong>Voice-ready learning</strong>
+                  <p>Speak your question, watch the live transcript, and hear the answer read aloud.</p>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-shell" id="eligibility-section">
+          <div class="section-heading">
+            <div>
+              <h2>Check Your Voting Eligibility</h2>
+              <p class="section-subtitle">
+                This quick checker gives a friendly, high-level answer for civic learning. Always confirm with your official election authority.
+              </p>
+            </div>
+          </div>
+          <div class="eligibility-layout">
+            <article class="eligibility-panel">
+              <h3>Eligibility Checker</h3>
+              <p>Enter your age and country to get an instant, educational eligibility snapshot.</p>
+              <form class="eligibility-form" id="eligibility-form">
+                <div class="field-grid">
+                  <div class="field-group">
+                    <label for="eligibility-age">Age</label>
+                    <input id="eligibility-age" name="age" type="number" min="0" max="120" inputmode="numeric" required aria-label="Enter your age" />
+                  </div>
+                  <div class="field-group">
+                    <label for="eligibility-country">Country</label>
+                    <select id="eligibility-country" name="country" aria-label="Select your country">
+                      <option value="India">India</option>
+                      <option value="United States">United States</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="Canada">Canada</option>
+                      <option value="Australia">Australia</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="primary-button" type="submit">
+                  <span class="material-symbols-outlined" aria-hidden="true">how_to_vote</span>
+                  Check Now
+                </button>
+              </form>
+            </article>
+            <article class="fact-panel">
+              <h3>Eligibility Result</h3>
+              <div class="feedback-panel" id="eligibility-result" aria-live="polite">
+                <strong>Ready when you are</strong>
+                <p>ElectIQ will show whether the sample age is likely eligible, plus what to verify next.</p>
+              </div>
+              <div class="feedback-pill-row" id="eligibility-pills"></div>
+              <div class="resource-list" id="official-links"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-shell" id="timeline-section">
+          <div class="section-heading">
+            <div>
+              <h2>Interactive Election Timeline</h2>
+              <p class="section-subtitle">
+                Explore each major election phase in a guided sequence. Expand any phase for details and send a focused follow-up straight to the AI assistant.
+              </p>
+            </div>
+            <button class="ghost-button" type="button" id="ask-timeline-overview">
+              <span class="material-symbols-outlined" aria-hidden="true">forum</span>
+              Ask AI for a timeline overview
+            </button>
+          </div>
+          <div class="timeline-shell">
+            <div class="timeline-track" id="timeline-track"></div>
+          </div>
+        </section>
+
+        <section class="section-shell" id="quiz-section">
+          <div class="section-heading">
+            <div>
+              <h2>Test Your Knowledge</h2>
+              <p class="section-subtitle">
+                Answer ten curated questions and get AI-powered study tips based on the questions you miss.
+              </p>
+            </div>
+          </div>
+          <div class="quiz-shell" id="quiz-app"></div>
+        </section>
+
+        <section class="section-shell" id="knowledge-section">
+          <div class="section-heading">
+            <div>
+              <h2>Election Knowledge Hub</h2>
+              <p class="section-subtitle">
+                Quick answers, essential terms, and an India-specific calendar snapshot for civic learners, first-time voters, and curious citizens.
+              </p>
+            </div>
+          </div>
+          <div class="knowledge-layout">
+            <article class="faq-shell">
+              <div class="section-heading">
+                <div>
+                  <h2>Frequently Asked Questions</h2>
+                  <p>Common election questions answered in neutral, simple language.</p>
+                </div>
+              </div>
+              <div class="faq-list" id="faq-list"></div>
+            </article>
+            <aside class="faq-shell">
+              <div class="section-heading">
+                <div>
+                  <h2>India Election Snapshot</h2>
+                  <p>How a typical Indian election schedule unfolds after dates are announced.</p>
+                </div>
+              </div>
+              <div class="india-calendar" id="india-calendar"></div>
+            </aside>
+          </div>
+          <div class="section-heading" style="margin-top: 2rem;">
+            <div>
+              <h2>Glossary</h2>
+              <p>Thirty key terms to help you decode election news and official notices.</p>
+            </div>
+          </div>
+          <div class="glossary-grid" id="glossary-grid"></div>
+        </section>
+      </main>
+
+      <footer class="footer" id="footer">
+        <div class="footer-shell footer-grid">
+          <article class="footer-card">
+            <h3>Translate & Explore</h3>
+            <p>Use the Google Translate widget for multilingual support and visit trusted, official election resources.</p>
+            <div class="translate-slot" id="google_translate_element" aria-label="Google Translate widget"></div>
+            <div class="resource-list" id="footer-links"></div>
+          </article>
+          <article class="footer-card">
+            <h3>Election Facts</h3>
+            <p id="footer-stats">
+              India regularly conducts one of the world's largest democratic exercises, with millions of polling personnel, observers, and support staff working together.
+            </p>
+            <p class="mono-note">Stat cards are educational demo values and do not represent live official reporting.</p>
+          </article>
+          <article class="footer-card">
+            <h3>Accessibility Controls</h3>
+            <p>Adjust font size or boost contrast. Your settings are saved on this device.</p>
+            <div class="accessibility-controls" id="font-controls" aria-label="Font size controls">
+              <button class="control-chip" data-font="0.92" type="button" aria-label="Set small font size">A-</button>
+              <button class="control-chip is-active" data-font="1" type="button" aria-label="Set medium font size">A</button>
+              <button class="control-chip" data-font="1.08" type="button" aria-label="Set large font size">A+</button>
+              <button class="control-chip" id="contrast-toggle" type="button" aria-label="Toggle high contrast mode">High Contrast</button>
+            </div>
+          </article>
+        </div>
+        <div class="footer-meta">
+          <span>Built as a non-partisan educational assistant for election literacy.</span>
+          <span>Made with vanilla HTML, CSS, JavaScript, and Google Gemini.</span>
+        </div>
+      </footer>
+    </div>
+
+    <button class="chat-launcher" id="chat-launcher" type="button" aria-label="Open ElectIQ chatbot">
+      <span class="material-symbols-outlined" aria-hidden="true">chat_bubble</span>
+    </button>
+
+    <section class="chat-window" id="chat-window" aria-label="ElectIQ AI assistant panel">
+      <div class="chat-header">
+        <div class="chat-title">
+          <strong>
+            <span class="material-symbols-outlined" aria-hidden="true">auto_awesome</span>
+            ElectIQ AI Assistant
+          </strong>
+          <p>Ask clear, non-partisan questions about elections, voting, roles, and rules.</p>
+        </div>
+        <div class="chat-toolbar">
+          <select class="persona-select" id="persona-select" aria-label="Choose AI personality">
+            <option value="professor">Professor</option>
+            <option value="genz">Gen Z Guide</option>
+            <option value="anchor">News Anchor</option>
+          </select>
+          <button class="icon-toggle" id="voice-mode-toggle" type="button" aria-label="Toggle voice mode">
+            <span class="material-symbols-outlined" aria-hidden="true">mic</span>
+          </button>
+          <button class="icon-toggle" id="fullscreen-toggle" type="button" aria-label="Toggle fullscreen chat">
+            <span class="material-symbols-outlined" aria-hidden="true">open_in_full</span>
+          </button>
+          <button class="icon-toggle" id="close-chat" type="button" aria-label="Close chat panel">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-body">
+        <div class="chat-scroll" id="chat-scroll"></div>
+        <div class="chat-input-zone">
+          <div class="chat-actions">
+            <button class="ghost-button" id="clear-chat" type="button" aria-label="Clear chat history">
+              <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+              Clear chat
+            </button>
+            <button class="ghost-button" id="download-chat" type="button" aria-label="Download chat history">
+              <span class="material-symbols-outlined" aria-hidden="true">download</span>
+              Download chat
+            </button>
+          </div>
+          <form class="chat-form" id="chat-form">
+            <div class="chat-entry">
+              <textarea
+                id="chat-input"
+                maxlength="500"
+                placeholder="Ask about registration, voting, counting, NOTA, EVMs, or election rights..."
+                aria-label="Type your election question"
+              ></textarea>
+              <button class="mic-button" id="mic-toggle" type="button" aria-label="Toggle speech recognition">
+                <span class="material-symbols-outlined" aria-hidden="true">mic</span>
+              </button>
+              <button class="send-button" id="send-chat" type="submit" aria-label="Send question to ElectIQ">
+                <span class="material-symbols-outlined" aria-hidden="true">send</span>
+              </button>
+            </div>
+            <div class="chat-footer-row">
+              <span id="input-status">Max 500 characters. Requests are rate-limited for safety.</span>
+              <span id="voice-status">Voice mode off</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <script id="electiq-data-fallback" type="application/json">
+      {
+        "phases": [
+          {
+            "id": "registration",
+            "title": "Voter Registration",
+            "description": "Citizens confirm eligibility, verify their constituency, and submit or update voter registration details before the rolls are frozen.",
+            "duration": "Several weeks to several months before polling",
+            "keyFacts": [
+              "In India, eligible citizens can register once they turn 18 through the Election Commission of India and state electoral offices.",
+              "Special summary revisions help correct names, addresses, photographs, and polling station assignments before an election.",
+              "Many democracies set a final registration deadline, while some permit same-day or automatic registration."
+            ],
+            "details": [
+              "Collect identity, age, and residence proof as required in your jurisdiction.",
+              "Submit Form 6 in India for new voter enrolment, or the equivalent local process elsewhere.",
+              "Check the draft electoral roll and correct mistakes early to avoid election-day surprises."
+            ],
+            "icon": "how_to_reg",
+            "badge": "Phase 1"
+          },
+          {
+            "id": "nomination",
+            "title": "Candidate Nomination",
+            "description": "Political parties and independent candidates file nomination papers, affidavits, and deposits to enter the contest.",
+            "duration": "Usually 7 to 14 days after election notification",
+            "keyFacts": [
+              "Returning Officers scrutinize nomination papers to confirm that legal requirements are met.",
+              "Candidates in India must disclose criminal cases, assets, liabilities, and educational qualifications.",
+              "Other democracies may use primaries, party lists, or caucuses before final nomination."
+            ],
+            "details": [
+              "Nomination papers are filed within the statutory window announced in the election schedule.",
+              "Objections can be raised during scrutiny if a candidate is ineligible or paperwork is incomplete.",
+              "Candidates can usually withdraw within a short withdrawal period before the final list is published."
+            ],
+            "icon": "badge",
+            "badge": "Phase 2"
+          },
+          {
+            "id": "campaign",
+            "title": "Campaign Period",
+            "description": "Candidates and parties present their agendas, seek public support, and campaign under rules meant to keep the contest fair.",
+            "duration": "From final candidate list until campaigning closes",
+            "keyFacts": [
+              "In India, the Model Code of Conduct limits misuse of government machinery, hate speech, and improper inducements.",
+              "Spending caps and disclosure rules are used in many systems to improve transparency.",
+              "Campaign silence periods close to polling help voters reflect without last-minute pressure."
+            ],
+            "details": [
+              "Campaign material may include rallies, speeches, manifestos, media outreach, and door-to-door contact.",
+              "Observers and flying squads monitor possible violations such as bribery, misinformation, or intimidation.",
+              "Digital campaigns are increasingly regulated through ad disclosure and platform compliance rules."
+            ],
+            "icon": "campaign",
+            "badge": "Phase 3"
+          },
+          {
+            "id": "polling",
+            "title": "Election Day Voting",
+            "description": "Voters cast ballots at polling stations or through approved alternative methods such as postal or absentee ballots.",
+            "duration": "One day in many countries, multiple phases in large democracies like India",
+            "keyFacts": [
+              "Indian general elections may be held in several phases for security and logistics.",
+              "Polling officers verify voter identity, mark participation, and guide voters to cast a secret ballot.",
+              "Some countries offer early voting, mail voting, or extensive absentee options."
+            ],
+            "details": [
+              "Polling stations open and close at notified hours, with voters in line at closing usually still allowed to vote.",
+              "India uses Electronic Voting Machines with VVPAT in parliamentary and assembly elections.",
+              "Accessibility measures may include ramps, Braille ballots, companions for eligible voters, and home voting in select cases."
+            ],
+            "icon": "how_to_vote",
+            "badge": "Phase 4"
+          },
+          {
+            "id": "counting",
+            "title": "Vote Counting & Verification",
+            "description": "Ballots or machine records are counted, checked, and matched against seals, forms, and statutory procedures.",
+            "duration": "Hours to multiple days depending on size and method",
+            "keyFacts": [
+              "In India, EVM control units are opened under supervision on counting day and VVPAT slips may be verified as prescribed.",
+              "Postal ballots are often counted first in many jurisdictions.",
+              "Verification steps protect the integrity of totals before final declaration."
+            ],
+            "details": [
+              "Counting agents of candidates observe the process and can raise objections through formal channels.",
+              "Round-wise counting sheets are prepared and signed to build a transparent trail.",
+              "Close races may trigger recount requests or mandatory audits in some democracies."
+            ],
+            "icon": "fact_check",
+            "badge": "Phase 5"
+          },
+          {
+            "id": "results",
+            "title": "Results Declaration",
+            "description": "Authorities publish constituency-wise results, confirm winners, and compile the overall verdict.",
+            "duration": "Same day or shortly after counting concludes",
+            "keyFacts": [
+              "Returning Officers formally declare the winner in each constituency after verifying the final totals.",
+              "Seat totals determine which party or coalition can attempt to form government.",
+              "Official websites and gazette notifications serve as authoritative sources for certified outcomes."
+            ],
+            "details": [
+              "Media projections may appear early, but only official declarations are final.",
+              "Results dashboards often show vote share, turnout, margin of victory, and counting status.",
+              "Disputes can move into election petitions or court processes after declaration."
+            ],
+            "icon": "bar_chart",
+            "badge": "Phase 6"
+          },
+          {
+            "id": "government",
+            "title": "Oath Taking & Government Formation",
+            "description": "The winning leader or coalition proves majority support, forms the executive, and begins the new term.",
+            "duration": "A few days to a few weeks after results",
+            "keyFacts": [
+              "In parliamentary systems, the head of state invites the leader most likely to command majority support.",
+              "Cabinets are formed after negotiations, party meetings, or coalition agreements.",
+              "The transition from results to governance is a constitutional step, not just a ceremonial event."
+            ],
+            "details": [
+              "Winning representatives may receive certificates and complete formal seating procedures in the legislature.",
+              "The oath of office commits elected leaders to constitutional duties.",
+              "Hung parliaments can lead to coalition talks, support letters, or fresh mandates in some systems."
+            ],
+            "icon": "gavel",
+            "badge": "Phase 7"
+          }
+        ],
+        "faqs": [
+          { "question": "What is the minimum age to vote in India?", "answer": "A citizen of India can register to vote once they are 18 years old, subject to meeting residency and legal eligibility requirements." },
+          { "question": "What is an electoral roll?", "answer": "An electoral roll is the official list of registered voters in a constituency. Only names on the roll can vote at the assigned polling station." },
+          { "question": "What is Form 6?", "answer": "Form 6 is the standard application used in India for inclusion of a name in the electoral roll when registering as a new voter." },
+          { "question": "Can I vote if I recently moved house?", "answer": "Usually yes, but you may need to update your address and constituency details before the revision deadline so your name appears on the correct roll." },
+          { "question": "What is the Model Code of Conduct?", "answer": "It is a set of campaign behavior rules that comes into force after election dates are announced to promote fairness and reduce misuse of power." },
+          { "question": "What does a Returning Officer do?", "answer": "A Returning Officer manages the election process in a constituency, including nominations, polling arrangements, counting, and declaration of results." },
+          { "question": "What is NOTA?", "answer": "NOTA means None of the Above. It lets a voter record dissatisfaction with all listed candidates while still participating in the election." },
+          { "question": "What is an EVM?", "answer": "An Electronic Voting Machine is the device used in Indian elections to record votes. It includes a ballot unit, control unit, and is paired with VVPAT." },
+          { "question": "What is VVPAT?", "answer": "VVPAT stands for Voter Verifiable Paper Audit Trail. It briefly shows the chosen candidate symbol and stores a paper slip for verification." },
+          { "question": "Are postal ballots available in India?", "answer": "Yes. Postal ballots are available for categories such as service voters and certain absentee voters as permitted under election rules." },
+          { "question": "What is voter turnout?", "answer": "Voter turnout is the percentage of registered voters who actually cast their votes in an election." },
+          { "question": "Can someone force me to show whom I voted for?", "answer": "No. Voting is secret. Any attempt to force disclosure or interfere with a voter can violate election law." },
+          { "question": "What happens if my name is missing from the voter list?", "answer": "If your name is not on the final roll for that polling station, you may not be allowed to vote there, so it is important to verify your status well before polling day." },
+          { "question": "How are candidates chosen by parties?", "answer": "It varies by country and party. In India, parties usually decide candidates internally, while some democracies use primaries or member ballots." },
+          { "question": "What is a polling booth?", "answer": "A polling booth is the private area where a voter marks or records a vote without being seen by others." },
+          { "question": "Who monitors elections in India?", "answer": "The Election Commission of India oversees elections, with Returning Officers, observers, polling staff, security personnel, and other officials supporting execution." },
+          { "question": "Why are some elections held in phases?", "answer": "Large countries may use multiple phases to manage security, logistics, weather, personnel movement, and machine deployment." },
+          { "question": "What is a hung parliament?", "answer": "A hung parliament happens when no single party or pre-poll alliance wins a clear majority, often leading to coalition talks." },
+          { "question": "Can election results be challenged?", "answer": "Yes. Election results can usually be challenged through petitions, recount requests, or court processes depending on the legal system." },
+          { "question": "Do all democracies vote the same way?", "answer": "No. Democracies use different systems such as first-past-the-post, proportional representation, ranked choice, runoffs, or mixed systems." }
+        ],
+        "quiz": [
+          {
+            "question": "What is the main purpose of the electoral roll?",
+            "options": ["To list approved campaign slogans", "To record the names of registered voters", "To publish unofficial exit polls", "To rank political parties"],
+            "correctIndex": 1,
+            "explanation": "The electoral roll is the official voter list used to confirm who is eligible to vote in a specific constituency."
+          },
+          {
+            "question": "Which Indian election form is commonly used for new voter registration?",
+            "options": ["Form 6", "Form 12A", "Form 49", "Form 27B"],
+            "correctIndex": 0,
+            "explanation": "Form 6 is used for inclusion of a new name in the electoral roll."
+          },
+          {
+            "question": "Why is the campaign silence period important?",
+            "options": ["It allows only one party to advertise", "It helps voters reflect without last-minute pressure", "It replaces the need for polling staff", "It suspends the counting process"],
+            "correctIndex": 1,
+            "explanation": "Campaign silence rules are meant to reduce intense last-minute persuasion and give voters a calmer environment before polling."
+          },
+          {
+            "question": "What does NOTA stand for?",
+            "options": ["Notice of Tally Approval", "National Order for Transparent Administration", "None of the Above", "Nomination of Trusted Applicants"],
+            "correctIndex": 2,
+            "explanation": "NOTA lets voters reject all listed candidates while still exercising the right to participate."
+          },
+          {
+            "question": "Which statement about EVMs and VVPAT is correct in India?",
+            "options": ["They are only used for local body elections", "VVPAT gives voters a temporary visual confirmation of their choice", "EVMs require internet access to record votes", "VVPAT replaces the need for counting officers"],
+            "correctIndex": 1,
+            "explanation": "VVPAT displays the selected candidate briefly and stores a paper audit slip for verification."
+          },
+          {
+            "question": "Who usually scrutinizes nomination papers in a constituency?",
+            "options": ["The Chief Minister", "The local police station", "The Returning Officer", "Any voter from the constituency"],
+            "correctIndex": 2,
+            "explanation": "The Returning Officer checks whether nomination papers meet legal and procedural requirements."
+          },
+          {
+            "question": "What is voter turnout?",
+            "options": ["The number of candidates who withdraw", "The percentage of registered voters who cast a vote", "The number of polling stations in a district", "The total number of campaign speeches"],
+            "correctIndex": 1,
+            "explanation": "Turnout measures participation by comparing votes cast to the total number of registered voters."
+          },
+          {
+            "question": "Why might a country hold elections in multiple phases?",
+            "options": ["To prevent all results from being announced", "To reduce the number of registered voters", "To manage large-scale logistics and security", "To allow candidates to vote twice"],
+            "correctIndex": 2,
+            "explanation": "Large countries may split polling into phases to manage machines, staff, security, and geography."
+          },
+          {
+            "question": "What happens after vote counting is completed and verified?",
+            "options": ["The campaign period reopens", "Results are formally declared", "The electoral roll is deleted", "All candidates are automatically re-nominated"],
+            "correctIndex": 1,
+            "explanation": "Once totals are verified, the competent authority formally declares the winner and publishes certified results."
+          },
+          {
+            "question": "In a parliamentary democracy, what often follows election results?",
+            "options": ["Government formation and oath taking", "A second registration drive on polling day", "A ban on all coalition talks", "Immediate dissolution of the legislature"],
+            "correctIndex": 0,
+            "explanation": "After the results, the winning party or coalition attempts to prove majority support and form a government."
+          }
+        ],
+        "glossary": [
+          { "term": "Absentee Voting", "definition": "A method that allows eligible voters to vote without being physically present at their polling station." },
+          { "term": "Affidavit", "definition": "A sworn declaration submitted by candidates, often including details on assets, liabilities, and criminal cases." },
+          { "term": "Alliance", "definition": "A group of parties that agrees to cooperate before or after an election." },
+          { "term": "Booth Level Officer", "definition": "An official in India who helps maintain the voter list and assists with local electoral tasks." },
+          { "term": "Campaign Finance", "definition": "The money raised and spent to contest an election, usually under regulatory limits and reporting rules." },
+          { "term": "Constituency", "definition": "A geographical area represented by an elected official." },
+          { "term": "Control Unit", "definition": "The part of an Indian EVM operated by polling officials to enable each vote." },
+          { "term": "Delimitation", "definition": "The process of redrawing constituency boundaries to reflect population changes." },
+          { "term": "Election Commission of India", "definition": "The constitutional authority responsible for supervising elections in India." },
+          { "term": "Electoral Roll", "definition": "The official list of registered voters for a constituency." },
+          { "term": "Exit Poll", "definition": "A survey of voters conducted after they leave the polling station, used to estimate results." },
+          { "term": "First-Past-The-Post", "definition": "An electoral system where the candidate with the highest number of votes wins, even without an absolute majority." },
+          { "term": "Franchise", "definition": "The legal right to vote." },
+          { "term": "General Election", "definition": "An election held to choose representatives for a national or state legislature." },
+          { "term": "Hustings", "definition": "Public meetings where candidates address voters and answer questions." },
+          { "term": "Hung Parliament", "definition": "A legislature in which no single party or alliance has a majority." },
+          { "term": "Manifesto", "definition": "A document outlining a party's policies, promises, and priorities." },
+          { "term": "Model Code of Conduct", "definition": "Rules in India that guide campaign behavior after elections are announced." },
+          { "term": "Nomination Paper", "definition": "The official document filed by a person seeking to contest an election." },
+          { "term": "NOTA", "definition": "None of the Above, an option allowing voters to reject all listed candidates." },
+          { "term": "Observer", "definition": "An official or independent monitor who watches election procedures for fairness and compliance." },
+          { "term": "Opinion Poll", "definition": "A survey that measures public voting intentions before an election." },
+          { "term": "Polling Agent", "definition": "A candidate's representative who observes voting at a polling station." },
+          { "term": "Polling Booth", "definition": "The private voting compartment inside a polling station." },
+          { "term": "Postal Ballot", "definition": "A ballot cast by mail or through an approved absentee process." },
+          { "term": "Proportional Representation", "definition": "A system where seats are allocated roughly in proportion to the votes received." },
+          { "term": "Returning Officer", "definition": "The official in charge of conducting an election in a constituency." },
+          { "term": "Secret Ballot", "definition": "A voting method that protects the privacy of each voter's choice." },
+          { "term": "Voter Turnout", "definition": "The percentage of registered voters who actually vote." },
+          { "term": "VVPAT", "definition": "Voter Verifiable Paper Audit Trail, a paper-based verification system linked to EVM voting." }
+        ],
+        "timeline_india": [
+          { "step": "Election schedule announcement", "note": "The Election Commission announces the polling phases, counting date, and code of conduct activation." },
+          { "step": "Publication of election notification", "note": "The legal process begins and nomination filing opens." },
+          { "step": "Nomination filing and scrutiny", "note": "Candidates file papers, then the Returning Officer examines eligibility and documents." },
+          { "step": "Withdrawal of candidatures", "note": "Candidates may withdraw within the notified window before the final contest list is frozen." },
+          { "step": "Campaigning under MCC", "note": "Public outreach, debates, and speeches happen under spending and conduct rules." },
+          { "step": "Polling day or phased polling", "note": "Voters cast their votes at assigned polling stations using EVMs and VVPAT." },
+          { "step": "Counting of votes", "note": "Postal ballots, EVM rounds, and required verification steps are completed under supervision." },
+          { "step": "Result declaration and government formation", "note": "Constituency winners are declared, seat totals are finalized, and the government formation process begins." }
+        ]
+      }
+    </script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script defer src="scripts/gemini.js"></script>
+    <script defer src="scripts/voice.js"></script>
+    <script defer src="scripts/chat.js"></script>
+    <script defer src="scripts/timeline.js"></script>
+    <script defer src="scripts/quiz.js"></script>
+    <script defer src="scripts/app.js"></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  </body>
+</html>

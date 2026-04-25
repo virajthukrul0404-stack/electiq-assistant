@@ -1,0 +1,28 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">ElectIQ ballot box and AI spark icon</title>
+  <desc id="desc">A ballot entering a glowing box with spark lines above it.</desc>
+  <rect x="22" y="43" width="84" height="60" rx="14" fill="url(#boxFill)" stroke="url(#boxStroke)" stroke-width="4"/>
+  <path d="M41 41H87" stroke="#60A5FA" stroke-width="6" stroke-linecap="round"/>
+  <path d="M52 13H76L89 33H39L52 13Z" fill="#E2E8F0" stroke="#BFDBFE" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M64 23V65" stroke="#3B82F6" stroke-width="6" stroke-linecap="round" stroke-dasharray="5 7"/>
+  <path d="M50 59L64 70L82 52" stroke="#A78BFA" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M64 10V2" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M43 18L38 12" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M85 18L90 12" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="104" cy="32" r="8" fill="#F59E0B" fill-opacity="0.18"/>
+  <path d="M104 20V26" stroke="#FCD34D" stroke-width="4" stroke-linecap="round"/>
+  <path d="M104 38V44" stroke="#FCD34D" stroke-width="4" stroke-linecap="round"/>
+  <path d="M116 32H110" stroke="#FCD34D" stroke-width="4" stroke-linecap="round"/>
+  <path d="M98 32H92" stroke="#FCD34D" stroke-width="4" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="boxFill" x1="22" y1="43" x2="106" y2="103" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="boxStroke" x1="24" y1="48" x2="104" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>
+
