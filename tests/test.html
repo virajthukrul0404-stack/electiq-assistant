@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ElectIQ Browser Tests</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, system-ui, sans-serif;
+        background: #0a0e1a;
+        color: #f1f5f9;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 2rem;
+        background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.15), transparent 24%), #0a0e1a;
+      }
+      main {
+        max-width: 920px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        margin-bottom: 0.5rem;
+      }
+      p {
+        color: #94a3b8;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        background: rgba(15, 23, 42, 0.75);
+        border-radius: 1rem;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 0.95rem 1rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        text-align: left;
+      }
+      tr.pass td:first-child { color: #86efac; }
+      tr.fail td:first-child { color: #fca5a5; }
+      .status {
+        display: inline-flex;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+      }
+      .status.pass { background: rgba(16, 185, 129, 0.16); color: #bbf7d0; }
+      .status.fail { background: rgba(248, 113, 113, 0.16); color: #fecaca; }
+      .summary {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      .summary span {
+        padding: 0.6rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.7);
+      }
+      code { font-family: "JetBrains Mono", monospace; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ElectIQ Test Suite</h1>
+      <p>Vanilla browser assertions for the ElectIQ MVP.</p>
+      <div class="summary" id="summary">
+        <span>Total: <strong id="total-count">0</strong></span>
+        <span>Passed: <strong id="pass-count">0</strong></span>
+        <span>Failed: <strong id="fail-count">0</strong></span>
+      </div>
+      <table aria-label="ElectIQ test results">
+        <thead>
+          <tr>
+            <th>Result</th>
+            <th>Test</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+      </table>
+    </main>
+
+    <script id="electiq-data-fallback" type="application/json">
+      {
+        "phases": [
+          { "title": "Voter Registration" },
+          { "title": "Candidate Nomination" },
+          { "title": "Campaign Period" },
+          { "title": "Election Day Voting" },
+          { "title": "Vote Counting & Verification" },
+          { "title": "Results Declaration" },
+          { "title": "Oath Taking & Government Formation" }
+        ],
+        "faqs": [{ "question": "Q1", "answer": "A1" }],
+        "quiz": [
+          { "question": "Q1", "options": ["A", "B", "C", "D"], "correctIndex": 0 },
+          { "question": "Q2", "options": ["A", "B", "C", "D"], "correctIndex": 1 },
+          { "question": "Q3", "options": ["A", "B", "C", "D"], "correctIndex": 2 },
+          { "question": "Q4", "options": ["A", "B", "C", "D"], "correctIndex": 3 },
+          { "question": "Q5", "options": ["A", "B", "C", "D"], "correctIndex": 0 },
+          { "question": "Q6", "options": ["A", "B", "C", "D"], "correctIndex": 1 },
+          { "question": "Q7", "options": ["A", "B", "C", "D"], "correctIndex": 2 },
+          { "question": "Q8", "options": ["A", "B", "C", "D"], "correctIndex": 3 },
+          { "question": "Q9", "options": ["A", "B", "C", "D"], "correctIndex": 0 },
+          { "question": "Q10", "options": ["A", "B", "C", "D"], "correctIndex": 1 }
+        ],
+        "glossary": [{ "term": "Roll", "definition": "List of voters" }],
+        "timeline_india": [{ "step": "Announcement", "note": "Dates released" }]
+      }
+    </script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+    <script defer src="../scripts/gemini.js"></script>
+    <script defer src="../scripts/voice.js"></script>
+    <script defer src="../scripts/chat.js"></script>
+    <script defer src="../scripts/quiz.js"></script>
+    <script defer src="../scripts/app.js"></script>
+    <script>
+      window.addEventListener("load", function () {
+        const body = document.getElementById("results-body");
+        const totalCount = document.getElementById("total-count");
+        const passCount = document.getElementById("pass-count");
+        const failCount = document.getElementById("fail-count");
+
+        function assert(condition, message) {
+          if (!condition) {
+            throw new Error(message);
+          }
+        }
+
+        async function runTest(name, callback) {
+          try {
+            const details = await callback();
+            renderResult(true, name, details || "Passed");
+          } catch (error) {
+            renderResult(false, name, error.message || "Failed");
+          }
+        }
+
+        function renderResult(passed, name, details) {
+          const row = document.createElement("tr");
+          row.className = passed ? "pass" : "fail";
+          row.innerHTML =
+            '<td><span class="status ' +
+            (passed ? "pass" : "fail") +
+            '">' +
+            (passed ? "PASS" : "FAIL") +
+            "</span></td><td>" +
+            name +
+            "</td><td>" +
+            details +
+            "</td>";
+          body.appendChild(row);
+        }
+
+        async function createMockStreamResponse(text) {
+          const encoder = new TextEncoder();
+          const stream = new ReadableStream({
+            start(controller) {
+              controller.enqueue(
+                encoder.encode('data: {"candidates":[{"content":{"parts":[{"text":"' + text + '"}]}}]}\n\n')
+              );
+              controller.close();
+            }
+          });
+          return new Response(stream, { status: 200, headers: { "Content-Type": "text/event-stream" } });
+        }
+
+        (async function () {
+          const data = await window.ElectIQ.app.loadElectionData();
+
+          await runTest("1. election-data.json loads correctly and has required keys", function () {
+            ["phases", "faqs", "quiz", "glossary", "timeline_india"].forEach(function (key) {
+              assert(Array.isArray(data[key]), "Missing or invalid key: " + key);
+            });
+            return "All required keys are present.";
+          });
+
+          await runTest("2. Quiz has exactly 10 questions with 4 options and a correctIndex", function () {
+            assert(data.quiz.length === 10, "Expected 10 quiz questions.");
+            data.quiz.forEach(function (question, index) {
+              assert(Array.isArray(question.options) && question.options.length === 4, "Question " + (index + 1) + " must have 4 options.");
+              assert(typeof question.correctIndex === "number", "Question " + (index + 1) + " is missing correctIndex.");
+            });
+            return "Quiz structure is valid.";
+          });
+
+          await runTest("3. All 7 timeline phases are present", function () {
+            assert(data.phases.length === 7, "Expected 7 election phases.");
+            return data.phases.map(function (phase) { return phase.title; }).join(", ");
+          });
+
+          await runTest("4. Input sanitization prevents script execution", function () {
+            window.__xssFlag = false;
+            const sanitized = window.ElectIQ.chat.sanitizeText('<script>window.__xssFlag = true<\/script>');
+            const host = document.createElement("div");
+            host.textContent = sanitized;
+            assert(window.__xssFlag === false, "Script executed unexpectedly.");
+            assert(sanitized.indexOf("<script>") === -1, "Sanitized text still contains a script tag.");
+            return "Sanitizer strips executable markup.";
+          });
+
+          await runTest("5. Rate limiter blocks second request within 2 seconds", async function () {
+            const originalFetch = window.fetch;
+            window.ElectIQ.gemini.resetRateLimitForTests();
+            window.fetch = function () {
+              return createMockStreamResponse("Mock response");
+            };
+            await window.ElectIQ.gemini.streamGenerate({ history: [], message: "First question", persona: "professor" });
+            let blocked = false;
+            try {
+              await window.ElectIQ.gemini.streamGenerate({ history: [], message: "Second question", persona: "professor" });
+            } catch (error) {
+              blocked = /wait a moment/i.test(error.message);
+            }
+            window.fetch = originalFetch;
+            assert(blocked, "Second request was not blocked.");
+            return "Second request correctly rejected.";
+          });
+
+          await runTest("6. localStorage saves and retrieves chat history correctly", function () {
+            const mockStorage = {
+              bag: {},
+              getItem(key) { return this.bag[key] || null; },
+              setItem(key, value) { this.bag[key] = value; }
+            };
+            const sample = [{ role: "user", content: "Hello", timestamp: 1 }];
+            window.ElectIQ.chat.saveChatHistory(sample, mockStorage);
+            const restored = window.ElectIQ.chat.loadChatHistory(mockStorage);
+            assert(restored.length === 1 && restored[0].content === "Hello", "Chat history was not restored.");
+            return "Chat history round-trips through storage.";
+          });
+
+          await runTest("7. Voice module gracefully handles browsers without SpeechRecognition", function () {
+            const originalSpeech = window.SpeechRecognition;
+            const originalWebkit = window.webkitSpeechRecognition;
+            window.SpeechRecognition = null;
+            window.webkitSpeechRecognition = null;
+            const controller = window.ElectIQ.voice.createVoiceController();
+            controller.setVoiceMode(true);
+            window.SpeechRecognition = originalSpeech;
+            window.webkitSpeechRecognition = originalWebkit;
+            assert(window.ElectIQ.voice.supportsSpeechRecognition() === Boolean(originalSpeech || originalWebkit), "Support detection failed.");
+            return "No crash when SpeechRecognition is unavailable.";
+          });
+
+          await runTest("8. Font size toggle updates CSS variable correctly", function () {
+            const applied = window.ElectIQ.app.applyFontScale("1.08");
+            const cssValue = document.documentElement.style.getPropertyValue("--font-scale").trim();
+            assert(applied === "1.08" && cssValue === "1.08", "Font scale did not update.");
+            return "CSS variable now equals " + cssValue + ".";
+          });
+
+          await runTest("9. Gemini system prompt is always prepended", function () {
+            const payload = window.ElectIQ.gemini.buildRequestPayload([], "Explain NOTA", "professor");
+            assert(payload.contents[0].parts[0].text.indexOf(window.ElectIQ.gemini.BASE_SYSTEM_PROMPT) === 0, "System prompt was not prepended.");
+            return "Payload prepends the ElectIQ instructions.";
+          });
+
+          await runTest("10. Score calculation is accurate in the quiz engine", function () {
+            const answers = data.quiz.map(function (question) { return question.correctIndex; });
+            const score = window.ElectIQ.quiz.calculateScore(answers, data.quiz);
+            assert(score === 10, "Expected perfect score of 10.");
+            return "Perfect answer set scores " + score + "/10.";
+          });
+
+          const rows = body.querySelectorAll("tr");
+          const passRows = body.querySelectorAll("tr.pass");
+          totalCount.textContent = String(rows.length);
+          passCount.textContent = String(passRows.length);
+          failCount.textContent = String(rows.length - passRows.length);
+        })();
+      });
+    </script>
+  </body>
+</html>
+
