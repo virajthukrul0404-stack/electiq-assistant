@@ -247,7 +247,6 @@
     const voiceStatus = document.getElementById("voice-status");
     const micToggle = document.getElementById("mic-toggle");
     const voiceModeToggle = document.getElementById("voice-mode-toggle");
-    const apiKeyToggle = document.getElementById("api-key-toggle");
     const personaSelect = document.getElementById("persona-select");
 
     const messages = loadChatHistory();
@@ -255,8 +254,6 @@
     let isStreaming = false;
     let voiceModeEnabled = false;
     let voicePanel = null;
-    let apiSetupPanel = null;
-    let apiSetupVisible = false;
 
     const voiceController = namespace.voice.createVoiceController({
       onTranscript: function (text) {
@@ -272,8 +269,7 @@
         if (namespace.gemini.hasApiKey()) {
           sendQuestion(text);
         } else {
-          status.textContent = "Transcript captured. Add your Gemini API key, then press send.";
-          openApiSetupPanel(true);
+          status.textContent = "API Key missing in config.";
         }
       },
       onSpeakingChange: function (speaking) {
@@ -313,52 +309,12 @@
         if (namespace.gemini.hasApiKey()) {
           sendQuestion(text);
         } else {
-          status.textContent = "Add your Gemini API key first to send this prompt.";
-          openApiSetupPanel(true);
+          status.textContent = "API Key missing in config.";
         }
       }
     }
 
-    function ensureApiSetupPanel() {
-      if (apiSetupPanel && document.getElementById(API_SETUP_PANEL_ID)) {
-        return apiSetupPanel;
-      }
 
-      apiSetupPanel = createApiSetupPanel();
-
-      apiSetupPanel.saveButton.addEventListener("click", function () {
-        const savedKey = namespace.gemini.setApiKey(apiSetupPanel.input.value);
-        apiSetupPanel.input.value = savedKey;
-        if (savedKey) {
-          apiSetupPanel.helper.textContent = "Key saved in this browser. Chat and spoken AI answers are now enabled.";
-          status.textContent = "Gemini API key saved.";
-          apiSetupVisible = false;
-          renderMessages();
-          input.focus();
-        } else {
-          apiSetupPanel.helper.textContent = "Paste a Gemini API key before saving.";
-          status.textContent = "No API key was saved.";
-        }
-      });
-
-      apiSetupPanel.clearButton.addEventListener("click", function () {
-        namespace.gemini.clearApiKey();
-        apiSetupPanel.input.value = "";
-        apiSetupPanel.helper.textContent = "Stored key cleared from this browser.";
-        status.textContent = "Gemini API key cleared.";
-        apiSetupVisible = true;
-      });
-
-      return apiSetupPanel;
-    }
-
-    function openApiSetupPanel(forceOpen) {
-      apiSetupVisible = forceOpen !== false;
-      renderMessages();
-      if (apiSetupVisible) {
-        ensureApiSetupPanel().input.focus();
-      }
-    }
 
     function attachAssistantTools(wrapper, promptText, answerText) {
       const toolButtons = wrapper.querySelectorAll(".mini-button");
@@ -384,12 +340,6 @@
 
     function renderMessages() {
       chatScroll.innerHTML = "";
-
-      if (apiSetupVisible || !namespace.gemini.hasApiKey()) {
-        const setup = ensureApiSetupPanel();
-        setup.input.value = namespace.gemini.getApiKey();
-        chatScroll.appendChild(setup.panel);
-      }
 
       if (voiceModeEnabled) {
         ensureVoicePanel();
@@ -460,8 +410,7 @@
       }
 
       if (!namespace.gemini.hasApiKey()) {
-        status.textContent = "Add your Gemini API key in chat settings to enable AI answers.";
-        openApiSetupPanel(true);
+        status.textContent = "API Key missing in config.";
         return;
       }
 
@@ -540,9 +489,6 @@
             : error.message || "Something went wrong while contacting Gemini.";
         appendMessage("assistant", errorMessage);
         status.textContent = errorMessage;
-        if ((error && error.code && /api_key/i.test(error.code)) || /api key/i.test(errorMessage)) {
-          openApiSetupPanel(true);
-        }
       } finally {
         isStreaming = false;
       }
@@ -601,46 +547,7 @@
 
     clearButton.addEventListener("click", clearChat);
     downloadButton.addEventListener("click", downloadChat);
-    apiKeyToggle.addEventListener("click", function () {
-      const popover = document.getElementById("api-key-popover");
-      if (popover) {
-        popover.style.display = popover.style.display === "none" ? "block" : "none";
-        const popoverInput = document.getElementById("popover-api-key-input");
-        if (popoverInput && popover.style.display === "block") {
-          popoverInput.value = namespace.gemini.getApiKey() || "";
-          popoverInput.focus();
-        }
-      }
-    });
 
-    const popoverSave = document.getElementById("popover-api-key-save");
-    if (popoverSave) {
-      popoverSave.addEventListener("click", function () {
-        const popoverInput = document.getElementById("popover-api-key-input");
-        const popoverSuccess = document.getElementById("popover-api-key-success");
-        if (popoverInput && popoverSuccess) {
-          const val = popoverInput.value.trim();
-          if (val) {
-            localStorage.setItem("electiq_gemini_key", val);
-            if (typeof ELECTIQ_CONFIG !== "undefined") {
-              ELECTIQ_CONFIG.GEMINI_API_KEY = val;
-            }
-            popoverSuccess.style.display = "block";
-            status.textContent = "✓ API key saved! AI is ready.";
-            
-            // hide warning message and rerender chat
-            apiSetupVisible = false;
-            renderMessages();
-            
-            setTimeout(function () {
-              popoverSuccess.style.display = "none";
-              const popover = document.getElementById("api-key-popover");
-              if (popover) popover.style.display = "none";
-            }, 1500);
-          }
-        }
-      });
-    }
     voiceModeToggle.addEventListener("click", function () {
       voiceModeEnabled = !voiceModeEnabled;
       voiceController.setVoiceMode(voiceModeEnabled);
@@ -658,6 +565,7 @@
       if (!voiceModeEnabled) {
         voiceModeEnabled = true;
         voiceController.setVoiceMode(true);
+        voiceModeToggle.classList.add("is-active");
         renderMessages();
       }
       voiceController.toggleAlwaysOn();
@@ -665,7 +573,7 @@
 
     renderMessages();
     if (!namespace.gemini.hasApiKey()) {
-      status.textContent = "Add your Gemini API key in chat settings to enable chat and spoken AI answers.";
+      status.textContent = "API Key missing in config.";
     }
 
     return {
@@ -681,9 +589,6 @@
         voiceModeEnabled = Boolean(enabled);
         voiceController.setVoiceMode(voiceModeEnabled);
         renderMessages();
-      },
-      openApiSetupPanel: function () {
-        openApiSetupPanel(true);
       }
     };
   }

@@ -131,12 +131,7 @@
     return storage || window.localStorage;
   }
 
-  function getApiKey(storage) {
-    const savedKey = getStorage(storage).getItem(API_KEY_STORAGE);
-    if (savedKey) {
-      ELECTIQ_CONFIG.GEMINI_API_KEY = savedKey;
-      return savedKey.trim();
-    }
+  function getApiKey() {
     const configKey = typeof ELECTIQ_CONFIG !== 'undefined' ? ELECTIQ_CONFIG.GEMINI_API_KEY : "";
     if (configKey && configKey.trim() !== "YOUR_GEMINI_API_KEY_HERE") {
       return String(configKey).trim();

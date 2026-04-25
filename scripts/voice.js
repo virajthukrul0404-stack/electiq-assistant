@@ -169,6 +169,9 @@
       publishState();
     }
 
+    // Prevent GC bug in Chrome
+    window.utterances = window.utterances || [];
+
     function speak(text) {
       if (!voiceMode || !window.speechSynthesis || !text) {
         return;
@@ -176,6 +179,8 @@
 
       stopSpeaking();
       utterance = new SpeechSynthesisUtterance(String(text));
+      window.utterances.push(utterance); // Prevent GC
+
       utterance.rate = 1.02;
       utterance.pitch = 1;
       utterance.lang = "en-IN";
@@ -188,11 +193,21 @@
         isSpeaking = false;
         onSpeakingChange(false);
         publishState();
+        // Clean up
+        const index = window.utterances.indexOf(utterance);
+        if (index > -1) {
+          window.utterances.splice(index, 1);
+        }
       };
       utterance.onerror = function () {
         isSpeaking = false;
         onSpeakingChange(false);
         publishState({ error: "Speech synthesis failed." });
+        // Clean up
+        const index = window.utterances.indexOf(utterance);
+        if (index > -1) {
+          window.utterances.splice(index, 1);
+        }
       };
       window.speechSynthesis.speak(utterance);
     }
