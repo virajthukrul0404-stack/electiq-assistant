@@ -6,6 +6,17 @@ Election Process Education
 ## Live Demo
 [GitHub Repository](https://github.com/virajthukrul0404-stack/electiq-assistant)
 
+## ⚡ Quick Setup
+
+1. Clone this repo
+2. Copy `scripts/config.example.js` → `scripts/config.js`  
+3. Get a free Gemini API key from https://aistudio.google.com/app/apikey
+4. Paste your key into `scripts/config.js`
+5. Open `index.html` in Chrome
+
+**OR** — open index.html directly and paste your key into the 🔑 key icon 
+in the chat panel. No setup needed!
+
 ## Features
 - 🧠 Gemini-powered election assistant with streaming responses, persona switching, session caching, and rate limiting
 - 🗓️ Interactive election timeline with seven expandable phases and AI follow-up shortcuts
@@ -27,7 +38,7 @@ The app is organized by feature area:
 - `scripts/app.js` initializes data, countdowns, eligibility logic, theme/accessibility state, and cross-feature orchestration.
 
 ## Google Services Used
-- Gemini 1.5 Flash API (AI conversations)
+- Gemini Flash API (AI conversations)
 - Google Fonts (Space Grotesk, Inter, JetBrains Mono)
 - Google Material Icons
 - Google Analytics GA4 (`G-ELECTIQ2026`)
@@ -50,7 +61,7 @@ ElectIQ UI (chat / timeline / quiz / voice)
 App logic + local state + safety guards
    |
    v
-Gemini 1.5 Flash streaming endpoint
+Gemini Flash streaming endpoint
    |
    v
 Progressive answer rendering + optional text-to-speech
@@ -71,6 +82,8 @@ Progressive answer rendering + optional text-to-speech
 
 ## Setup & Run
 Open `index.html` in a modern browser such as Chrome.
+
+To enable chatbot replies and spoken AI answers, open the chat panel and save your own Gemini API key with the key icon in the chat header. The key is stored only in the current browser.
 
 For the included browser tests, open `tests/test.html`. If your browser blocks local JSON fetches on `file://`, run a tiny local static server and load both pages through `http://localhost`.
 

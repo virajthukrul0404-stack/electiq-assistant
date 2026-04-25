@@ -2,6 +2,7 @@
   const namespace = (window.ElectIQ = window.ElectIQ || {});
   const STORAGE_KEY = "electiq-chat-history";
   const VOICE_PANEL_ID = "voice-mode-panel";
+  const API_SETUP_PANEL_ID = "api-setup-panel";
   const QUICK_PROMPTS = [
     "How do I register to vote?",
     "What happens on Election Day?",
@@ -174,6 +175,55 @@
     };
   }
 
+  function createApiSetupPanel() {
+    const panel = document.createElement("section");
+    panel.id = API_SETUP_PANEL_ID;
+    panel.className = "setup-card";
+    panel.innerHTML =
+      "<h3>Connect Gemini</h3><p>Add your own Gemini API key to enable chatbot replies and spoken AI answers. The key stays in this browser only.</p>";
+
+    const label = document.createElement("label");
+    label.className = "setup-field";
+    label.textContent = "Gemini API key";
+
+    const input = document.createElement("input");
+    input.type = "password";
+    input.className = "setup-input";
+    input.placeholder = "Paste your Gemini API key";
+    input.autocomplete = "off";
+    input.spellcheck = false;
+    input.value = namespace.gemini.getApiKey();
+    label.appendChild(input);
+
+    const helper = document.createElement("p");
+    helper.className = "setup-helper";
+    helper.textContent = "Get a fresh key from Google AI Studio, then save it here.";
+
+    const actions = document.createElement("div");
+    actions.className = "setup-actions";
+
+    const saveButton = document.createElement("button");
+    saveButton.type = "button";
+    saveButton.className = "primary-button";
+    saveButton.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">key</span> Save key';
+
+    const clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.className = "ghost-button";
+    clearButton.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">delete</span> Clear key';
+
+    actions.append(saveButton, clearButton);
+    panel.append(label, helper, actions);
+
+    return {
+      panel: panel,
+      input: input,
+      helper: helper,
+      saveButton: saveButton,
+      clearButton: clearButton
+    };
+  }
+
   function createTypingIndicator() {
     const wrapper = document.createElement("div");
     wrapper.className = "typing-indicator";
@@ -197,6 +247,7 @@
     const voiceStatus = document.getElementById("voice-status");
     const micToggle = document.getElementById("mic-toggle");
     const voiceModeToggle = document.getElementById("voice-mode-toggle");
+    const apiKeyToggle = document.getElementById("api-key-toggle");
     const personaSelect = document.getElementById("persona-select");
 
     const messages = loadChatHistory();
@@ -204,6 +255,8 @@
     let isStreaming = false;
     let voiceModeEnabled = false;
     let voicePanel = null;
+    let apiSetupPanel = null;
+    let apiSetupVisible = false;
 
     const voiceController = namespace.voice.createVoiceController({
       onTranscript: function (text) {
@@ -216,7 +269,12 @@
           return;
         }
         input.value = text;
-        sendQuestion(text);
+        if (namespace.gemini.hasApiKey()) {
+          sendQuestion(text);
+        } else {
+          status.textContent = "Transcript captured. Add your Gemini API key, then press send.";
+          openApiSetupPanel(true);
+        }
       },
       onSpeakingChange: function (speaking) {
         voiceStatus.textContent = speaking ? "AI is speaking..." : voiceModeEnabled ? "Voice mode on" : "Voice mode off";
@@ -252,7 +310,53 @@
       open();
       input.focus();
       if (autoSend) {
-        sendQuestion(text);
+        if (namespace.gemini.hasApiKey()) {
+          sendQuestion(text);
+        } else {
+          status.textContent = "Add your Gemini API key first to send this prompt.";
+          openApiSetupPanel(true);
+        }
+      }
+    }
+
+    function ensureApiSetupPanel() {
+      if (apiSetupPanel && document.getElementById(API_SETUP_PANEL_ID)) {
+        return apiSetupPanel;
+      }
+
+      apiSetupPanel = createApiSetupPanel();
+
+      apiSetupPanel.saveButton.addEventListener("click", function () {
+        const savedKey = namespace.gemini.setApiKey(apiSetupPanel.input.value);
+        apiSetupPanel.input.value = savedKey;
+        if (savedKey) {
+          apiSetupPanel.helper.textContent = "Key saved in this browser. Chat and spoken AI answers are now enabled.";
+          status.textContent = "Gemini API key saved.";
+          apiSetupVisible = false;
+          renderMessages();
+          input.focus();
+        } else {
+          apiSetupPanel.helper.textContent = "Paste a Gemini API key before saving.";
+          status.textContent = "No API key was saved.";
+        }
+      });
+
+      apiSetupPanel.clearButton.addEventListener("click", function () {
+        namespace.gemini.clearApiKey();
+        apiSetupPanel.input.value = "";
+        apiSetupPanel.helper.textContent = "Stored key cleared from this browser.";
+        status.textContent = "Gemini API key cleared.";
+        apiSetupVisible = true;
+      });
+
+      return apiSetupPanel;
+    }
+
+    function openApiSetupPanel(forceOpen) {
+      apiSetupVisible = forceOpen !== false;
+      renderMessages();
+      if (apiSetupVisible) {
+        ensureApiSetupPanel().input.focus();
       }
     }
 
@@ -280,6 +384,12 @@
 
     function renderMessages() {
       chatScroll.innerHTML = "";
+
+      if (apiSetupVisible || !namespace.gemini.hasApiKey()) {
+        const setup = ensureApiSetupPanel();
+        setup.input.value = namespace.gemini.getApiKey();
+        chatScroll.appendChild(setup.panel);
+      }
 
       if (voiceModeEnabled) {
         ensureVoicePanel();
@@ -349,6 +459,12 @@
         return;
       }
 
+      if (!namespace.gemini.hasApiKey()) {
+        status.textContent = "Add your Gemini API key in chat settings to enable AI answers.";
+        openApiSetupPanel(true);
+        return;
+      }
+
       const history = messages.slice();
       appendMessage("user", question);
       input.value = "";
@@ -415,12 +531,18 @@
       } catch (error) {
         typingIndicator.remove();
         assistantWrapper.remove();
+        if (error && (error.code === "api_key_revoked" || error.code === "api_key_invalid")) {
+          namespace.gemini.clearApiKey();
+        }
         const errorMessage =
           error && error.retryAfter
             ? "Please wait " + Math.ceil(error.retryAfter / 1000) + " more second(s) before sending another question."
             : error.message || "Something went wrong while contacting Gemini.";
         appendMessage("assistant", errorMessage);
         status.textContent = errorMessage;
+        if ((error && error.code && /api_key/i.test(error.code)) || /api key/i.test(errorMessage)) {
+          openApiSetupPanel(true);
+        }
       } finally {
         isStreaming = false;
       }
@@ -479,6 +601,46 @@
 
     clearButton.addEventListener("click", clearChat);
     downloadButton.addEventListener("click", downloadChat);
+    apiKeyToggle.addEventListener("click", function () {
+      const popover = document.getElementById("api-key-popover");
+      if (popover) {
+        popover.style.display = popover.style.display === "none" ? "block" : "none";
+        const popoverInput = document.getElementById("popover-api-key-input");
+        if (popoverInput && popover.style.display === "block") {
+          popoverInput.value = namespace.gemini.getApiKey() || "";
+          popoverInput.focus();
+        }
+      }
+    });
+
+    const popoverSave = document.getElementById("popover-api-key-save");
+    if (popoverSave) {
+      popoverSave.addEventListener("click", function () {
+        const popoverInput = document.getElementById("popover-api-key-input");
+        const popoverSuccess = document.getElementById("popover-api-key-success");
+        if (popoverInput && popoverSuccess) {
+          const val = popoverInput.value.trim();
+          if (val) {
+            localStorage.setItem("electiq_gemini_key", val);
+            if (typeof ELECTIQ_CONFIG !== "undefined") {
+              ELECTIQ_CONFIG.GEMINI_API_KEY = val;
+            }
+            popoverSuccess.style.display = "block";
+            status.textContent = "✓ API key saved! AI is ready.";
+            
+            // hide warning message and rerender chat
+            apiSetupVisible = false;
+            renderMessages();
+            
+            setTimeout(function () {
+              popoverSuccess.style.display = "none";
+              const popover = document.getElementById("api-key-popover");
+              if (popover) popover.style.display = "none";
+            }, 1500);
+          }
+        }
+      });
+    }
     voiceModeToggle.addEventListener("click", function () {
       voiceModeEnabled = !voiceModeEnabled;
       voiceController.setVoiceMode(voiceModeEnabled);
@@ -502,6 +664,9 @@
     });
 
     renderMessages();
+    if (!namespace.gemini.hasApiKey()) {
+      status.textContent = "Add your Gemini API key in chat settings to enable chat and spoken AI answers.";
+    }
 
     return {
       open: open,
@@ -516,6 +681,9 @@
         voiceModeEnabled = Boolean(enabled);
         voiceController.setVoiceMode(voiceModeEnabled);
         renderMessages();
+      },
+      openApiSetupPanel: function () {
+        openApiSetupPanel(true);
       }
     };
   }
@@ -530,4 +698,3 @@
     createChatWidget: createChatWidget
   };
 })();
-

@@ -209,6 +209,7 @@
           await runTest("5. Rate limiter blocks second request within 2 seconds", async function () {
             const originalFetch = window.fetch;
             window.ElectIQ.gemini.resetRateLimitForTests();
+            window.ElectIQ.gemini.setApiKey("test-key");
             window.fetch = function () {
               return createMockStreamResponse("Mock response");
             };
@@ -220,6 +221,7 @@
               blocked = /wait a moment/i.test(error.message);
             }
             window.fetch = originalFetch;
+            window.ElectIQ.gemini.clearApiKey();
             assert(blocked, "Second request was not blocked.");
             return "Second request correctly rejected.";
           });
@@ -280,4 +282,3 @@
     </script>
   </body>
 </html>
-

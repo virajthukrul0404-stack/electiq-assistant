@@ -104,7 +104,7 @@
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.14);
   padding: 0 0.85rem;
-  background: rgba(15, 23, 42, 0.68);
+  background: var(--surface-panel-bold);
   color: var(--text-primary);
 }
 
@@ -126,15 +126,17 @@
 }
 
 .welcome-card,
-.voice-mode-panel {
+.voice-mode-panel,
+.setup-card {
   padding: 1rem;
   border-radius: 1.2rem;
-  background: rgba(15, 23, 42, 0.48);
+  background: var(--surface-panel-raised);
   border: 1px solid rgba(148, 163, 184, 0.12);
 }
 
 .welcome-card h3,
 .voice-mode-panel h3,
+.setup-card h3,
 .quiz-feedback h3 {
   margin: 0;
   font-family: "Space Grotesk", sans-serif;
@@ -142,9 +144,41 @@
 }
 
 .welcome-card p,
-.voice-mode-panel p {
+.voice-mode-panel p,
+.setup-card p {
   margin: 0.45rem 0 0;
   color: var(--text-muted);
+}
+
+.setup-card {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.setup-field {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.setup-input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: var(--input-fill);
+  color: var(--text-primary);
+}
+
+.setup-helper {
+  font-size: 0.88rem;
+}
+
+.setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
 .chip-row {
@@ -177,7 +211,7 @@
   padding: 0.85rem 1rem;
   border-radius: 1.15rem;
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(15, 23, 42, 0.45);
+  background: var(--surface-panel-strong);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -217,7 +251,7 @@
   gap: 0.35rem;
   padding: 0.75rem 0.95rem;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.52);
+  background: var(--surface-panel-raised);
 }
 
 .typing-indicator span {
@@ -303,7 +337,7 @@
 .transcript-box {
   padding: 0.85rem 1rem;
   border-radius: 1rem;
-  background: rgba(15, 23, 42, 0.42);
+  background: var(--surface-panel-strong);
   border: 1px solid rgba(148, 163, 184, 0.12);
   min-height: 3.2rem;
 }
@@ -311,7 +345,7 @@
 .chat-input-zone {
   padding: 0.85rem 1rem 1rem;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(8, 15, 30, 0.94);
+  background: var(--surface-panel-bold);
 }
 
 .chat-form {
@@ -333,7 +367,7 @@
   padding: 0.95rem 1rem;
   border-radius: 1rem;
   border: 1px solid rgba(148, 163, 184, 0.14);
-  background: rgba(15, 23, 42, 0.68);
+  background: var(--input-fill);
   color: var(--text-primary);
 }
 
@@ -368,6 +402,24 @@
   gap: 1rem;
   color: var(--text-muted);
   font-size: 0.82rem;
+}
+
+:root[data-theme="light"] .chat-window {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 28px 64px rgba(15, 23, 42, 0.16);
+}
+
+:root[data-theme="light"] .chat-header {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+}
+
+:root[data-theme="light"] .mini-button {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme="light"] .voice-visualizer {
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.12), rgba(226, 232, 240, 0.72));
 }
 
 @keyframes pulse-ring {
@@ -424,4 +476,3 @@
     flex-direction: column;
   }
 }
-

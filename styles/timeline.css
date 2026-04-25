@@ -78,8 +78,8 @@
 .phase-chip {
   padding: 0.32rem 0.7rem;
   border-radius: 999px;
-  background: rgba(16, 185, 129, 0.14);
-  color: #bbf7d0;
+  background: var(--success-chip-bg);
+  color: var(--success-chip-text);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -104,7 +104,7 @@
 
 .timeline-expand {
   color: var(--text-primary);
-  background: rgba(15, 23, 42, 0.42);
+  background: var(--surface-panel-strong);
   border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
@@ -132,7 +132,7 @@
 .timeline-steps {
   padding: 1rem;
   border-radius: 1rem;
-  background: rgba(15, 23, 42, 0.34);
+  background: var(--surface-panel);
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
@@ -205,7 +205,7 @@
   backface-visibility: hidden;
   border-radius: 1.5rem;
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(15, 23, 42, 0.38);
+  background: var(--surface-panel);
   padding: 1.2rem;
 }
 
@@ -231,7 +231,7 @@
   padding: 0.95rem 1rem;
   border-radius: 1rem;
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-soft);
   color: var(--text-primary);
 }
 
@@ -274,7 +274,11 @@
 .quiz-summary-item {
   padding: 0.9rem 1rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-soft);
+}
+
+:root[data-theme="light"] .timeline-badge {
+  color: #2563eb;
 }
 
 @media (max-width: 720px) {
@@ -290,4 +294,3 @@
     flex-direction: column;
   }
 }
-

@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="styles/main.css" />
     <link rel="stylesheet" href="styles/timeline.css" />
     <link rel="stylesheet" href="styles/chat.css" />
+    <script src="scripts/config.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELECTIQ2026"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -81,7 +82,7 @@
             <div class="hero-copy">
               <div class="eyebrow">
                 <span class="material-symbols-outlined" aria-hidden="true">verified</span>
-                Neutral civic education powered by Gemini 1.5 Flash
+                Neutral civic education powered by Gemini Flash
               </div>
               <h1>Elect<span>IQ</span></h1>
               <p class="tagline">Your AI Guide to the Democratic Process</p>
@@ -298,6 +299,21 @@
             <option value="genz">Gen Z Guide</option>
             <option value="anchor">News Anchor</option>
           </select>
+          <div style="position: relative; display: inline-block;">
+            <button class="icon-toggle" id="api-key-toggle" type="button" aria-label="Open Gemini API key settings">
+              <span class="material-symbols-outlined" aria-hidden="true">vpn_key</span>
+            </button>
+            <div id="api-key-popover" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #ccc); padding: 12px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 260px; z-index: 100; color: var(--text-main, #333);">
+              <input type="password" id="popover-api-key-input" placeholder="Paste your Gemini API key..." style="width: 100%; box-sizing: border-box; margin-bottom: 8px; padding: 6px 8px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 14px;" />
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <a href="https://aistudio.google.com" target="_blank" style="font-size: 12px; color: var(--primary-color, #0056b3); text-decoration: none;">Get free key at aistudio.google.com</a>
+                <button type="button" id="popover-api-key-save" style="background: var(--primary-color, #0056b3); color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 13px;">Save</button>
+              </div>
+              <div id="popover-api-key-success" style="display: none; color: #0f9d58; font-size: 13px; text-align: center; margin-top: 8px; font-weight: 500;">
+                ✓ API key saved!
+              </div>
+            </div>
+          </div>
           <button class="icon-toggle" id="voice-mode-toggle" type="button" aria-label="Toggle voice mode">
             <span class="material-symbols-outlined" aria-hidden="true">mic</span>
           </button>

@@ -289,6 +289,11 @@
   }
 
   async function init() {
+    const savedKey = localStorage.getItem("electiq_gemini_key");
+    if (savedKey && typeof ELECTIQ_CONFIG !== "undefined") {
+      ELECTIQ_CONFIG.GEMINI_API_KEY = savedKey;
+    }
+
     if (!$("hero-stats") || !$("timeline-track") || !$("quiz-app")) {
       return;
     }
