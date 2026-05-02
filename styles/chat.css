@@ -392,8 +392,13 @@
   box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.44);
 }
 
-.mic-button.is-listening {
+.mic-button.is-listening,
+.mic-button.is-starting {
   animation: mic-pulse 1.8s ease-out infinite;
+}
+
+.mic-button.is-starting {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.78));
 }
 
 .chat-footer-row {

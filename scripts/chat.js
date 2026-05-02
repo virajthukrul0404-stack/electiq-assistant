@@ -212,6 +212,7 @@
     let isStreaming = false;
     let voiceModeEnabled = false;
     let voicePanel = null;
+    let micStartWatchdog = 0;
 
     const voiceController = namespace.voice.createVoiceController({
       onTranscript: function (text) {
@@ -231,16 +232,33 @@
       },
       onStateChange: function (state) {
         micToggle.classList.toggle("is-listening", Boolean(state.listening));
+        micToggle.classList.toggle("is-starting", Boolean(state.starting));
+        micToggle.setAttribute("aria-pressed", state.listening ? "true" : "false");
+
         if (state.error && voiceModeEnabled) {
-          voiceStatus.textContent = state.error;
+          voiceStatus.textContent = namespace.voice.friendlyError(state.error);
+          micToggle.title = voiceStatus.textContent;
         } else if (!state.supported) {
-          voiceStatus.textContent = "Speech recognition is unavailable in this browser.";
+          voiceStatus.textContent = namespace.voice.friendlyError("unsupported");
+          micToggle.title = voiceStatus.textContent;
+        } else if (state.starting || state.status === "starting") {
+          voiceStatus.textContent = "Starting microphone...";
+          micToggle.title = "Starting microphone...";
+        } else if (state.status === "permission-pending") {
+          voiceStatus.textContent = "Waiting for microphone permission...";
+          micToggle.title = "Allow microphone access to use voice notes.";
+        } else if (state.status === "no-speech") {
+          voiceStatus.textContent = "Listening... speak your question.";
+          micToggle.title = "Listening for your question.";
         } else if (state.listening) {
-          voiceStatus.textContent = "Listening...";
+          voiceStatus.textContent = "Listening... speak your question.";
+          micToggle.title = "Listening for your question.";
         } else if (voiceModeEnabled) {
           voiceStatus.textContent = state.speaking ? "AI is speaking..." : "Voice mode on";
+          micToggle.title = "Click to start listening.";
         } else {
           voiceStatus.textContent = "Voice mode off";
+          micToggle.title = "Click to enable voice mode and start listening.";
         }
       }
     });
@@ -557,7 +575,23 @@
         voiceModeToggle.classList.add("is-active");
         renderMessages();
       }
-      voiceController.toggleAlwaysOn();
+      status.textContent = "Starting voice note. Allow microphone access if your browser asks.";
+      const started = voiceController.toggleAlwaysOn();
+      if (!started) {
+        input.focus();
+        status.textContent = "Voice input is unavailable here. Type your question and press send.";
+        return;
+      }
+      window.clearTimeout(micStartWatchdog);
+      micStartWatchdog = window.setTimeout(function () {
+        const voiceState = voiceController.getState();
+        if (voiceModeEnabled && !voiceState.listening && !voiceState.starting) {
+          const message = namespace.voice.friendlyError(voiceState.error || "not-started");
+          voiceStatus.textContent = message;
+          micToggle.title = message;
+          status.textContent = "Voice did not start. You can type your question, or allow microphone access and try again.";
+        }
+      }, 2200);
     });
 
     renderMessages();
