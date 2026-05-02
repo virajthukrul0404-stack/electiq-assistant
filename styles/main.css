@@ -1106,6 +1106,21 @@ nav a[aria-current="page"],
   z-index: 9999 !important;
 }
 
+#goog-gt-vt,
+#goog-gt-tt,
+#goog-gt-thumbUpButton,
+#goog-gt-thumbDownButton,
+.goog-te-balloon-frame,
+.goog-text-highlight {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body .goog-text-highlight {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 .footer-meta {
   width: var(--content-width);
   margin: 1rem auto 0;
