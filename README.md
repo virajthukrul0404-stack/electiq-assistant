@@ -1,5 +1,12 @@
 # ElectIQ - AI-Powered Election Education Assistant
 
+![ElectIQ hero dashboard preview](assets/readme/hero-preview.svg)
+
+<p align="center">
+  <img src="assets/readme/assistant-preview.svg" alt="ElectIQ chatbot and voice assistant preview" width="49%">
+  <img src="assets/readme/timeline-quiz-preview.svg" alt="ElectIQ timeline and quiz preview" width="49%">
+</p>
+
 ## Chosen Vertical
 Election Process Education.
 

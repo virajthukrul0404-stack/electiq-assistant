@@ -1,0 +1,53 @@
+<svg width="1200" height="620" viewBox="0 0 1200 620" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">ElectIQ timeline and quiz preview</title>
+  <desc id="desc">Interactive election timeline cards and a civic knowledge quiz card with progress tracking.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="620">
+      <stop stop-color="#0a0e1a"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#10b981"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="620" rx="34" fill="url(#bg)"/>
+  <text x="84" y="86" fill="#f8fafc" font-family="Space Grotesk, Arial, sans-serif" font-size="42" font-weight="800">Interactive Election Timeline</text>
+  <text x="84" y="124" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="22">Seven guided phases from registration to oath taking.</text>
+  <line x1="140" y1="184" x2="140" y2="530" stroke="#3b82f6" stroke-width="4" opacity=".55"/>
+  <g>
+    <rect x="104" y="160" width="560" height="94" rx="24" fill="rgba(255,255,255,.05)" stroke="rgba(148,163,184,.18)"/>
+    <circle cx="140" cy="207" r="22" fill="#1d4ed8"/>
+    <text x="184" y="199" fill="#f8fafc" font-family="Space Grotesk, Arial, sans-serif" font-size="24" font-weight="800">Voter Registration</text>
+    <rect x="454" y="176" width="88" height="34" rx="17" fill="rgba(16,185,129,.16)"/>
+    <text x="475" y="198" fill="#86efac" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800">PHASE 1</text>
+    <text x="184" y="232" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17">Verify eligibility and electoral roll details.</text>
+  </g>
+  <g>
+    <rect x="104" y="286" width="560" height="94" rx="24" fill="rgba(255,255,255,.05)" stroke="rgba(148,163,184,.18)"/>
+    <circle cx="140" cy="333" r="22" fill="#4338ca"/>
+    <text x="184" y="325" fill="#f8fafc" font-family="Space Grotesk, Arial, sans-serif" font-size="24" font-weight="800">Candidate Nomination</text>
+    <rect x="484" y="302" width="88" height="34" rx="17" fill="rgba(16,185,129,.16)"/>
+    <text x="505" y="324" fill="#86efac" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800">PHASE 2</text>
+    <text x="184" y="358" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17">Candidates file nomination papers and affidavits.</text>
+  </g>
+  <g>
+    <rect x="104" y="412" width="560" height="94" rx="24" fill="rgba(255,255,255,.05)" stroke="rgba(148,163,184,.18)"/>
+    <circle cx="140" cy="459" r="22" fill="#2563eb"/>
+    <text x="184" y="451" fill="#f8fafc" font-family="Space Grotesk, Arial, sans-serif" font-size="24" font-weight="800">Election Day Voting</text>
+    <rect x="464" y="428" width="88" height="34" rx="17" fill="rgba(16,185,129,.16)"/>
+    <text x="485" y="450" fill="#86efac" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800">PHASE 4</text>
+    <text x="184" y="484" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17">Voters cast secret ballots at assigned polling stations.</text>
+  </g>
+  <rect x="748" y="130" width="350" height="392" rx="32" fill="rgba(255,255,255,.055)" stroke="rgba(148,163,184,.18)"/>
+  <rect x="790" y="174" width="268" height="18" rx="9" fill="rgba(148,163,184,.2)"/>
+  <rect x="790" y="174" width="188" height="18" rx="9" fill="url(#chip)"/>
+  <text x="790" y="236" fill="#f8fafc" font-family="Space Grotesk, Arial, sans-serif" font-size="26" font-weight="800">Knowledge Check</text>
+  <text x="790" y="282" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700">What does VVPAT help verify?</text>
+  <rect x="790" y="318" width="268" height="52" rx="18" fill="rgba(59,130,246,.16)" stroke="rgba(59,130,246,.34)"/>
+  <text x="814" y="351" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="17">A printed vote slip trail</text>
+  <rect x="790" y="386" width="268" height="52" rx="18" fill="rgba(255,255,255,.045)" stroke="rgba(148,163,184,.14)"/>
+  <text x="814" y="419" fill="#94a3b8" font-family="Inter, Arial, sans-serif" font-size="17">Campaign spending</text>
+  <rect x="790" y="454" width="168" height="46" rx="23" fill="#10b981"/>
+  <text x="828" y="484" fill="white" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">Correct</text>
+</svg>
