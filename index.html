@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://translate.googleapis.com; frame-src https://translate.google.com https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://translate.googleapis.com; frame-src https://translate.google.com https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
     />
     <meta
       name="description"
@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="styles/chat.css" />
     <script src="scripts/config.js?v=20260502-voice"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELECTIQ2026"></script>
+    <script defer src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -207,6 +208,46 @@
             </div>
           </div>
           <div class="quiz-shell" id="quiz-app"></div>
+        </section>
+
+        <section class="section-shell google-services-section" id="google-services-section">
+          <div class="section-heading">
+            <div>
+              <h2>Google Services Intelligence Layer</h2>
+              <p class="section-subtitle">
+                ElectIQ uses Google services actively, not decoratively: Gemini for answers, Translate for multilingual access,
+                Analytics for product learning, Charts for civic statistics, Calendar for reminders, and Cloud Run for hosting.
+              </p>
+            </div>
+          </div>
+          <div class="google-service-layout">
+            <article class="google-chart-card">
+              <div class="service-card-heading">
+                <span class="material-symbols-outlined" aria-hidden="true">monitoring</span>
+                <div>
+                  <h3>Google Charts Civic Dashboard</h3>
+                  <p>Live-rendered visual summary of election scale and learning metrics.</p>
+                </div>
+              </div>
+              <div id="google-civic-chart" class="google-civic-chart" role="img" aria-label="Google Charts election statistics visualization">
+                Loading Google Charts civic dashboard...
+              </div>
+              <p class="chart-fallback" id="google-chart-fallback" hidden>
+                Google Charts could not load, so ElectIQ keeps the same civic facts available in the hero stats and knowledge hub.
+              </p>
+            </article>
+            <article class="google-calendar-card">
+              <div class="service-card-heading">
+                <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
+                <div>
+                  <h3>Google Calendar Reminders</h3>
+                  <p>Add demo election milestones to Google Calendar for practical planning.</p>
+                </div>
+              </div>
+              <div class="calendar-reminder-list" id="calendar-reminder-list"></div>
+            </article>
+          </div>
+          <div class="google-service-grid" id="google-service-grid" aria-label="Google services used by ElectIQ"></div>
         </section>
 
         <section class="section-shell" id="knowledge-section">
@@ -629,12 +670,12 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    <script defer src="scripts/gemini.js?v=20260502-voice"></script>
-    <script defer src="scripts/voice.js?v=20260502-voice"></script>
-    <script defer src="scripts/chat.js?v=20260502-voice"></script>
-    <script defer src="scripts/timeline.js?v=20260502-voice"></script>
-    <script defer src="scripts/quiz.js?v=20260502-voice"></script>
-    <script defer src="scripts/app.js?v=20260502-voice"></script>
+    <script defer src="scripts/gemini.js?v=20260502-google100"></script>
+    <script defer src="scripts/voice.js?v=20260502-google100"></script>
+    <script defer src="scripts/chat.js?v=20260502-google100"></script>
+    <script defer src="scripts/timeline.js?v=20260502-google100"></script>
+    <script defer src="scripts/quiz.js?v=20260502-google100"></script>
+    <script defer src="scripts/app.js?v=20260502-google100"></script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>

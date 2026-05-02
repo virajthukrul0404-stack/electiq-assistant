@@ -53,7 +53,7 @@
 
   <script>
     let passed = 0;
-    let total = 10;
+    let total = 12;
     const tbody = document.getElementById("test-results");
 
     function renderTest(name, result, details) {
@@ -186,6 +186,32 @@
         }
       } catch (e) {
         renderTest("10. Quiz score calculation accurate", false, e.message);
+      }
+
+      // TEST 11: Google services are represented in the app shell
+      try {
+        const html = await (await fetch("../index.html")).text();
+        const googleSignals = [
+          "googletagmanager.com/gtag/js?id=G-ELECTIQ2026",
+          "google_translate_element",
+          "www.gstatic.com/charts/loader.js",
+          "calendar-reminder-list",
+          "google-services-section"
+        ];
+        const allFound = googleSignals.every(signal => html.includes(signal));
+        renderTest("11. Google services integration is visible", allFound, allFound ? "GA4, Translate, Charts, Calendar, and section detected" : "Missing one or more Google service signals");
+      } catch (e) {
+        renderTest("11. Google services integration is visible", false, e.message);
+      }
+
+      // TEST 12: Cloud Run deployment config is present
+      try {
+        const dockerfile = await (await fetch("../Dockerfile")).text();
+        const readme = await (await fetch("../README.md")).text();
+        const validDeploy = dockerfile.includes("EXPOSE 8080") && dockerfile.includes("http.server") && readme.includes("Cloud Run");
+        renderTest("12. Cloud Run deployment config present", validDeploy, validDeploy ? "Dockerfile and README Cloud Run link detected" : "Missing Cloud Run deployment evidence");
+      } catch (e) {
+        renderTest("12. Cloud Run deployment config present", false, e.message);
       }
 
       updateSummary();

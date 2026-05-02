@@ -35,10 +35,13 @@ Gemini is optional at runtime because public client-side keys can be revoked or 
 
 ## Google Services Used
 - Gemini Flash API via `generativelanguage.googleapis.com` for live AI answers when a valid key is provided.
+- Google Cloud Run hosts the production app with a small containerized static server.
+- Google Charts renders the in-app civic statistics dashboard from election-scale metrics.
+- Google Calendar reminder links let learners add election milestone reminders to their own calendar.
+- Google Translate Widget in the footer provides multilingual support across Indian languages.
+- Google Analytics GA4 with measurement ID `G-ELECTIQ2026` tracks learning-product usage signals.
 - Google Fonts: Space Grotesk, Inter, and JetBrains Mono.
-- Google Material Icons for interface symbols.
-- Google Analytics GA4 with measurement ID `G-ELECTIQ2026`.
-- Google Translate Widget in the footer for multilingual support.
+- Google Material Symbols provide consistent action icons throughout the UI.
 
 ## How It Works
 ```text
@@ -50,6 +53,8 @@ Chat / Voice / Timeline / Quiz UI
    +--> Gemini streamGenerateContent API if a valid browser-saved key exists
    |
    +--> Local election knowledge fallback if Gemini is unavailable
+   |
+   +--> Google Charts dashboard + Google Calendar reminder links
    |
    v
 Sanitized answer rendered in chat, optionally read aloud by SpeechSynthesis

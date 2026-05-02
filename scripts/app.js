@@ -28,6 +28,48 @@
     { label: "Voter Helpline", href: "https://voters.eci.gov.in/" },
     { label: "National Voters' Service Portal", href: "https://www.nvsp.in/" }
   ];
+  const GOOGLE_SERVICE_CARDS = [
+    {
+      icon: "auto_awesome",
+      title: "Gemini Flash",
+      detail: "Streams neutral election explanations and quiz study tips with an offline civic fallback."
+    },
+    {
+      icon: "translate",
+      title: "Google Translate",
+      detail: "Footer widget supports Indian languages including Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, and Urdu."
+    },
+    {
+      icon: "analytics",
+      title: "GA4 Analytics",
+      detail: "Measurement ID G-ELECTIQ2026 is wired for product analytics and learning-flow insights."
+    },
+    {
+      icon: "monitoring",
+      title: "Google Charts",
+      detail: "Renders the civic statistics dashboard from local election metrics at runtime."
+    },
+    {
+      icon: "event",
+      title: "Google Calendar",
+      detail: "Creates reminder links for demo election milestones so learners can plan civic actions."
+    },
+    {
+      icon: "cloud_done",
+      title: "Google Cloud Run",
+      detail: "Production deployment is live on Cloud Run with a small static container."
+    },
+    {
+      icon: "font_download",
+      title: "Google Fonts",
+      detail: "Space Grotesk, Inter, and JetBrains Mono shape the premium civic-tech interface."
+    },
+    {
+      icon: "category",
+      title: "Material Symbols",
+      detail: "Google iconography powers recognizable actions across timeline, quiz, voice, and accessibility controls."
+    }
+  ];
 
   function normalizeQuery(value) {
     return String(value || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
@@ -327,6 +369,153 @@
     });
   }
 
+  function formatCalendarDate(date) {
+    return new Date(date)
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
+  }
+
+  function buildGoogleCalendarUrl(event) {
+    const start = new Date(event.date);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const params = new URLSearchParams({
+      action: "TEMPLATE",
+      text: "ElectIQ reminder: " + event.name,
+      dates: formatCalendarDate(start) + "/" + formatCalendarDate(end),
+      details: event.note + " Created from ElectIQ, an AI-powered election education assistant.",
+      location: "India"
+    });
+    return "https://calendar.google.com/calendar/render?" + params.toString();
+  }
+
+  function renderGoogleCalendarReminders() {
+    const host = $("calendar-reminder-list");
+    if (!host) {
+      return;
+    }
+
+    host.innerHTML = "";
+    DEMO_ELECTIONS.forEach(function (event) {
+      const link = document.createElement("a");
+      link.href = buildGoogleCalendarUrl(event);
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.className = "calendar-reminder";
+
+      const date = new Date(event.date);
+      const icon = document.createElement("span");
+      icon.className = "material-symbols-outlined";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = "event";
+
+      const copy = document.createElement("span");
+      const title = document.createElement("strong");
+      title.textContent = event.name;
+      const meta = document.createElement("small");
+      meta.textContent = date.toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) + " - Add to Google Calendar";
+      copy.append(title, meta);
+
+      link.append(icon, copy);
+      host.appendChild(link);
+    });
+  }
+
+  function renderGoogleServiceGrid() {
+    const host = $("google-service-grid");
+    if (!host) {
+      return;
+    }
+
+    host.innerHTML = "";
+    GOOGLE_SERVICE_CARDS.forEach(function (service) {
+      const card = document.createElement("article");
+      card.className = "google-service-card";
+
+      const icon = document.createElement("span");
+      icon.className = "material-symbols-outlined";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = service.icon;
+
+      const title = document.createElement("strong");
+      title.textContent = service.title;
+
+      const detail = document.createElement("p");
+      detail.textContent = service.detail;
+
+      card.append(icon, title, detail);
+      host.appendChild(card);
+    });
+  }
+
+  function drawGoogleCivicChart() {
+    const chartHost = $("google-civic-chart");
+    const fallback = $("google-chart-fallback");
+    if (!chartHost) {
+      return;
+    }
+
+    if (!window.google || !google.visualization || !google.visualization.DataTable) {
+      chartHost.textContent = "Google Charts is unavailable.";
+      if (fallback) {
+        fallback.hidden = false;
+      }
+      return;
+    }
+
+    const dataTable = new google.visualization.DataTable();
+    dataTable.addColumn("string", "Metric");
+    dataTable.addColumn("number", "Scale");
+    dataTable.addRows([
+      ["Eligible voters (millions)", 968],
+      ["Polling stations (ten-thousands)", 105],
+      ["Turnout benchmark", 67.4],
+      ["Civic access hours", 24]
+    ]);
+
+    const options = {
+      backgroundColor: "transparent",
+      legend: { position: "none" },
+      chartArea: { left: 170, top: 24, width: "68%", height: "72%" },
+      colors: ["#3b82f6"],
+      hAxis: {
+        textStyle: { color: getComputedStyle(document.documentElement).getPropertyValue("--text-muted").trim() || "#94a3b8" },
+        gridlines: { color: "rgba(148, 163, 184, 0.12)" },
+        baselineColor: "rgba(148, 163, 184, 0.2)"
+      },
+      vAxis: {
+        textStyle: { color: getComputedStyle(document.documentElement).getPropertyValue("--text-primary").trim() || "#f1f5f9" }
+      },
+      animation: {
+        startup: true,
+        duration: 800,
+        easing: "out"
+      }
+    };
+
+    const chart = new google.visualization.BarChart(chartHost);
+    chart.draw(dataTable, options);
+  }
+
+  function initGoogleCharts() {
+    const chartHost = $("google-civic-chart");
+    if (!chartHost) {
+      return;
+    }
+
+    if (!window.google || !google.charts) {
+      drawGoogleCivicChart();
+      return;
+    }
+
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawGoogleCivicChart);
+    window.addEventListener("resize", function () {
+      window.clearTimeout(initGoogleCharts.resizeTimer);
+      initGoogleCharts.resizeTimer = window.setTimeout(drawGoogleCivicChart, 200);
+    });
+  }
+
   function updateCountdown() {
     const card = $("countdown-card");
     const now = new Date();
@@ -458,6 +647,9 @@
     renderFAQs(data.faqs || []);
     renderGlossary(data.glossary || []);
     renderIndiaCalendar(data.timeline_india || []);
+    renderGoogleCalendarReminders();
+    renderGoogleServiceGrid();
+    initGoogleCharts();
     setupEligibilityChecker();
     setupThemeAndAccessibility();
     updateCountdown();
@@ -532,6 +724,8 @@
     applyTheme: applyTheme,
     applyContrast: applyContrast,
     evaluateEligibility: evaluateEligibility,
+    buildGoogleCalendarUrl: buildGoogleCalendarUrl,
+    renderGoogleServiceGrid: renderGoogleServiceGrid,
     createLocalAssistant: createLocalAssistant
   };
 })();

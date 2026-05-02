@@ -799,6 +799,147 @@ button {
   margin-bottom: 0.35rem;
 }
 
+.google-services-section {
+  position: relative;
+}
+
+.google-services-section::before {
+  content: "";
+  position: absolute;
+  inset: 2rem -6rem auto auto;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.16), transparent 68%);
+  pointer-events: none;
+}
+
+.google-service-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.google-chart-card,
+.google-calendar-card,
+.google-service-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-glass);
+  border: 1px solid var(--hero-border);
+  box-shadow: var(--surface-shadow);
+}
+
+.google-chart-card,
+.google-calendar-card {
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.service-card-heading {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.service-card-heading > .material-symbols-outlined {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  color: #bfdbfe;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.24), rgba(139, 92, 246, 0.18));
+}
+
+.service-card-heading h3 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.25rem;
+}
+
+.service-card-heading p,
+.chart-fallback,
+.calendar-reminder small,
+.google-service-card p {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+}
+
+.google-civic-chart {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.06)),
+    var(--surface-panel-muted);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  color: var(--text-muted);
+}
+
+.calendar-reminder-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.calendar-reminder {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--input-fill-soft);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.calendar-reminder:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.38);
+  background: rgba(59, 130, 246, 0.11);
+}
+
+.calendar-reminder > .material-symbols-outlined {
+  color: var(--accent-green);
+}
+
+.calendar-reminder span:last-child {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.google-service-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.google-service-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border-radius: 1.25rem;
+}
+
+.google-service-card > .material-symbols-outlined {
+  color: var(--accent-blue);
+}
+
+.google-service-card strong {
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--text-primary);
+}
+
+.google-service-card p {
+  font-size: 0.92rem;
+}
+
 .footer {
   padding: 2rem 0 4rem;
 }
@@ -941,6 +1082,7 @@ button {
   .hero-grid,
   .eligibility-layout,
   .knowledge-layout,
+  .google-service-layout,
   .footer-grid {
     grid-template-columns: 1fr;
   }
@@ -948,7 +1090,8 @@ button {
   .hero-stats,
   .countdown-grid,
   .panel-grid,
-  .glossary-grid {
+  .glossary-grid,
+  .google-service-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -980,6 +1123,7 @@ button {
   .hero-stats,
   .panel-grid,
   .glossary-grid,
+  .google-service-grid,
   .countdown-grid,
   .field-grid {
     grid-template-columns: 1fr;
