@@ -29,6 +29,165 @@
     { label: "National Voters' Service Portal", href: "https://www.nvsp.in/" }
   ];
 
+  function normalizeQuery(value) {
+    return String(value || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function textIncludesAny(text, words) {
+    return words.some(function (word) {
+      return text.indexOf(word) !== -1;
+    });
+  }
+
+  function createLocalAssistant(data) {
+    const phases = data.phases || [];
+    const faqs = data.faqs || [];
+    const glossary = data.glossary || [];
+
+    function findPhase(query) {
+      return phases.find(function (phase) {
+        const haystack = normalizeQuery([phase.title, phase.description, phase.id].join(" "));
+        return normalizeQuery(phase.title).split(" ").some(function (word) {
+          return word.length > 3 && query.indexOf(word) !== -1;
+        }) || haystack.indexOf(query) !== -1;
+      });
+    }
+
+    function findFaq(query) {
+      return faqs.find(function (faq) {
+        const question = normalizeQuery(faq.question);
+        return query && (question.indexOf(query) !== -1 || query.split(" ").some(function (word) {
+          return word.length > 4 && question.indexOf(word) !== -1;
+        }));
+      });
+    }
+
+    function findTerm(query) {
+      return glossary.find(function (item) {
+        return query.indexOf(normalizeQuery(item.term)) !== -1;
+      });
+    }
+
+    function phaseAnswer(phase) {
+      return [
+        phase.title + " is " + phase.description,
+        "",
+        "Key points:",
+        "1. " + (phase.keyFacts && phase.keyFacts[0] ? phase.keyFacts[0] : "This phase keeps the process orderly and transparent."),
+        "2. " + (phase.keyFacts && phase.keyFacts[1] ? phase.keyFacts[1] : "Officials follow written procedures to protect fairness."),
+        "3. " + (phase.keyFacts && phase.keyFacts[2] ? phase.keyFacts[2] : "Rules can vary by country, so official guidance matters."),
+        "",
+        "What to remember: " + (phase.details && phase.details[0] ? phase.details[0] : "Check official election instructions early.")
+      ].join("\n");
+    }
+
+    function respond(message) {
+      const query = normalizeQuery(message);
+      const phase = findPhase(query);
+      if (phase) {
+        return phaseAnswer(phase);
+      }
+
+      if (textIncludesAny(query, ["nota", "none of the above"])) {
+        return "NOTA means None of the Above. It lets a voter record that they do not support any listed candidate while still participating in the election. In India, NOTA is available on EVMs, but the candidate with the highest valid votes still wins under current rules.";
+      }
+
+      if (textIncludesAny(query, ["count", "counted", "counting", "verification", "vvpat"])) {
+        return phaseAnswer(phases.find(function (item) { return item.id === "counting"; }) || phases[4]);
+      }
+
+      if (textIncludesAny(query, ["register", "registration", "voter list", "electoral roll", "form 6"])) {
+        return phaseAnswer(phases.find(function (item) { return item.id === "registration"; }) || phases[0]);
+      }
+
+      if (textIncludesAny(query, ["nomination", "candidate", "affidavit"])) {
+        return phaseAnswer(phases.find(function (item) { return item.id === "nomination"; }) || phases[1]);
+      }
+
+      if (textIncludesAny(query, ["election day", "polling", "vote", "voting"])) {
+        return phaseAnswer(phases.find(function (item) { return item.id === "polling"; }) || phases[3]);
+      }
+
+      const faq = findFaq(query);
+      if (faq) {
+        return faq.answer;
+      }
+
+      const term = findTerm(query);
+      if (term) {
+        return term.term + ": " + term.definition;
+      }
+
+      return [
+        "Here is the simple election-process view:",
+        "",
+        "1. Voters register and verify their name on the electoral roll.",
+        "2. Candidates file nominations and officials check eligibility.",
+        "3. Campaigning happens under conduct and spending rules.",
+        "4. Voters cast a secret ballot on polling day.",
+        "5. Votes are counted, verified, and results are officially declared.",
+        "",
+        "Ask me about registration, nomination, NOTA, EVM/VVPAT, polling day, counting, or government formation for a more focused answer."
+      ].join("\n");
+    }
+
+    return { respond: respond };
+  }
+
+  async function streamLocalAnswer(text, onChunk) {
+    const answer = String(text || "");
+    let built = "";
+    for (let index = 0; index < answer.length; index += 1) {
+      built += answer[index];
+      if (typeof onChunk === "function") {
+        onChunk(answer[index], built);
+      }
+      await new Promise(function (resolve) {
+        window.setTimeout(resolve, 3);
+      });
+    }
+    return answer;
+  }
+
+  function evaluateEligibility(age, country) {
+    const normalizedCountry = String(country || "India");
+    const votingAges = {
+      India: 18,
+      "United States": 18,
+      "United Kingdom": 18,
+      Canada: 18,
+      Australia: 18,
+      Brazil: 16
+    };
+    const requiredAge = votingAges[normalizedCountry] || 18;
+    const numericAge = Number(age);
+
+    if (!Number.isFinite(numericAge) || numericAge < 0 || numericAge > 120) {
+      return {
+        eligible: false,
+        valid: false,
+        title: "Enter a valid age",
+        message: "Use an age between 0 and 120 so ElectIQ can give a useful learning snapshot.",
+        pills: ["Educational only", "Check official rules"]
+      };
+    }
+
+    const eligible = numericAge >= requiredAge;
+    return {
+      eligible: eligible,
+      valid: true,
+      title: eligible ? "Likely eligible to vote" : "Not eligible yet",
+      message: eligible
+        ? "In " + normalizedCountry + ", the usual voting age is " + requiredAge + "+. Next, confirm citizenship, residence, and registration status with the official election authority."
+        : "In " + normalizedCountry + ", the usual voting age is " + requiredAge + "+. You can still learn the process now and register when you meet the official requirements.",
+      pills: [
+        normalizedCountry,
+        "Voting age: " + requiredAge + "+",
+        eligible ? "Registration check next" : "Learn before registration"
+      ]
+    };
+  }
+
   function $(id) {
     return document.getElementById(id);
   }
@@ -208,67 +367,49 @@
   }
 
   function setupEligibilityChecker() {
-    const btn = document.getElementById("check-eligibility-btn");
-    const ageInput = document.getElementById("eligibility-age");
-    const countrySelect = document.getElementById("eligibility-country");
-    const resultDiv = document.getElementById("eligibility-result");
-    const askAiBtn = document.getElementById("eligibility-ask-ai");
+    const form = $("eligibility-form");
+    const ageInput = $("eligibility-age");
+    const countrySelect = $("eligibility-country");
+    const resultPanel = $("eligibility-result");
+    const pillsHost = $("eligibility-pills");
 
-    if (!btn || !ageInput || !countrySelect || !resultDiv || !askAiBtn) return;
+    if (!form || !ageInput || !countrySelect || !resultPanel || !pillsHost) {
+      return;
+    }
 
-    const votingAge = { India: 18, USA: 18, UK: 18, Australia: 18, Canada: 18, Germany: 18, France: 18, Japan: 18, Brazil: 16, "South Africa": 18 };
-    const defaultAge = 18;
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const result = evaluateEligibility(ageInput.value, countrySelect.value);
+      resultPanel.classList.toggle("is-success", result.valid && result.eligible);
+      resultPanel.classList.toggle("is-warning", result.valid && !result.eligible);
+      resultPanel.innerHTML = "";
 
-    btn.addEventListener("click", function () {
-      const age = parseInt(ageInput.value, 10);
-      const country = countrySelect.value;
-      
-      if (isNaN(age) || age < 1 || age > 120) {
-        resultDiv.textContent = "Please enter a valid age between 1 and 120.";
-        resultDiv.style.background = "var(--bg-warning, #fff3cd)";
-        resultDiv.style.color = "#856404";
-        resultDiv.style.display = "block";
-        resultDiv.style.opacity = "1";
-        resultDiv.style.transform = "scale(1)";
-        return;
+      const title = document.createElement("strong");
+      title.textContent = result.title;
+      const message = document.createElement("p");
+      message.textContent = result.message;
+      resultPanel.append(title, message);
+
+      pillsHost.innerHTML = "";
+      result.pills.forEach(function (pill) {
+        const item = document.createElement("span");
+        item.textContent = pill;
+        pillsHost.appendChild(item);
+      });
+
+      if (namespace.chatInstance) {
+        const prompt = "Explain voting eligibility and registration next steps in " + countrySelect.value + ".";
+        const askButton = document.createElement("button");
+        askButton.type = "button";
+        askButton.className = "ghost-button";
+        askButton.textContent = "Ask ElectIQ about next steps";
+        askButton.addEventListener("click", function () {
+          namespace.chatInstance.prefill(prompt, true);
+        });
+        pillsHost.appendChild(askButton);
       }
-
-      const required = votingAge[country] || defaultAge;
-      
-      resultDiv.style.display = "block";
-      resultDiv.style.opacity = "0";
-      resultDiv.style.transform = "scale(0.8)";
-
-      setTimeout(function() {
-        if (age >= required) {
-          resultDiv.innerHTML = "✓ You are eligible to vote in " + country + "! Voting age is " + required + "+. Register today.";
-          resultDiv.style.background = "rgba(15, 157, 88, 0.15)";
-          resultDiv.style.color = "var(--text-main, #0f9d58)";
-          resultDiv.style.border = "1px solid rgba(15, 157, 88, 0.3)";
-        } else {
-          resultDiv.innerHTML = "You need to be " + required + " to vote in " + country + ". You are " + (required - age) + " years away from being eligible. Learn the process now!";
-          resultDiv.style.background = "rgba(244, 180, 0, 0.15)";
-          resultDiv.style.color = "var(--text-main, #b38500)";
-          resultDiv.style.border = "1px solid rgba(244, 180, 0, 0.3)";
-        }
-        
-        resultDiv.style.opacity = "1";
-        resultDiv.style.transform = "scale(1)";
-
-        askAiBtn.innerHTML = "Ask AI more about voting in " + country + " &rarr;";
-        askAiBtn.style.display = "inline-flex";
-        
-        askAiBtn.onclick = function() {
-          const chatLauncher = document.getElementById("chat-launcher");
-          if (chatLauncher) chatLauncher.click();
-          if (window.ElectIQ && window.ElectIQ.chatInstance) {
-            window.ElectIQ.chatInstance.prefill("Tell me about voting rights and process in " + country, true);
-          }
-        };
-      }, 50);
     });
   }
-
   function setupThemeAndAccessibility() {
     const storedTheme = window.localStorage.getItem(STORAGE_KEYS.theme) || "dark";
     const storedContrast = window.localStorage.getItem(STORAGE_KEYS.contrast) === "high";
@@ -300,7 +441,8 @@
   }
 
   async function init() {
-    const saved = localStorage.getItem("electiq_gemini_key");
+    localStorage.removeItem("electiq_gemini_key");
+    const saved = sessionStorage.getItem("electiq_gemini_key");
     if (saved && typeof ELECTIQ_CONFIG !== "undefined") {
       ELECTIQ_CONFIG.GEMINI_API_KEY = saved;
     }
@@ -321,11 +463,19 @@
     updateCountdown();
     window.setInterval(updateCountdown, 1000);
 
+    const localAssistant = createLocalAssistant(data);
     const chatWidget = namespace.chat.createChatWidget({
       requestAI: function (payload) {
-        return namespace.gemini.streamGenerate(payload);
+        return namespace.gemini.streamGenerate(payload).catch(function (error) {
+          if (error && (error.code === "api_key_revoked" || error.code === "api_key_invalid" || error.code === "api_key_forbidden")) {
+            namespace.gemini.clearApiKey();
+          }
+          const answer = localAssistant.respond(payload.message);
+          return streamLocalAnswer(answer, payload.onChunk);
+        });
       }
     });
+    namespace.chatInstance = chatWidget;
 
     namespace.timeline.renderTimeline($("timeline-track"), data.phases || [], {
       onAskAI: function (question) {
@@ -367,7 +517,7 @@
             persona: "professor"
           })
           .catch(function () {
-            return "Focus on voter registration, nomination checks, election-day voting steps, and how counting leads to official declaration.";
+            return "Focus on voter registration, nomination checks, election-day voting steps, and how counting leads to official declaration. Review any wrong answers, then ask ElectIQ for that topic again.";
           });
       }
     });
@@ -381,6 +531,7 @@
     applyFontScale: applyFontScale,
     applyTheme: applyTheme,
     applyContrast: applyContrast,
-    evaluateEligibility: evaluateEligibility
+    evaluateEligibility: evaluateEligibility,
+    createLocalAssistant: createLocalAssistant
   };
 })();

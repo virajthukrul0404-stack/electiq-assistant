@@ -62,7 +62,7 @@
             <a href="#timeline-section">Timeline</a>
             <a href="#quiz-section">Quiz</a>
             <a href="#knowledge-section">Knowledge</a>
-            <a href="#eligibility-checker">Eligibility</a>
+            <a href="#eligibility-section">Eligibility</a>
             <a href="#footer">Resources</a>
           </nav>
           <div class="header-actions">
@@ -248,41 +248,6 @@
         </section>
       </main>
 
-      <section id="eligibility-checker" style="padding: 3rem 1.5rem; max-width: 800px; margin: 0 auto;">
-        <div class="eligibility-card" style="background: var(--bg-surface, rgba(255,255,255,0.05)); border: 1px solid var(--border-color, rgba(255,255,255,0.1)); border-radius: 12px; padding: 2rem; backdrop-filter: blur(10px);">
-          <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Am I Eligible to Vote?</h2>
-          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 150px;">
-              <label for="eligibility-age" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">Age</label>
-              <input type="number" id="eligibility-age" min="1" max="120" placeholder="e.g. 18" style="width: 100%; box-sizing: border-box; padding: 0.75rem; border: 1px solid var(--border-color, #ccc); border-radius: 6px; background: transparent; color: inherit;" />
-            </div>
-            <div style="flex: 1; min-width: 200px;">
-              <label for="eligibility-country" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">Country</label>
-              <select id="eligibility-country" style="width: 100%; box-sizing: border-box; padding: 0.75rem; border: 1px solid var(--border-color, #ccc); border-radius: 6px; background: var(--bg-primary, #fff); color: inherit;">
-                <option value="India">India</option>
-                <option value="USA">USA</option>
-                <option value="UK">UK</option>
-                <option value="Australia">Australia</option>
-                <option value="Canada">Canada</option>
-                <option value="Germany">Germany</option>
-                <option value="France">France</option>
-                <option value="Japan">Japan</option>
-                <option value="Brazil">Brazil</option>
-                <option value="South Africa">South Africa</option>
-                <option value="Other">Other democracies</option>
-              </select>
-            </div>
-            <div style="display: flex; align-items: flex-end;">
-              <button id="check-eligibility-btn" style="background: var(--primary-color, #0056b3); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Check Eligibility</button>
-            </div>
-          </div>
-          <div id="eligibility-result" style="display: none; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; transition: all 0.3s ease; transform: scale(0.8); opacity: 0;"></div>
-          <button id="eligibility-ask-ai" style="display: none; background: transparent; border: 1px solid var(--primary-color, #0056b3); color: var(--primary-color, #0056b3); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; align-items: center; gap: 0.5rem;">
-            Ask AI more about voting here &rarr;
-          </button>
-        </div>
-      </section>
-
       <footer class="footer" id="footer">
         <div class="footer-shell footer-grid">
           <article class="footer-card">
@@ -346,7 +311,7 @@
                 <button type="button" id="popover-api-key-save" style="background: var(--primary-color, #0056b3); color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 13px;">Save</button>
               </div>
               <div id="popover-api-key-success" style="display: none; color: #0f9d58; font-size: 13px; text-align: center; margin-top: 8px; font-weight: 500;">
-                ✓ API key saved! AI is ready.
+                API key saved. Gemini answers are enabled.
               </div>
             </div>
           </div>

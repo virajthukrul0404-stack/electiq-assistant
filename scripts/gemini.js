@@ -118,19 +118,39 @@
     });
   }
 
+  function canMakeRequest() {
+    const now = Date.now();
+    if (now - lastRequestTime >= 2000) {
+      lastRequestTime = now;
+      return true;
+    }
+    return false;
+  }
+
   function resetRateLimitForTests() {
     lastRequestTime = 0;
   }
 
   function getStorage(storage) {
-    return storage || window.localStorage;
+    return storage || window.sessionStorage;
   }
 
-  function getApiKey() {
-    const configKey = typeof ELECTIQ_CONFIG !== 'undefined' ? ELECTIQ_CONFIG.GEMINI_API_KEY : "";
-    if (configKey && configKey.trim() !== "YOUR_GEMINI_API_KEY_HERE") {
+  function isUsableKey(value) {
+    const normalized = String(value || "").trim();
+    return normalized && normalized !== "YOUR_GEMINI_API_KEY_HERE";
+  }
+
+  function getApiKey(storage) {
+    const storedKey = getStorage(storage).getItem(API_KEY_STORAGE);
+    if (isUsableKey(storedKey)) {
+      return String(storedKey).trim();
+    }
+
+    const configKey = typeof ELECTIQ_CONFIG !== "undefined" ? ELECTIQ_CONFIG.GEMINI_API_KEY : "";
+    if (isUsableKey(configKey)) {
       return String(configKey).trim();
     }
+
     return "";
   }
 
@@ -138,19 +158,31 @@
     const normalized = String(value || "").trim();
     if (normalized) {
       getStorage(storage).setItem(API_KEY_STORAGE, normalized);
+      if (window.localStorage) {
+        window.localStorage.removeItem(API_KEY_STORAGE);
+      }
     } else {
       getStorage(storage).removeItem(API_KEY_STORAGE);
+    }
+    if (typeof ELECTIQ_CONFIG !== "undefined") {
+      ELECTIQ_CONFIG.GEMINI_API_KEY = normalized;
     }
     return normalized;
   }
 
   function clearApiKey(storage) {
     getStorage(storage).removeItem(API_KEY_STORAGE);
+    if (window.localStorage) {
+      window.localStorage.removeItem(API_KEY_STORAGE);
+    }
+    if (typeof ELECTIQ_CONFIG !== "undefined") {
+      ELECTIQ_CONFIG.GEMINI_API_KEY = "";
+    }
   }
 
   function hasApiKey(storage) {
     const key = getApiKey(storage);
-    return key && key.trim() !== "" && key !== "YOUR_GEMINI_API_KEY_HERE";
+    return isUsableKey(key);
   }
 
   function buildEndpoint(modelName, apiKey) {

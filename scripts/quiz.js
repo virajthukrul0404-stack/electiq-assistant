@@ -2,6 +2,9 @@
   const namespace = (window.ElectIQ = window.ElectIQ || {});
 
   function calculateScore(selectedAnswers, questions) {
+    if (typeof selectedAnswers === "number" && typeof questions === "number") {
+      return Math.round((selectedAnswers / questions) * 100) || 0;
+    }
     return (selectedAnswers || []).reduce(function (total, answer, index) {
       if (!questions[index]) {
         return total;
@@ -129,7 +132,8 @@
 
       const yourAnswer = document.createElement("div");
       yourAnswer.className = "quiz-summary-item";
-      yourAnswer.textContent = "Your answer: " + question.options[lockedChoice];
+      yourAnswer.textContent =
+        "Your answer: " + (typeof lockedChoice === "number" ? question.options[lockedChoice] : "No answer selected");
       answerList.appendChild(yourAnswer);
 
       const correctAnswer = document.createElement("div");
@@ -271,4 +275,3 @@
     createQuiz: createQuiz
   };
 })();
-

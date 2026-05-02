@@ -2,7 +2,6 @@
   const namespace = (window.ElectIQ = window.ElectIQ || {});
   const STORAGE_KEY = "electiq-chat-history";
   const VOICE_PANEL_ID = "voice-mode-panel";
-  const API_SETUP_PANEL_ID = "api-setup-panel";
   const QUICK_PROMPTS = [
     "How do I register to vote?",
     "What happens on Election Day?",
@@ -78,7 +77,8 @@
     button.setAttribute("aria-label", label);
     button.textContent = label;
     if (iconName) {
-      button.textContent = label;
+      button.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">' + iconName + '</span>';
+      button.title = label;
     }
     return button;
   }
@@ -108,8 +108,8 @@
     tools.className = "message-tools";
 
     if (role === "assistant" && isFinalized) {
-      const copyButton = createIconButton("Copy");
-      const shareButton = createIconButton("Share");
+      const copyButton = createIconButton("Copy", "content_copy");
+      const shareButton = createIconButton("Share", "share");
       tools.append(copyButton, shareButton);
       meta.appendChild(tools);
       wrapper.dataset.message = message;
@@ -181,55 +181,6 @@
     };
   }
 
-  function createApiSetupPanel() {
-    const panel = document.createElement("section");
-    panel.id = API_SETUP_PANEL_ID;
-    panel.className = "setup-card";
-    panel.innerHTML =
-      "<h3>Connect Gemini</h3><p>Add your own Gemini API key to enable chatbot replies and spoken AI answers. The key stays in this browser only.</p>";
-
-    const label = document.createElement("label");
-    label.className = "setup-field";
-    label.textContent = "Gemini API key";
-
-    const input = document.createElement("input");
-    input.type = "password";
-    input.className = "setup-input";
-    input.placeholder = "Paste your Gemini API key";
-    input.autocomplete = "off";
-    input.spellcheck = false;
-    input.value = namespace.gemini.getApiKey();
-    label.appendChild(input);
-
-    const helper = document.createElement("p");
-    helper.className = "setup-helper";
-    helper.textContent = "Get a fresh key from Google AI Studio, then save it here.";
-
-    const actions = document.createElement("div");
-    actions.className = "setup-actions";
-
-    const saveButton = document.createElement("button");
-    saveButton.type = "button";
-    saveButton.className = "primary-button";
-    saveButton.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">key</span> Save key';
-
-    const clearButton = document.createElement("button");
-    clearButton.type = "button";
-    clearButton.className = "ghost-button";
-    clearButton.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">delete</span> Clear key';
-
-    actions.append(saveButton, clearButton);
-    panel.append(label, helper, actions);
-
-    return {
-      panel: panel,
-      input: input,
-      helper: helper,
-      saveButton: saveButton,
-      clearButton: clearButton
-    };
-  }
-
   function createTypingIndicator() {
     const wrapper = document.createElement("div");
     wrapper.className = "typing-indicator";
@@ -273,11 +224,7 @@
           return;
         }
         input.value = text;
-        if (namespace.gemini.hasApiKey()) {
-          sendQuestion(text);
-        } else {
-          status.textContent = "API Key missing in config.";
-        }
+        sendQuestion(text);
       },
       onSpeakingChange: function (speaking) {
         voiceStatus.textContent = speaking ? "AI is speaking..." : voiceModeEnabled ? "Voice mode on" : "Voice mode off";
@@ -313,11 +260,7 @@
       open();
       input.focus();
       if (autoSend) {
-        if (namespace.gemini.hasApiKey()) {
-          sendQuestion(text);
-        } else {
-          status.textContent = "API Key missing in config.";
-        }
+        sendQuestion(text);
       }
     }
 
@@ -416,11 +359,6 @@
         return;
       }
 
-      if (!namespace.gemini.hasApiKey()) {
-        status.textContent = "API Key missing in config.";
-        return;
-      }
-
       const history = messages.slice();
       appendMessage("user", question);
       input.value = "";
@@ -467,8 +405,8 @@
         meta.appendChild(timestamp);
         const tools = document.createElement("div");
         tools.className = "message-tools";
-        const copyButton = createIconButton("Copy");
-        const shareButton = createIconButton("Share");
+        const copyButton = createIconButton("Copy", "content_copy");
+        const shareButton = createIconButton("Share", "share");
         tools.append(copyButton, shareButton);
         meta.appendChild(tools);
         attachAssistantTools(assistantWrapper, question, sanitizeText(responseText));
@@ -547,11 +485,10 @@
       chatWindow.classList.toggle("is-fullscreen");
     });
 
-    const input = document.getElementById("chat-input");
     const charCounter = document.getElementById("char-counter");
 
-    if (input && charCounter) {
-      input.addEventListener("input", function() {
+    if (charCounter) {
+      input.addEventListener("input", function () {
         charCounter.textContent = input.value.length + " / 500";
       });
     }
@@ -586,12 +523,9 @@
         if (popoverInput && popoverSuccess) {
           const val = popoverInput.value.trim();
           if (val) {
-            localStorage.setItem("electiq_gemini_key", val);
-            if (typeof ELECTIQ_CONFIG !== "undefined") {
-              ELECTIQ_CONFIG.GEMINI_API_KEY = val;
-            }
+            namespace.gemini.setApiKey(val);
             popoverSuccess.style.display = "block";
-            status.textContent = "✓ API key saved! AI is ready.";
+            status.textContent = "API key saved. Gemini answers are enabled.";
             
             setTimeout(function () {
               popoverSuccess.style.display = "none";
@@ -628,7 +562,7 @@
 
     renderMessages();
     if (!namespace.gemini.hasApiKey()) {
-      status.textContent = "Add your Gemini API key in chat settings to enable AI answers.";
+      status.textContent = "Using built-in election knowledge. Add a Gemini key for live AI.";
     }
 
     return {

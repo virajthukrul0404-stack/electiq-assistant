@@ -1,5 +1,5 @@
 const ELECTIQ_CONFIG = {
   GEMINI_API_KEY: "YOUR_GEMINI_API_KEY_HERE",
-  GEMINI_MODEL: "gemini-1.5-flash",
+  GEMINI_MODEL: "gemini-2.5-flash",
   RATE_LIMIT_MS: 2000
 };

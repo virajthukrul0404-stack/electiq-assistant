@@ -43,7 +43,7 @@
   <script>
     const ELECTIQ_CONFIG = {
       GEMINI_API_KEY: "TEST_KEY",
-      GEMINI_MODEL: "gemini-1.5-flash",
+      GEMINI_MODEL: "gemini-2.5-flash",
       RATE_LIMIT_MS: 100
     };
   </script>
@@ -102,10 +102,10 @@
         const div = document.createElement("div");
         div.textContent = '<script>window.__xss=true</scr' + 'ipt>';
         document.body.appendChild(div);
-        renderTest("4. XSS — user input is sanitized", window.__xss === undefined, "window.__xss is undefined");
+        renderTest("4. XSS - user input is sanitized", window.__xss === undefined, "window.__xss is undefined");
         div.remove();
       } catch (e) {
-        renderTest("4. XSS — user input is sanitized", false, e.message);
+        renderTest("4. XSS - user input is sanitized", false, e.message);
       }
 
       // TEST 5: Rate limiter blocks rapid requests
@@ -146,7 +146,8 @@
           // If unsupported, should not throw!
           let threw = false;
           try {
-            window.ElectIQ.voice.toggleAlwaysOn();
+            const controller = window.ElectIQ.voice.createVoiceController();
+            controller.toggleAlwaysOn();
           } catch(err) {
             threw = true;
           }

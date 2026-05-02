@@ -1,83 +1,98 @@
-# ElectIQ — AI-Powered Election Education Assistant
+# ElectIQ - AI-Powered Election Education Assistant
 
-ElectIQ is a non-partisan, AI-driven educational tool designed to demystify complex electoral systems. From voter registration to government formation, ElectIQ guides users through the core processes of a functional democracy.
+## Chosen Vertical
+Election Process Education.
 
-## Chosen Vertical: Election Process Education
-This project specifically focuses on educating users about the phases and logistics of elections (with special depth on Indian democratic processes, while remaining adaptable to others).
+ElectIQ is a non-partisan civic learning assistant focused on election processes, voter registration, polling, vote counting, and democratic participation. The content is India-first, with notes that rules vary across democracies.
 
-## Live Demo: [link]
-*(Add Vercel/Netlify live deployment link here once deployed)*
+## Live Demo
+Public repository: [electiq-assistant](https://github.com/virajthukrul0404-stack/electiq-assistant)
 
 ## Features
-- 🧠 **AI Chatbot**: Real-time answers powered by Gemini 1.5 Flash.
-- 🎙️ **Voice Mode**: Speak your questions to the assistant with live speech-to-text.
-- 🚦 **Interactive Timeline**: Learn the 7 crucial phases of the election lifecycle.
-- 🎯 **Eligibility Checker**: Find out if you meet the requirements to vote in various democracies.
-- 🗣️ **Multilingual**: Google Translate widget to read content in any language.
-- 📚 **Glossary & FAQs**: Browse top questions and key terms instantly.
-- ♿ **Accessible**: A-/A/A+ scaling, contrast toggles, and screen reader-friendly roles.
-- 👩‍🏫 **Custom Personas**: Switch AI personalities (Professor, Gen Z Guide, News Anchor).
+- AI-style chatbot with Gemini streaming support and a built-in offline election knowledge fallback.
+- Voice assistant mode using Web Speech API speech recognition and speech synthesis.
+- Interactive seven-phase election timeline with focused "Ask AI" prompts.
+- Ten-question election quiz with score tracking, answer reveal animation, and study tips.
+- Voting eligibility checker for India and several other democracies.
+- Persona switcher: Professor, Gen Z Guide, and News Anchor.
+- Google Translate widget, Google Fonts, Google Material Icons, and GA4 snippet.
+- Accessibility controls for font size, high contrast, keyboard navigation, and screen-reader announcements.
+- Dark/light theme with premium civic-tech styling.
+
+## Approach & Logic
+The app is intentionally static and lightweight: HTML, CSS, and vanilla JavaScript only. Core civic data lives in `data/election-data.json`, while UI modules in `scripts/` handle timeline rendering, quiz logic, voice controls, chat rendering, and Gemini requests.
+
+Gemini is optional at runtime because public client-side keys can be revoked or restricted. If no valid key is saved, ElectIQ still answers using the local election knowledge base. This keeps the assistant usable during evaluation while preserving support for real Gemini streaming when the evaluator adds a fresh key through the key button in the chat header.
 
 ## Google Services Used
-- **Google Gemini API**: Provides the core generative AI chat responses (`gemini-1.5-flash`).
-- **Google Cloud Translate**: Embedded widget for instant UI translation.
-- **Google Analytics / Tag Manager**: (Analytics IDs included for demonstration/tracking).
-
-## Quick Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/virajthukrul0404-stack/electiq-assistant.git
-   cd electiq-assistant
-   ```
-2. Configuration:
-   - Duplicate `scripts/config.example.js` and rename it to `scripts/config.js`.
-   - Add your Gemini API Key in `scripts/config.js` or via the `🔑` icon in the Web UI.
-3. Start a local server:
-   ```bash
-   python -m http.server 8080
-   # or npx serve
-   ```
-4. Open `http://localhost:8080` in Chrome/Edge/Safari.
+- Gemini Flash API via `generativelanguage.googleapis.com` for live AI answers when a valid key is provided.
+- Google Fonts: Space Grotesk, Inter, and JetBrains Mono.
+- Google Material Icons for interface symbols.
+- Google Analytics GA4 with measurement ID `G-ELECTIQ2026`.
+- Google Translate Widget in the footer for multilingual support.
 
 ## How It Works
 ```text
-  [ USER ] <----(UI interactions)----> [ VaniIla JS Frontend App ]
-                                           |      |      |
-                    (DOM Updates & A11Y) --+      |      +-- (Voice API)
-                                                  |
-                                            [ gemini.js ]
-                                                  | (REST / SSE)
-                                       [ Google Gemini API ]
+User input
+   |
+   v
+Chat / Voice / Timeline / Quiz UI
+   |
+   +--> Gemini streamGenerateContent API if a valid browser-saved key exists
+   |
+   +--> Local election knowledge fallback if Gemini is unavailable
+   |
+   v
+Sanitized answer rendered in chat, optionally read aloud by SpeechSynthesis
 ```
 
 ## Tech Stack
-- HTML5 / CSS3 (Vanilla)
-- Vanilla JavaScript
-- Google Gemini API (`generativelanguage.googleapis.com`)
-- DOMPurify
-- Web Speech API (SpeechRecognition & SpeechSynthesis)
-- Canvas Confetti
+- Vanilla HTML, CSS, and JavaScript
+- Google Gemini REST streaming endpoint
+- Web Speech API
+- DOMPurify CDN for response sanitization
+- Canvas Confetti CDN for perfect quiz scores
+- Browser localStorage for non-sensitive preferences and chat history
+- Browser sessionStorage for an optional user-provided Gemini key during the current tab session
+
+## Setup & Run
+1. Clone the repository.
+2. Start a static server from the project root:
+   ```bash
+   python -m http.server 8080
+   ```
+3. Open `http://localhost:8080`.
+4. Optional: click the key icon in the chat header and save a fresh Gemini API key from Google AI Studio for live Gemini responses.
+
+The app also includes an embedded data fallback so the main page can still render when opened directly as `index.html`, though a local server is recommended for browser tests and JSON loading.
+
+## Assumptions
+- The user has a modern browser; Chrome or Edge is best for voice recognition.
+- Eligibility results are educational snapshots, not legal advice.
+- Gemini keys should not be committed to a public repository; users provide their own key locally if needed.
+- Local fallback answers are scoped to election and civic education topics.
 
 ## Security Measures
-- **No Hardcoded Keys**: API keys are injected via `config.js` and ignored by Git. LocalStorage is strictly scoped for local caching.
-- **XSS Protection**: User messages use strict `textContent`. Gemini HTML responses are scrubbed and sanitized via DOMPurify before being pushed to `innerHTML`.
-- **Content Security Policy (CSP)**: Blocks unverified scripts from executing.
-- **Rate Limiting**: Built-in 2000ms delay between consecutive requests to prevent API spam.
-- **Input Validation**: `maxlength="500"` character cap on the chat input box.
+- No active secret API key is committed.
+- Chat input is capped at 500 characters.
+- User messages are rendered with `textContent`.
+- Assistant HTML is sanitized with DOMPurify.
+- Gemini calls are rate-limited client-side.
+- CSP meta tag limits allowed script and network sources.
+- localStorage stores only non-sensitive preferences and chat history. Optional Gemini keys are session-only and are not committed.
 
-## Accessibility (WCAG 2.1 AA)
-- Semantic HTML tags (`<nav>`, `<header>`, `<footer>`, `<main>`).
-- `<a href="#main-content" class="skip-link">Skip to main content</a>` available to keyboard users.
-- Live Aria Regions for dynamic content updates (e.g. Chatbot Speech).
-- Custom toggle variables: High-contrast mode and variable CSS font scaling (A- / A / A+).
-
-## Assumptions Made
-- Users will open the app using modern browsers (Chrome/Edge for full Web Speech Support).
-- Application requires a static local server due to browser security restrictions around importing non-module scripts and fetching `.json` data over the `file://` protocol.
-- Gemini rate limiting accounts for free-tier constraints.
+## Accessibility
+- Skip link to main content.
+- Visible focus rings on interactive controls.
+- ARIA labels and live regions for chat and dynamic status.
+- Font scaling controls and high contrast mode.
+- Semantic sections, forms, buttons, and keyboard-friendly interactions.
 
 ## Testing
-Run the 10-suite unit test natively in the browser:
-1. Start your local server at the project root.
-2. Navigate to `http://localhost:8080/tests/test.html`.
-3. Assertions will validate JSON payloads, Quiz structure, LocalStorage mechanics, DOMPurify sanitization, and the Gemini Rate Limiter sequentially.
+Run the browser test suite at:
+
+```text
+http://localhost:8080/tests/test.html
+```
+
+The suite validates JSON structure, quiz data, timeline phases, sanitization, rate limiting, localStorage, voice fallback behavior, font scaling, Gemini prompt construction, and quiz score calculation.
