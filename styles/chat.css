@@ -15,7 +15,7 @@
   border-radius: 50%;
   display: inline-grid;
   place-items: center;
-  color: #eff6ff;
+  color: var(--chat-launcher-text);
   background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
   border: none;
   box-shadow: 0 18px 40px rgba(59, 130, 246, 0.32);
@@ -296,7 +296,7 @@
 
 .message.user .message-bubble {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.72));
-  color: #eff6ff;
+  color: var(--chat-launcher-text);
 }
 
 .message-meta {
@@ -336,7 +336,7 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 999px;
-  background: #bfdbfe;
+  background: var(--voice-wave-fill);
   animation: typing-bounce 0.9s ease-in-out infinite;
 }
 
@@ -406,7 +406,7 @@
   width: 0.22rem;
   height: 1.2rem;
   border-radius: 999px;
-  background: linear-gradient(180deg, #38bdf8, #8b5cf6);
+  background: var(--voice-speaking-gradient);
   animation: voice-bars 0.85s ease-in-out infinite;
 }
 
@@ -464,11 +464,11 @@
   border: none;
   display: inline-grid;
   place-items: center;
-  color: #eff6ff;
+  color: var(--chat-launcher-text);
 }
 
 .send-button {
-  background: linear-gradient(135deg, var(--accent-blue), #60a5fa);
+  background: var(--send-button-fill);
 }
 
 .mic-button {

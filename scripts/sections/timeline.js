@@ -22,3 +22,12 @@ export function timelineTemplate() {
   `;
 }
 
+/**
+ * Mount the timeline section into its container.
+ * @param {HTMLElement} containerEl - The container receiving the timeline shell.
+ * @returns {void} No return value.
+ */
+export default function mount(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = timelineTemplate();
+}

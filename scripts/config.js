@@ -17,8 +17,11 @@ const ELECTIQ_CONFIG = {
   RATE_LIMIT_MS: 2000
 };
 
-// On load, read a session-only key if the user supplied one through the UI.
-(function() {
+/**
+ * Loads a session-only Gemini key into runtime config when present.
+ * @returns {void} No return value.
+ */
+function loadSessionKey() {
   try {
     const saved = sessionStorage.getItem("electiq_gemini_key");
     if (saved) {
@@ -27,4 +30,6 @@ const ELECTIQ_CONFIG = {
   } catch (error) {
     console.warn("Could not read from sessionStorage.", error);
   }
-})();
+}
+
+loadSessionKey();

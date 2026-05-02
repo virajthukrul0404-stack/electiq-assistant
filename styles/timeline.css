@@ -59,7 +59,7 @@
   height: 3rem;
   border-radius: 1rem;
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(139, 92, 246, 0.15));
-  color: #bfdbfe;
+  color: var(--link-accent-text);
 }
 
 .timeline-title-row {
@@ -278,7 +278,7 @@
 }
 
 :root[data-theme="light"] .timeline-badge {
-  color: #2563eb;
+  color: var(--ticker-text);
 }
 
 @media (max-width: 720px) {

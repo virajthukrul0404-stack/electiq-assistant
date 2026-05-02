@@ -220,26 +220,25 @@
     ]);
 
     const heroHost = $("top");
-    if (heroHost) heroHost.innerHTML = heroSection.heroTemplate();
+    if (heroHost) heroSection.default(heroHost);
 
     const eligibilityHost = $("eligibility-section");
-    if (eligibilityHost) eligibilityHost.innerHTML = eligibilitySection.eligibilityTemplate();
+    if (eligibilityHost) eligibilitySection.default(eligibilityHost);
 
     const timelineHost = $("timeline-section");
-    if (timelineHost) timelineHost.innerHTML = timelineSection.timelineTemplate();
+    if (timelineHost) timelineSection.default(timelineHost);
 
     const quizHost = $("quiz-section");
-    if (quizHost) quizHost.innerHTML = quizSection.quizTemplate();
+    if (quizHost) quizSection.default(quizHost);
 
     const googleHost = $("google-services-section");
-    if (googleHost) googleHost.innerHTML = googleServicesSection.googleServicesTemplate();
+    if (googleHost) googleServicesSection.default(googleHost);
 
-    const resources = resourcesSection.resourcesTemplate();
     const knowledgeHost = $("knowledge-section");
-    if (knowledgeHost) knowledgeHost.innerHTML = resources.knowledge;
+    if (knowledgeHost) resourcesSection.default(knowledgeHost);
 
     const footerHost = $("footer");
-    if (footerHost) footerHost.innerHTML = resources.footer;
+    if (footerHost) resourcesSection.mountFooter(footerHost);
   }
 
   /**
@@ -316,8 +315,39 @@
    * @param {string} value - The currently active font scale.
    */
   function updateFontControlState(value) {
-    document.querySelectorAll("[data-font]").forEach((button) => {
+    const fontButtons = document.querySelectorAll("[data-font]");
+    if (!fontButtons.length) return;
+    fontButtons.forEach((button) => {
       button.classList.toggle("is-active", button.dataset.font === String(value));
+    });
+  }
+
+  /**
+   * Updates navigation link state based on the visible section.
+   * @returns {void} No return value.
+   */
+  function updateActiveNavLink() {
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    if (!navLinks.length) return;
+
+    let activeId = "timeline-section";
+    navLinks.forEach((link) => {
+      const targetId = link.getAttribute("href");
+      if (!targetId) return;
+      const section = document.querySelector(targetId);
+      if (!section) return;
+      const bounds = section.getBoundingClientRect();
+      if (bounds.top <= 160 && bounds.bottom >= 160) {
+        activeId = targetId.slice(1);
+      }
+    });
+
+    navLinks.forEach((link) => {
+      if (link.getAttribute("href") === "#" + activeId) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
     });
   }
 
@@ -716,12 +746,17 @@
       });
     }
 
-    document.querySelectorAll("[data-font]").forEach((button) => {
-      button.addEventListener("click", function () {
-        const value = applyFontScale(this.dataset.font);
-        updateFontControlState(value);
+    const fontButtons = document.querySelectorAll("[data-font]");
+    if (fontButtons.length) {
+      fontButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          const value = applyFontScale(this.dataset.font);
+          updateFontControlState(value);
+        });
       });
-    });
+    }
+    updateActiveNavLink();
+    window.addEventListener("scroll", updateActiveNavLink, { passive: true });
   }
 
   /**

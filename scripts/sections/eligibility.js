@@ -52,3 +52,12 @@ export function eligibilityTemplate() {
   `;
 }
 
+/**
+ * Mount the eligibility section into its container.
+ * @param {HTMLElement} containerEl - The container receiving the eligibility shell.
+ * @returns {void} No return value.
+ */
+export default function mount(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = eligibilityTemplate();
+}

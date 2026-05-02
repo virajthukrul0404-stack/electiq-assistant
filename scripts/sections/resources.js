@@ -46,7 +46,9 @@ export function resourcesTemplate() {
         <article class="footer-card">
           <h3>Translate & Explore</h3>
           <p>Use the Google Translate widget for multilingual support and visit trusted, official election resources.</p>
-          <div class="translate-slot" id="google_translate_element" aria-label="Google Translate widget"></div>
+          <div class="translate-wrapper">
+            <div class="translate-slot" id="google_translate_element" aria-label="Google Translate widget"></div>
+          </div>
           <div class="resource-list" id="footer-links"></div>
         </article>
         <article class="footer-card">
@@ -73,4 +75,24 @@ export function resourcesTemplate() {
       </div>
     `
   };
+}
+
+/**
+ * Mount the knowledge hub portion of the resources module.
+ * @param {HTMLElement} containerEl - The container receiving the knowledge markup.
+ * @returns {void} No return value.
+ */
+export default function mount(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = resourcesTemplate().knowledge;
+}
+
+/**
+ * Mount the footer portion of the resources module.
+ * @param {HTMLElement} containerEl - The footer container receiving the footer markup.
+ * @returns {void} No return value.
+ */
+export function mountFooter(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = resourcesTemplate().footer;
 }

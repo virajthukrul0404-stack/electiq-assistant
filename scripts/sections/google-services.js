@@ -44,3 +44,12 @@ export function googleServicesTemplate() {
   `;
 }
 
+/**
+ * Mount the Google services section into its container.
+ * @param {HTMLElement} containerEl - The container receiving the services shell.
+ * @returns {void} No return value.
+ */
+export default function mount(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = googleServicesTemplate();
+}

@@ -2,17 +2,17 @@
    1. Theme Variables & Base
    ========================================================================== */
 :root {
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #111827;
+  --bg-primary: rgb(10, 14, 26);
+  --bg-secondary: rgb(17, 24, 39);
   --bg-glass: rgba(255, 255, 255, 0.04);
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  --accent-green: #10b981;
-  --accent-amber: #f59e0b;
-  --text-primary: #f1f5f9;
-  --text-muted: #94a3b8;
+  --accent-blue: rgb(59, 130, 246);
+  --accent-purple: rgb(139, 92, 246);
+  --accent-green: rgb(16, 185, 129);
+  --accent-amber: rgb(245, 158, 11);
+  --text-primary: rgb(241, 245, 249);
+  --text-muted: rgb(148, 163, 184);
   --border-glow: rgba(59, 130, 246, 0.3);
-  --gradient-hero: linear-gradient(135deg, #0a0e1a 0%, #1e1b4b 50%, #0a0e1a 100%);
+  --gradient-hero: linear-gradient(135deg, rgb(10, 14, 26) 0%, rgb(30, 27, 75) 50%, rgb(10, 14, 26) 100%);
   --surface-shadow: 0 24px 60px rgba(2, 8, 23, 0.45);
   --page-glow-a: rgba(59, 130, 246, 0.15);
   --page-glow-b: rgba(139, 92, 246, 0.14);
@@ -28,12 +28,27 @@
   --input-fill-soft: rgba(15, 23, 42, 0.38);
   --shortcut-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(17, 24, 39, 0.85));
   --ticker-bg: rgba(15, 23, 42, 0.4);
-  --ticker-text: #bfdbfe;
+  --ticker-text: rgb(191, 219, 254);
   --success-chip-bg: rgba(16, 185, 129, 0.14);
-  --success-chip-text: #bbf7d0;
+  --success-chip-text: rgb(187, 247, 208);
   --control-bg: rgba(15, 23, 42, 0.4);
   --hero-overlay-a: rgba(59, 130, 246, 0.24);
   --hero-overlay-b: rgba(139, 92, 246, 0.18);
+  --color-nav-text: rgba(255, 255, 255, 0.85);
+  --color-nav-bg: rgba(255, 255, 255, 0.08);
+  --color-nav-border: rgba(255, 255, 255, 0.15);
+  --color-nav-hover-bg: rgba(255, 255, 255, 0.15);
+  --button-primary-text: var(--text-primary);
+  --button-primary-fill: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(96, 165, 250, 0.72));
+  --button-primary-shadow: 0 18px 32px rgba(37, 99, 235, 0.3);
+  --link-accent-text: var(--ticker-text);
+  --spark-fill-light: rgba(37, 99, 235, 0.95);
+  --control-chip-active-bg: rgba(59, 130, 246, 0.18);
+  --control-chip-active-border: rgba(96, 165, 250, 0.4);
+  --chat-launcher-text: var(--text-primary);
+  --voice-wave-fill: var(--ticker-text);
+  --voice-speaking-gradient: linear-gradient(180deg, rgba(56, 189, 248, 1), var(--accent-purple));
+  --send-button-fill: linear-gradient(135deg, var(--accent-blue), rgba(96, 165, 250, 1));
   --radius-lg: 28px;
   --radius-md: 20px;
   --radius-sm: 14px;
@@ -45,13 +60,13 @@
 }
 
 :root[data-theme="light"] {
-  --bg-primary: #f8fbff;
-  --bg-secondary: #ffffff;
+  --bg-primary: rgb(248, 251, 255);
+  --bg-secondary: rgb(255, 255, 255);
   --bg-glass: rgba(255, 255, 255, 0.78);
-  --text-primary: #0f172a;
-  --text-muted: #475569;
+  --text-primary: rgb(15, 23, 42);
+  --text-muted: rgb(71, 85, 105);
   --border-glow: rgba(37, 99, 235, 0.18);
-  --gradient-hero: linear-gradient(135deg, #eff6ff 0%, #eef2ff 45%, #f8fbff 100%);
+  --gradient-hero: linear-gradient(135deg, rgb(239, 246, 255) 0%, rgb(238, 242, 255) 45%, rgb(248, 251, 255) 100%);
   --surface-shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
   --hero-border: rgba(15, 23, 42, 0.08);
   --page-glow-a: rgba(59, 130, 246, 0.08);
@@ -68,20 +83,24 @@
   --input-fill-soft: rgba(241, 245, 249, 0.96);
   --shortcut-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.96));
   --ticker-bg: rgba(226, 232, 240, 0.96);
-  --ticker-text: #2563eb;
+  --ticker-text: rgb(37, 99, 235);
   --success-chip-bg: rgba(16, 185, 129, 0.12);
-  --success-chip-text: #047857;
+  --success-chip-text: rgb(4, 120, 87);
   --control-bg: rgba(241, 245, 249, 0.96);
   --hero-overlay-a: rgba(59, 130, 246, 0.12);
   --hero-overlay-b: rgba(139, 92, 246, 0.08);
+  --color-nav-text: rgba(0, 0, 0, 0.75);
+  --color-nav-bg: rgba(0, 0, 0, 0.05);
+  --color-nav-border: rgba(0, 0, 0, 0.12);
+  --color-nav-hover-bg: rgba(0, 0, 0, 0.1);
 }
 
 :root[data-contrast="high"] {
-  --bg-primary: #020617;
-  --bg-secondary: #0f172a;
+  --bg-primary: rgb(2, 6, 23);
+  --bg-secondary: rgb(15, 23, 42);
   --bg-glass: rgba(255, 255, 255, 0.08);
-  --text-primary: #ffffff;
-  --text-muted: #e2e8f0;
+  --text-primary: rgb(255, 255, 255);
+  --text-muted: rgb(226, 232, 240);
   --border-glow: rgba(255, 255, 255, 0.4);
 }
 
@@ -179,6 +198,40 @@ button {
   border-bottom: 1px solid var(--hero-border);
 }
 
+nav,
+.nav-links,
+header nav {
+  all: unset !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+nav a,
+.nav-links a {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.4rem 1rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  color: var(--color-nav-text) !important;
+  background: var(--color-nav-bg) !important;
+  border: 0.5px solid var(--color-nav-border) !important;
+  transition: background 0.2s, color 0.2s !important;
+  text-decoration: none !important;
+}
+
+nav a:hover,
+.nav-links a:hover,
+nav a[aria-current="page"],
+.nav-links a[aria-current="page"] {
+  background: var(--color-nav-hover-bg) !important;
+  color: var(--text-primary) !important;
+}
+
 .nav-row,
 .section-shell,
 .footer-shell {
@@ -237,7 +290,7 @@ button {
 .nav-links a:hover,
 .nav-links a:focus-visible {
   color: var(--text-primary);
-  background: rgba(59, 130, 246, 0.12);
+  background: var(--color-nav-hover-bg);
 }
 
 .header-actions {
@@ -282,7 +335,7 @@ button {
   padding: 0.75rem 1rem;
   border-radius: 999px;
   background: var(--shortcut-bg);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid var(--border-glow);
   color: var(--text-primary);
 }
 
@@ -378,9 +431,9 @@ button {
 }
 
 .primary-button {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(96, 165, 250, 0.72));
-  color: #eff6ff;
-  box-shadow: 0 18px 32px rgba(37, 99, 235, 0.3);
+  background: var(--button-primary-fill);
+  color: var(--button-primary-text);
+  box-shadow: var(--button-primary-shadow);
 }
 
 .secondary-button {
@@ -865,7 +918,7 @@ button {
   width: 3rem;
   height: 3rem;
   border-radius: 1rem;
-  color: #bfdbfe;
+  color: var(--link-accent-text);
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.24), rgba(139, 92, 246, 0.18));
 }
 
@@ -960,7 +1013,9 @@ button {
 }
 
 .footer-grid {
+  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .footer-card {
@@ -1023,12 +1078,32 @@ button {
 }
 
 .control-chip.is-active {
-  background: rgba(59, 130, 246, 0.18);
-  border-color: rgba(96, 165, 250, 0.4);
+  background: var(--control-chip-active-bg);
+  border-color: var(--control-chip-active-border);
 }
 
 .translate-slot {
   min-height: 48px;
+}
+
+.translate-wrapper {
+  overflow: hidden;
+  max-width: 100%;
+  contain: layout;
+}
+
+#google_translate_element,
+.goog-te-gadget,
+.goog-te-gadget-simple {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.goog-te-menu-frame,
+.goog-te-balloon-frame {
+  max-width: 320px !important;
+  z-index: 9999 !important;
 }
 
 .footer-meta {

@@ -56,3 +56,12 @@ export function heroTemplate() {
   `;
 }
 
+/**
+ * Mount the hero section into its container.
+ * @param {HTMLElement} containerEl - The container receiving the hero markup.
+ * @returns {void} No return value.
+ */
+export default function mount(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = heroTemplate();
+}

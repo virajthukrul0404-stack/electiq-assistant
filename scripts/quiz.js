@@ -1,6 +1,16 @@
+/**
+ * @file quiz.js
+ * @description Quiz engine for ElectIQ.
+ */
 (function () {
   const namespace = (window.ElectIQ = window.ElectIQ || {});
 
+  /**
+   * Calculates either quiz score count or percentage.
+   * @param {Array<number>|number} selectedAnswers - Selected answers or raw score.
+   * @param {Array<Object>|number} questions - Question list or total question count.
+   * @returns {number} Score count or percentage.
+   */
   function calculateScore(selectedAnswers, questions) {
     if (typeof selectedAnswers === "number" && typeof questions === "number") {
       return Math.round((selectedAnswers / questions) * 100) || 0;
@@ -13,6 +23,12 @@
     }, 0);
   }
 
+  /**
+   * Builds a list of wrong answers for feedback.
+   * @param {Array<number>} selectedAnswers - Selected answer indexes.
+   * @param {Array<Object>} questions - Quiz question objects.
+   * @returns {Array<Object>} Wrong answer summary objects.
+   */
   function buildWrongAnswerSummary(selectedAnswers, questions) {
     return (questions || [])
       .map(function (question, index) {
@@ -29,10 +45,21 @@
       .filter(Boolean);
   }
 
+  /**
+   * Animates the quiz progress bar width.
+   * @param {HTMLElement} bar - Progress bar element.
+   * @param {number} value - Percentage width value.
+   * @returns {void} No return value.
+   */
   function animateScoreBar(bar, value) {
+    if (!bar) return;
     bar.style.width = value + "%";
   }
 
+  /**
+   * Fires confetti when a perfect score is achieved.
+   * @returns {void} No return value.
+   */
   function fireConfetti() {
     if (typeof window.confetti !== "function") {
       return;
@@ -43,6 +70,13 @@
     }, 220);
   }
 
+  /**
+   * Creates and manages the quiz UI.
+   * @param {HTMLElement} container - Quiz mount container.
+   * @param {Array<Object>} questions - Quiz question list.
+   * @param {Object} options - Quiz behavior options.
+   * @returns {Object} Public quiz helpers.
+   */
   function createQuiz(container, questions, options) {
     const config = options || {};
     const selectedAnswers = [];
@@ -50,6 +84,10 @@
     let flipped = false;
     let lockedChoice = null;
 
+    /**
+     * Renders the active quiz question card.
+     * @returns {void} No return value.
+     */
     function renderQuestion() {
       const question = questions[currentIndex];
       const score = calculateScore(selectedAnswers, questions);
@@ -84,6 +122,7 @@
       front.className = "quiz-face";
       const questionTitle = document.createElement("h3");
       questionTitle.className = "quiz-question";
+      questionTitle.id = "quiz-question-" + currentIndex;
       questionTitle.textContent = question.question;
       front.appendChild(questionTitle);
 
@@ -94,6 +133,7 @@
         button.type = "button";
         button.className = "quiz-option";
         button.textContent = option;
+        button.setAttribute("aria-describedby", questionTitle.id);
         button.addEventListener("click", function () {
           if (flipped) {
             return;
@@ -181,6 +221,10 @@
       }
     }
 
+    /**
+     * Renders final quiz results and personalized study tips.
+     * @returns {Promise<void>} Resolves when feedback rendering completes.
+     */
     async function renderResults() {
       const total = questions.length;
       const score = calculateScore(selectedAnswers, questions);

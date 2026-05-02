@@ -16,3 +16,12 @@ export function quizTemplate() {
   `;
 }
 
+/**
+ * Mount the quiz section into its container.
+ * @param {HTMLElement} containerEl - The container receiving the quiz shell.
+ * @returns {void} No return value.
+ */
+export default function mount(containerEl) {
+  if (!containerEl) return;
+  containerEl.innerHTML = quizTemplate();
+}
