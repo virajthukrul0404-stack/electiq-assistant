@@ -1,0 +1,112 @@
+﻿[
+    {
+        "question":  "What is the main purpose of the electoral roll?",
+        "options":  [
+                        "To list approved campaign slogans",
+                        "To record the names of registered voters",
+                        "To publish unofficial exit polls",
+                        "To rank political parties"
+                    ],
+        "correctIndex":  1,
+        "explanation":  "The electoral roll is the official voter list used to confirm who is eligible to vote in a specific constituency."
+    },
+    {
+        "question":  "Which Indian election form is commonly used for new voter registration?",
+        "options":  [
+                        "Form 6",
+                        "Form 12A",
+                        "Form 49",
+                        "Form 27B"
+                    ],
+        "correctIndex":  0,
+        "explanation":  "Form 6 is used for inclusion of a new name in the electoral roll."
+    },
+    {
+        "question":  "Why is the campaign silence period important?",
+        "options":  [
+                        "It allows only one party to advertise",
+                        "It helps voters reflect without last-minute pressure",
+                        "It replaces the need for polling staff",
+                        "It suspends the counting process"
+                    ],
+        "correctIndex":  1,
+        "explanation":  "Campaign silence rules are meant to reduce intense last-minute persuasion and give voters a calmer environment before polling."
+    },
+    {
+        "question":  "What does NOTA stand for?",
+        "options":  [
+                        "Notice of Tally Approval",
+                        "National Order for Transparent Administration",
+                        "None of the Above",
+                        "Nomination of Trusted Applicants"
+                    ],
+        "correctIndex":  2,
+        "explanation":  "NOTA lets voters reject all listed candidates while still exercising the right to participate."
+    },
+    {
+        "question":  "Which statement about EVMs and VVPAT is correct in India?",
+        "options":  [
+                        "They are only used for local body elections",
+                        "VVPAT gives voters a temporary visual confirmation of their choice",
+                        "EVMs require internet access to record votes",
+                        "VVPAT replaces the need for counting officers"
+                    ],
+        "correctIndex":  1,
+        "explanation":  "VVPAT displays the selected candidate briefly and stores a paper audit slip for verification."
+    },
+    {
+        "question":  "Who usually scrutinizes nomination papers in a constituency?",
+        "options":  [
+                        "The Chief Minister",
+                        "The local police station",
+                        "The Returning Officer",
+                        "Any voter from the constituency"
+                    ],
+        "correctIndex":  2,
+        "explanation":  "The Returning Officer checks whether nomination papers meet legal and procedural requirements."
+    },
+    {
+        "question":  "What is voter turnout?",
+        "options":  [
+                        "The number of candidates who withdraw",
+                        "The percentage of registered voters who cast a vote",
+                        "The number of polling stations in a district",
+                        "The total number of campaign speeches"
+                    ],
+        "correctIndex":  1,
+        "explanation":  "Turnout measures participation by comparing votes cast to the total number of registered voters."
+    },
+    {
+        "question":  "Why might a country hold elections in multiple phases?",
+        "options":  [
+                        "To prevent all results from being announced",
+                        "To reduce the number of registered voters",
+                        "To manage large-scale logistics and security",
+                        "To allow candidates to vote twice"
+                    ],
+        "correctIndex":  2,
+        "explanation":  "Large countries may split polling into phases to manage machines, staff, security, and geography."
+    },
+    {
+        "question":  "What happens after vote counting is completed and verified?",
+        "options":  [
+                        "The campaign period reopens",
+                        "Results are formally declared",
+                        "The electoral roll is deleted",
+                        "All candidates are automatically re-nominated"
+                    ],
+        "correctIndex":  1,
+        "explanation":  "Once totals are verified, the competent authority formally declares the winner and publishes certified results."
+    },
+    {
+        "question":  "In a parliamentary democracy, what often follows election results?",
+        "options":  [
+                        "Government formation and oath taking",
+                        "A second registration drive on polling day",
+                        "A ban on all coalition talks",
+                        "Immediate dissolution of the legislature"
+                    ],
+        "correctIndex":  0,
+        "explanation":  "After the results, the winning party or coalition attempts to prove majority support and form a government."
+    }
+]

@@ -1,0 +1,128 @@
+﻿[
+    {
+        "id":  "registration",
+        "title":  "Voter Registration",
+        "description":  "Citizens confirm eligibility, verify their constituency, and submit or update voter registration details before the rolls are frozen.",
+        "duration":  "Several weeks to several months before polling",
+        "keyFacts":  [
+                         "In India, eligible citizens can register once they turn 18 through the Election Commission of India and state electoral offices.",
+                         "Special summary revisions help correct names, addresses, photographs, and polling station assignments before an election.",
+                         "Many democracies set a final registration deadline, while some permit same-day or automatic registration."
+                     ],
+        "details":  [
+                        "Collect identity, age, and residence proof as required in your jurisdiction.",
+                        "Submit Form 6 in India for new voter enrolment, or the equivalent local process elsewhere.",
+                        "Check the draft electoral roll and correct mistakes early to avoid election-day surprises."
+                    ],
+        "icon":  "how_to_reg",
+        "badge":  "Phase 1"
+    },
+    {
+        "id":  "nomination",
+        "title":  "Candidate Nomination",
+        "description":  "Political parties and independent candidates file nomination papers, affidavits, and deposits to enter the contest.",
+        "duration":  "Usually 7 to 14 days after election notification",
+        "keyFacts":  [
+                         "Returning Officers scrutinize nomination papers to confirm that legal requirements are met.",
+                         "Candidates in India must disclose criminal cases, assets, liabilities, and educational qualifications.",
+                         "Other democracies may use primaries, party lists, or caucuses before final nomination."
+                     ],
+        "details":  [
+                        "Nomination papers are filed within the statutory window announced in the election schedule.",
+                        "Objections can be raised during scrutiny if a candidate is ineligible or paperwork is incomplete.",
+                        "Candidates can usually withdraw within a short withdrawal period before the final list is published."
+                    ],
+        "icon":  "badge",
+        "badge":  "Phase 2"
+    },
+    {
+        "id":  "campaign",
+        "title":  "Campaign Period",
+        "description":  "Candidates and parties present their agendas, seek public support, and campaign under rules meant to keep the contest fair.",
+        "duration":  "From final candidate list until campaigning closes",
+        "keyFacts":  [
+                         "In India, the Model Code of Conduct limits misuse of government machinery, hate speech, and improper inducements.",
+                         "Spending caps and disclosure rules are used in many systems to improve transparency.",
+                         "Campaign silence periods close to polling help voters reflect without last-minute pressure."
+                     ],
+        "details":  [
+                        "Campaign material may include rallies, speeches, manifestos, media outreach, and door-to-door contact.",
+                        "Observers and flying squads monitor possible violations such as bribery, misinformation, or intimidation.",
+                        "Digital campaigns are increasingly regulated through ad disclosure and platform compliance rules."
+                    ],
+        "icon":  "campaign",
+        "badge":  "Phase 3"
+    },
+    {
+        "id":  "polling",
+        "title":  "Election Day Voting",
+        "description":  "Voters cast ballots at polling stations or through approved alternative methods such as postal or absentee ballots.",
+        "duration":  "One day in many countries, multiple phases in large democracies like India",
+        "keyFacts":  [
+                         "Indian general elections may be held in several phases for security and logistics.",
+                         "Polling officers verify voter identity, mark participation, and guide voters to cast a secret ballot.",
+                         "Some countries offer early voting, mail voting, or extensive absentee options."
+                     ],
+        "details":  [
+                        "Polling stations open and close at notified hours, with voters in line at closing usually still allowed to vote.",
+                        "India uses Electronic Voting Machines with VVPAT in parliamentary and assembly elections.",
+                        "Accessibility measures may include ramps, Braille ballots, companions for eligible voters, and home voting in select cases."
+                    ],
+        "icon":  "how_to_vote",
+        "badge":  "Phase 4"
+    },
+    {
+        "id":  "counting",
+        "title":  "Vote Counting \u0026 Verification",
+        "description":  "Ballots or machine records are counted, checked, and matched against seals, forms, and statutory procedures.",
+        "duration":  "Hours to multiple days depending on size and method",
+        "keyFacts":  [
+                         "In India, EVM control units are opened under supervision on counting day and VVPAT slips may be verified as prescribed.",
+                         "Postal ballots are often counted first in many jurisdictions.",
+                         "Verification steps protect the integrity of totals before final declaration."
+                     ],
+        "details":  [
+                        "Counting agents of candidates observe the process and can raise objections through formal channels.",
+                        "Round-wise counting sheets are prepared and signed to build a transparent trail.",
+                        "Close races may trigger recount requests or mandatory audits in some democracies."
+                    ],
+        "icon":  "fact_check",
+        "badge":  "Phase 5"
+    },
+    {
+        "id":  "results",
+        "title":  "Results Declaration",
+        "description":  "Authorities publish constituency-wise results, confirm winners, and compile the overall verdict.",
+        "duration":  "Same day or shortly after counting concludes",
+        "keyFacts":  [
+                         "Returning Officers formally declare the winner in each constituency after verifying the final totals.",
+                         "Seat totals determine which party or coalition can attempt to form government.",
+                         "Official websites and gazette notifications serve as authoritative sources for certified outcomes."
+                     ],
+        "details":  [
+                        "Media projections may appear early, but only official declarations are final.",
+                        "Results dashboards often show vote share, turnout, margin of victory, and counting status.",
+                        "Disputes can move into election petitions or court processes after declaration."
+                    ],
+        "icon":  "bar_chart",
+        "badge":  "Phase 6"
+    },
+    {
+        "id":  "government",
+        "title":  "Oath Taking \u0026 Government Formation",
+        "description":  "The winning leader or coalition proves majority support, forms the executive, and begins the new term.",
+        "duration":  "A few days to a few weeks after results",
+        "keyFacts":  [
+                         "In parliamentary systems, the head of state invites the leader most likely to command majority support.",
+                         "Cabinets are formed after negotiations, party meetings, or coalition agreements.",
+                         "The transition from results to governance is a constitutional step, not just a ceremonial event."
+                     ],
+        "details":  [
+                        "Winning representatives may receive certificates and complete formal seating procedures in the legislature.",
+                        "The oath of office commits elected leaders to constitutional duties.",
+                        "Hung parliaments can lead to coalition talks, support letters, or fresh mandates in some systems."
+                    ],
+        "icon":  "gavel",
+        "badge":  "Phase 7"
+    }
+]

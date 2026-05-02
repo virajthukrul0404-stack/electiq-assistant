@@ -1,3 +1,10 @@
+/* ==========================================================================
+   ElectIQ Chat Widget Styles
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Chat Launcher & Window
+   -------------------------------------------------------------------------- */
 .chat-launcher {
   position: fixed;
   right: 1.4rem;
@@ -61,6 +68,9 @@
   height: min(80vh, 760px);
 }
 
+/* --------------------------------------------------------------------------
+   2. Header & Controls
+   -------------------------------------------------------------------------- */
 .chat-header {
   display: flex;
   align-items: flex-start;
@@ -108,6 +118,74 @@
   color: var(--text-primary);
 }
 
+/* --------------------------------------------------------------------------
+   3. API Key Popover
+   -------------------------------------------------------------------------- */
+.api-key-container {
+  position: relative;
+  display: inline-block;
+}
+
+.api-key-popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--bg-secondary);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  width: 260px;
+  z-index: 100;
+  color: var(--text-primary);
+}
+
+.api-key-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 4px;
+  font-size: 14px;
+  background: var(--surface-panel);
+  color: var(--text-primary);
+}
+
+.api-key-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.api-key-link {
+  font-size: 12px;
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+
+.api-key-save-btn {
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.api-key-success {
+  color: var(--success-chip-text);
+  font-size: 13px;
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   4. Chat Body & Messages
+   -------------------------------------------------------------------------- */
 .chat-body {
   display: flex;
   flex-direction: column;
@@ -265,6 +343,9 @@
 .typing-indicator span:nth-child(2) { animation-delay: 0.12s; }
 .typing-indicator span:nth-child(3) { animation-delay: 0.24s; }
 
+/* --------------------------------------------------------------------------
+   5. Voice UI
+   -------------------------------------------------------------------------- */
 .voice-mode-panel {
   display: grid;
   gap: 0.85rem;
@@ -342,6 +423,9 @@
   min-height: 3.2rem;
 }
 
+/* --------------------------------------------------------------------------
+   6. Input Zone
+   -------------------------------------------------------------------------- */
 .chat-input-zone {
   padding: 0.85rem 1rem 1rem;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
@@ -409,6 +493,14 @@
   font-size: 0.82rem;
 }
 
+.input-status-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Themes & Animations
+   -------------------------------------------------------------------------- */
 :root[data-theme="light"] .chat-window {
   background: rgba(255, 255, 255, 0.98);
   border-color: rgba(148, 163, 184, 0.22);

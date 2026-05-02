@@ -28,26 +28,7 @@
     <script src="scripts/config.js?v=20260502-voice"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELECTIQ2026"></script>
     <script defer src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-ELECTIQ2026");
-    </script>
-    <script>
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          {
-            pageLanguage: "en",
-            includedLanguages: "en,hi,bn,ta,te,ml,kn,mr,gu,pa,ur",
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-          },
-          "google_translate_element"
-        );
-      }
-    </script>
+    <script defer src="scripts/google-init.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -79,247 +60,15 @@
       </header>
 
       <main id="main-content">
-        <section class="hero" id="top">
-          <div class="section-shell hero-grid">
-            <div class="hero-copy">
-              <div class="eyebrow">
-                <span class="material-symbols-outlined" aria-hidden="true">verified</span>
-                Neutral civic education powered by Gemini Flash
-              </div>
-              <h1>Elect<span>IQ</span></h1>
-              <p class="tagline">Your AI Guide to the Democratic Process</p>
-              <p>
-                Understand every stage of elections, ask neutral questions in plain language, practice with
-                interactive quizzes, and explore how Indian general elections compare with other democracies.
-              </p>
-              <div class="hero-actions">
-                <a class="primary-button" href="#timeline-section">
-                  <span class="material-symbols-outlined" aria-hidden="true">school</span>
-                  Start Learning
-                </a>
-                <button class="secondary-button" id="open-chat-hero" type="button" aria-label="Open the ElectIQ AI chatbot">
-                  <span class="material-symbols-outlined" aria-hidden="true">chat</span>
-                  Ask AI
-                </button>
-              </div>
-              <div class="hero-stats" id="hero-stats" aria-label="Key ElectIQ statistics"></div>
-            </div>
-
-            <div class="hero-side">
-              <div class="hero-panel">
-                <div class="visual-stage" aria-hidden="true">
-                  <div class="ballot-orb">
-                    <div class="spark-star"></div>
-                    <img src="assets/icons/ballot-ai.svg" alt="" />
-                  </div>
-                  <div class="ticker-wrap" aria-label="Live vote counter ticker">
-                    <div class="ticker-track" id="vote-ticker"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="countdown-card" id="countdown-card" aria-live="polite"></div>
-              <div class="panel-grid">
-                <article>
-                  <strong>AI persona switch</strong>
-                  <p>Swap between Professor, Gen Z Guide, and News Anchor voices without losing your chat history.</p>
-                </article>
-                <article>
-                  <strong>Voice-ready learning</strong>
-                  <p>Speak your question, watch the live transcript, and hear the answer read aloud.</p>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section-shell" id="eligibility-section">
-          <div class="section-heading">
-            <div>
-              <h2>Check Your Voting Eligibility</h2>
-              <p class="section-subtitle">
-                This quick checker gives a friendly, high-level answer for civic learning. Always confirm with your official election authority.
-              </p>
-            </div>
-          </div>
-          <div class="eligibility-layout">
-            <article class="eligibility-panel">
-              <h3>Eligibility Checker</h3>
-              <p>Enter your age and country to get an instant, educational eligibility snapshot.</p>
-              <form class="eligibility-form" id="eligibility-form">
-                <div class="field-grid">
-                  <div class="field-group">
-                    <label for="eligibility-age">Age</label>
-                    <input id="eligibility-age" name="age" type="number" min="0" max="120" inputmode="numeric" required aria-label="Enter your age" />
-                  </div>
-                  <div class="field-group">
-                    <label for="eligibility-country">Country</label>
-                    <select id="eligibility-country" name="country" aria-label="Select your country">
-                      <option value="India">India</option>
-                      <option value="United States">United States</option>
-                      <option value="United Kingdom">United Kingdom</option>
-                      <option value="Canada">Canada</option>
-                      <option value="Australia">Australia</option>
-                    </select>
-                  </div>
-                </div>
-                <button class="primary-button" type="submit">
-                  <span class="material-symbols-outlined" aria-hidden="true">how_to_vote</span>
-                  Check Now
-                </button>
-              </form>
-            </article>
-            <article class="fact-panel">
-              <h3>Eligibility Result</h3>
-              <div class="feedback-panel" id="eligibility-result" aria-live="polite">
-                <strong>Ready when you are</strong>
-                <p>ElectIQ will show whether the sample age is likely eligible, plus what to verify next.</p>
-              </div>
-              <div class="feedback-pill-row" id="eligibility-pills"></div>
-              <div class="resource-list" id="official-links"></div>
-            </article>
-          </div>
-        </section>
-
-        <section class="section-shell" id="timeline-section">
-          <div class="section-heading">
-            <div>
-              <h2>Interactive Election Timeline</h2>
-              <p class="section-subtitle">
-                Explore each major election phase in a guided sequence. Expand any phase for details and send a focused follow-up straight to the AI assistant.
-              </p>
-            </div>
-            <button class="ghost-button" type="button" id="ask-timeline-overview">
-              <span class="material-symbols-outlined" aria-hidden="true">forum</span>
-              Ask AI for a timeline overview
-            </button>
-          </div>
-          <div class="timeline-shell">
-            <div class="timeline-track" id="timeline-track"></div>
-          </div>
-        </section>
-
-        <section class="section-shell" id="quiz-section">
-          <div class="section-heading">
-            <div>
-              <h2>Test Your Knowledge</h2>
-              <p class="section-subtitle">
-                Answer ten curated questions and get AI-powered study tips based on the questions you miss.
-              </p>
-            </div>
-          </div>
-          <div class="quiz-shell" id="quiz-app"></div>
-        </section>
-
-        <section class="section-shell google-services-section" id="google-services-section">
-          <div class="section-heading">
-            <div>
-              <h2>Google Services Intelligence Layer</h2>
-              <p class="section-subtitle">
-                ElectIQ uses Google services actively, not decoratively: Gemini for answers, Translate for multilingual access,
-                Analytics for product learning, Charts for civic statistics, Calendar for reminders, and Cloud Run for hosting.
-              </p>
-            </div>
-          </div>
-          <div class="google-service-layout">
-            <article class="google-chart-card">
-              <div class="service-card-heading">
-                <span class="material-symbols-outlined" aria-hidden="true">monitoring</span>
-                <div>
-                  <h3>Google Charts Civic Dashboard</h3>
-                  <p>Live-rendered visual summary of election scale and learning metrics.</p>
-                </div>
-              </div>
-              <div id="google-civic-chart" class="google-civic-chart" role="img" aria-label="Google Charts election statistics visualization">
-                Loading Google Charts civic dashboard...
-              </div>
-              <p class="chart-fallback" id="google-chart-fallback" hidden>
-                Google Charts could not load, so ElectIQ keeps the same civic facts available in the hero stats and knowledge hub.
-              </p>
-            </article>
-            <article class="google-calendar-card">
-              <div class="service-card-heading">
-                <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
-                <div>
-                  <h3>Google Calendar Reminders</h3>
-                  <p>Add demo election milestones to Google Calendar for practical planning.</p>
-                </div>
-              </div>
-              <div class="calendar-reminder-list" id="calendar-reminder-list"></div>
-            </article>
-          </div>
-          <div class="google-service-grid" id="google-service-grid" aria-label="Google services used by ElectIQ"></div>
-        </section>
-
-        <section class="section-shell" id="knowledge-section">
-          <div class="section-heading">
-            <div>
-              <h2>Election Knowledge Hub</h2>
-              <p class="section-subtitle">
-                Quick answers, essential terms, and an India-specific calendar snapshot for civic learners, first-time voters, and curious citizens.
-              </p>
-            </div>
-          </div>
-          <div class="knowledge-layout">
-            <article class="faq-shell">
-              <div class="section-heading">
-                <div>
-                  <h2>Frequently Asked Questions</h2>
-                  <p>Common election questions answered in neutral, simple language.</p>
-                </div>
-              </div>
-              <div class="faq-list" id="faq-list"></div>
-            </article>
-            <aside class="faq-shell">
-              <div class="section-heading">
-                <div>
-                  <h2>India Election Snapshot</h2>
-                  <p>How a typical Indian election schedule unfolds after dates are announced.</p>
-                </div>
-              </div>
-              <div class="india-calendar" id="india-calendar"></div>
-            </aside>
-          </div>
-          <div class="section-heading" style="margin-top: 2rem;">
-            <div>
-              <h2>Glossary</h2>
-              <p>Thirty key terms to help you decode election news and official notices.</p>
-            </div>
-          </div>
-          <div class="glossary-grid" id="glossary-grid"></div>
-        </section>
+        <section class="hero" id="top"></section>
+        <section class="section-shell" id="eligibility-section"></section>
+        <section class="section-shell" id="timeline-section"></section>
+        <section class="section-shell" id="quiz-section"></section>
+        <section class="section-shell google-services-section" id="google-services-section"></section>
+        <section class="section-shell" id="knowledge-section"></section>
       </main>
 
-      <footer class="footer" id="footer">
-        <div class="footer-shell footer-grid">
-          <article class="footer-card">
-            <h3>Translate & Explore</h3>
-            <p>Use the Google Translate widget for multilingual support and visit trusted, official election resources.</p>
-            <div class="translate-slot" id="google_translate_element" aria-label="Google Translate widget"></div>
-            <div class="resource-list" id="footer-links"></div>
-          </article>
-          <article class="footer-card">
-            <h3>Election Facts</h3>
-            <p id="footer-stats">
-              India regularly conducts one of the world's largest democratic exercises, with millions of polling personnel, observers, and support staff working together.
-            </p>
-            <p class="mono-note">Stat cards are educational demo values and do not represent live official reporting.</p>
-          </article>
-          <article class="footer-card">
-            <h3>Accessibility Controls</h3>
-            <p>Adjust font size or boost contrast. Your settings are saved on this device.</p>
-            <div class="accessibility-controls" id="font-controls" aria-label="Font size controls">
-              <button class="control-chip" data-font="0.9" type="button" aria-label="Set small font size">A-</button>
-              <button class="control-chip is-active" data-font="1.0" type="button" aria-label="Set medium font size">A</button>
-              <button class="control-chip" data-font="1.15" type="button" aria-label="Set large font size">A+</button>
-              <button class="control-chip" id="contrast-toggle" type="button" aria-label="Toggle high contrast mode">High Contrast</button>
-            </div>
-          </article>
-        </div>
-        <div class="footer-meta">
-          <span>Built as a non-partisan educational assistant for election literacy.</span>
-          <span>Made with vanilla HTML, CSS, JavaScript, and Google Gemini.</span>
-        </div>
-      </footer>
+      <footer class="footer" id="footer"></footer>
     </div>
 
     <button class="chat-launcher" id="chat-launcher" type="button" aria-label="Open ElectIQ chatbot">
@@ -341,17 +90,17 @@
             <option value="genz">Gen Z Guide</option>
             <option value="anchor">News Anchor</option>
           </select>
-          <div style="position: relative; display: inline-block;">
+          <div class="api-key-container">
             <button class="icon-toggle" id="api-key-toggle" type="button" aria-label="Open Gemini API key settings">
               <span class="material-symbols-outlined" aria-hidden="true">vpn_key</span>
             </button>
-            <div id="api-key-popover" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #ccc); padding: 12px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 260px; z-index: 100; color: var(--text-main, #333);">
-              <input type="password" id="popover-api-key-input" placeholder="Paste your new Gemini API key..." style="width: 100%; box-sizing: border-box; margin-bottom: 8px; padding: 6px 8px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 14px;" />
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <a href="https://aistudio.google.com" target="_blank" style="font-size: 12px; color: var(--primary-color, #0056b3); text-decoration: none;">Get free key &rarr; aistudio.google.com</a>
-                <button type="button" id="popover-api-key-save" style="background: var(--primary-color, #0056b3); color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 13px;">Save</button>
+            <div id="api-key-popover" class="api-key-popover" style="display: none;">
+              <input type="password" id="popover-api-key-input" class="api-key-input" placeholder="Paste your new Gemini API key..." />
+              <div class="api-key-actions">
+                <a href="https://aistudio.google.com" target="_blank" rel="noopener noreferrer" class="api-key-link">Get free key &rarr; aistudio.google.com</a>
+                <button type="button" id="popover-api-key-save" class="api-key-save-btn">Save</button>
               </div>
-              <div id="popover-api-key-success" style="display: none; color: #0f9d58; font-size: 13px; text-align: center; margin-top: 8px; font-weight: 500;">
+              <div id="popover-api-key-success" class="api-key-success" style="display: none;">
                 API key saved. Gemini answers are enabled.
               </div>
             </div>
@@ -398,7 +147,7 @@
               </button>
             </div>
             <div class="chat-footer-row">
-              <span id="input-status" style="display: flex; gap: 8px;">
+              <span id="input-status" class="input-status-row">
                 <span id="char-counter">0 / 500</span> 
                 <span>Requests are rate-limited.</span>
               </span>
@@ -670,6 +419,14 @@
 
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script defer src="data/constants.js?v=20260502"></script>
+    <script defer src="scripts/components/hero.js?v=20260502"></script>
+    <script defer src="scripts/components/eligibility.js?v=20260502"></script>
+    <script defer src="scripts/components/timeline-section.js?v=20260502"></script>
+    <script defer src="scripts/components/quiz-section.js?v=20260502"></script>
+    <script defer src="scripts/components/google-services.js?v=20260502"></script>
+    <script defer src="scripts/components/knowledge.js?v=20260502"></script>
+    <script defer src="scripts/components/footer.js?v=20260502"></script>
     <script defer src="scripts/gemini.js?v=20260502-google100"></script>
     <script defer src="scripts/voice.js?v=20260502-google100"></script>
     <script defer src="scripts/chat.js?v=20260502-google100"></script>

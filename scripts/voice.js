@@ -1,58 +1,70 @@
+/**
+ * @file voice.js
+ * @description Manages voice recognition and speech synthesis.
+ */
 (function () {
   const namespace = (window.ElectIQ = window.ElectIQ || {});
 
+  /**
+   * Debounces a function call.
+   * @param {Function} callback - The function to debounce.
+   * @param {number} wait - The wait time in ms.
+   * @returns {Function} The debounced function.
+   */
   function debounce(callback, wait) {
     let timeoutId = 0;
-    return function () {
-      const context = this;
-      const args = arguments;
+    return function (...args) {
       window.clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(function () {
-        callback.apply(context, args);
+      timeoutId = window.setTimeout(() => {
+        callback.apply(this, args);
       }, wait);
     };
   }
 
+  /**
+   * Gets the speech recognition constructor if supported.
+   * @returns {Function|null} The constructor or null.
+   */
   function getRecognitionConstructor() {
     return window.SpeechRecognition || window.webkitSpeechRecognition || null;
   }
 
+  /**
+   * Checks if speech recognition is supported.
+   * @returns {boolean} True if supported.
+   */
   function supportsSpeechRecognition() {
     return Boolean(getRecognitionConstructor());
   }
 
+  /**
+   * Provides friendly error messages for speech recognition errors.
+   * @param {string} errorCode - The error code string.
+   * @returns {string} User-friendly error message.
+   */
   function friendlyError(errorCode) {
     const code = String(errorCode || "");
-    if (code === "unsupported") {
-      return "Speech recognition is not supported in this browser. Chrome or Edge works best; you can still type your question.";
-    }
-    if (code === "not-allowed" || code === "service-not-allowed") {
-      return "Microphone permission was blocked. Allow microphone access in the browser and click the mic again.";
-    }
-    if (code === "audio-capture") {
-      return "No microphone was detected. Connect or enable a microphone, then try again.";
-    }
-    if (code === "network") {
-      return "Speech recognition service is unavailable right now. You can still type your question.";
-    }
-    if (code === "not-started") {
-      return "The browser did not start voice listening. Check microphone permission, use Chrome or Edge, or type your question.";
-    }
-    if (code === "no-speech") {
-      return "I did not hear speech. Click the mic and try again.";
-    }
-    if (code === "aborted") {
-      return "Voice listening stopped.";
-    }
+    if (code === "unsupported") return "Speech recognition is not supported in this browser. Chrome or Edge works best; you can still type your question.";
+    if (code === "not-allowed" || code === "service-not-allowed") return "Microphone permission was blocked. Allow microphone access in the browser and click the mic again.";
+    if (code === "audio-capture") return "No microphone was detected. Connect or enable a microphone, then try again.";
+    if (code === "network") return "Speech recognition service is unavailable right now. You can still type your question.";
+    if (code === "not-started") return "The browser did not start voice listening. Check microphone permission, use Chrome or Edge, or type your question.";
+    if (code === "no-speech") return "I did not hear speech. Click the mic and try again.";
+    if (code === "aborted") return "Voice listening stopped.";
     return code || "Speech recognition could not start in this browser.";
   }
 
+  /**
+   * Creates a voice controller.
+   * @param {Object} options - Options containing event callbacks.
+   * @returns {Object} Public voice control methods.
+   */
   function createVoiceController(options) {
     const config = options || {};
-    const onTranscript = typeof config.onTranscript === "function" ? config.onTranscript : function () {};
-    const onFinalTranscript = typeof config.onFinalTranscript === "function" ? config.onFinalTranscript : function () {};
-    const onStateChange = typeof config.onStateChange === "function" ? config.onStateChange : function () {};
-    const onSpeakingChange = typeof config.onSpeakingChange === "function" ? config.onSpeakingChange : function () {};
+    const onTranscript = typeof config.onTranscript === "function" ? config.onTranscript : () => {};
+    const onFinalTranscript = typeof config.onFinalTranscript === "function" ? config.onFinalTranscript : () => {};
+    const onStateChange = typeof config.onStateChange === "function" ? config.onStateChange : () => {};
+    const onSpeakingChange = typeof config.onSpeakingChange === "function" ? config.onSpeakingChange : () => {};
 
     const Recognition = getRecognitionConstructor();
     let recognition = null;
@@ -67,12 +79,16 @@
     let lastError = "";
     let utterance = null;
 
-    const publishState = function (extra) {
+    /**
+     * Publishes the current state.
+     * @param {Object} [extra] - Extra state properties.
+     */
+    const publishState = (extra) => {
       onStateChange(
         Object.assign(
           {
             supported: Boolean(Recognition),
-            voiceMode: voiceMode,
+            voiceMode,
             listening: isListening,
             starting: isStarting,
             speaking: isSpeaking,
@@ -84,7 +100,7 @@
       );
     };
 
-    const publishInterim = debounce(function (text) {
+    const publishInterim = debounce((text) => {
       latestTranscript = text;
       onTranscript(text);
       publishState();
@@ -96,7 +112,7 @@
       recognition.interimResults = true;
       recognition.lang = "en-IN";
 
-      recognition.onstart = function () {
+      recognition.onstart = () => {
         window.clearTimeout(startTimer);
         isStarting = false;
         isListening = true;
@@ -104,7 +120,7 @@
         publishState();
       };
 
-      recognition.onresult = function (event) {
+      recognition.onresult = (event) => {
         let interimText = "";
         let finalText = "";
         for (let index = event.resultIndex; index < event.results.length; index += 1) {
@@ -116,9 +132,7 @@
           }
         }
 
-        if (interimText.trim()) {
-          publishInterim(interimText.trim());
-        }
+        if (interimText.trim()) publishInterim(interimText.trim());
 
         if (finalText.trim()) {
           latestTranscript = finalText.trim();
@@ -128,7 +142,7 @@
         }
       };
 
-      recognition.onend = function () {
+      recognition.onend = () => {
         const wasStarting = isStarting;
         window.clearTimeout(startTimer);
         isStarting = false;
@@ -143,7 +157,7 @@
         publishState();
 
         if (voiceMode && desiredContinuous && lastError !== "not-allowed" && lastError !== "service-not-allowed") {
-          restartTimer = window.setTimeout(function () {
+          restartTimer = window.setTimeout(() => {
             try {
               isStarting = true;
               publishState({ status: "restarting" });
@@ -157,7 +171,7 @@
         }
       };
 
-      recognition.onerror = function (event) {
+      recognition.onerror = (event) => {
         window.clearTimeout(startTimer);
         isStarting = false;
         isListening = false;
@@ -170,6 +184,11 @@
       };
     }
 
+    /**
+     * Starts listening for speech.
+     * @param {boolean} continuous - Whether to listen continuously.
+     * @returns {boolean} True if starting.
+     */
     function startListening(continuous) {
       if (!recognition) {
         lastError = "unsupported";
@@ -177,9 +196,7 @@
         return false;
       }
 
-      if (isListening || isStarting) {
-        return true;
-      }
+      if (isListening || isStarting) return true;
 
       desiredContinuous = Boolean(continuous);
       window.clearTimeout(restartTimer);
@@ -189,7 +206,7 @@
       publishState({ status: "starting" });
       try {
         recognition.start();
-        startTimer = window.setTimeout(function () {
+        startTimer = window.setTimeout(() => {
           if (isStarting && !isListening) {
             publishState({ status: "permission-pending" });
           }
@@ -203,27 +220,21 @@
       }
     }
 
+    /** Stops listening for speech. */
     function stopListening() {
       desiredContinuous = false;
       window.clearTimeout(restartTimer);
       window.clearTimeout(startTimer);
-      if (recognition && isListening) {
-        recognition.stop();
-      }
+      if (recognition && isListening) recognition.stop();
       isStarting = false;
       isListening = false;
       publishState();
     }
 
-    function startPushToTalk() {
-      desiredContinuous = false;
-      return startListening(false);
-    }
-
-    function stopPushToTalk() {
-      stopListening();
-    }
-
+    /**
+     * Toggles continuous listening.
+     * @returns {boolean} True if started.
+     */
     function toggleAlwaysOn() {
       if (isListening && desiredContinuous) {
         stopListening();
@@ -232,10 +243,9 @@
       return startListening(true);
     }
 
+    /** Stops speech synthesis. */
     function stopSpeaking() {
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       utterance = null;
       isSpeaking = false;
       onSpeakingChange(false);
@@ -245,10 +255,12 @@
     // Prevent GC bug in Chrome
     window.utterances = window.utterances || [];
 
+    /**
+     * Speaks text using speech synthesis.
+     * @param {string} text - The text to speak.
+     */
     function speak(text) {
-      if (!voiceMode || !window.speechSynthesis || !text) {
-        return;
-      }
+      if (!voiceMode || !window.speechSynthesis || !text) return;
 
       stopSpeaking();
       utterance = new SpeechSynthesisUtterance(String(text));
@@ -257,42 +269,40 @@
       utterance.rate = 1.02;
       utterance.pitch = 1;
       utterance.lang = "en-IN";
-      utterance.onstart = function () {
+      utterance.onstart = () => {
         isSpeaking = true;
         onSpeakingChange(true);
         publishState();
       };
-      utterance.onend = function () {
+      utterance.onend = () => {
         isSpeaking = false;
         onSpeakingChange(false);
         publishState();
-        // Clean up
         const index = window.utterances.indexOf(utterance);
-        if (index > -1) {
-          window.utterances.splice(index, 1);
-        }
+        if (index > -1) window.utterances.splice(index, 1);
       };
-      utterance.onerror = function () {
+      utterance.onerror = () => {
         isSpeaking = false;
         onSpeakingChange(false);
         publishState({ error: "Speech synthesis failed." });
-        // Clean up
         const index = window.utterances.indexOf(utterance);
-        if (index > -1) {
-          window.utterances.splice(index, 1);
-        }
+        if (index > -1) window.utterances.splice(index, 1);
       };
       window.speechSynthesis.speak(utterance);
     }
 
+    /**
+     * Enables or disables voice mode.
+     * @param {boolean} enabled - True to enable.
+     */
     function setVoiceMode(enabled) {
       voiceMode = Boolean(enabled);
       if (!voiceMode) {
         stopListening();
-      stopSpeaking();
-      latestTranscript = "";
-      lastError = "";
-      onTranscript("");
+        stopSpeaking();
+        latestTranscript = "";
+        lastError = "";
+        onTranscript("");
       }
       publishState();
     }
@@ -300,32 +310,30 @@
     publishState();
 
     return {
-      setVoiceMode: setVoiceMode,
-      startPushToTalk: startPushToTalk,
-      stopPushToTalk: stopPushToTalk,
-      toggleAlwaysOn: toggleAlwaysOn,
-      stopListening: stopListening,
-      speak: speak,
-      stopSpeaking: stopSpeaking,
+      setVoiceMode,
+      startPushToTalk: () => startListening(false),
+      stopPushToTalk: stopListening,
+      toggleAlwaysOn,
+      stopListening,
+      speak,
+      stopSpeaking,
       getFriendlyError: friendlyError,
-      getState: function () {
-        return {
-          supported: Boolean(Recognition),
-          voiceMode: voiceMode,
-          listening: isListening,
-          starting: isStarting,
-          speaking: isSpeaking,
-          transcript: latestTranscript,
-          error: lastError
-        };
-      }
+      getState: () => ({
+        supported: Boolean(Recognition),
+        voiceMode,
+        listening: isListening,
+        starting: isStarting,
+        speaking: isSpeaking,
+        transcript: latestTranscript,
+        error: lastError
+      })
     };
   }
 
   namespace.voice = {
-    debounce: debounce,
-    friendlyError: friendlyError,
-    supportsSpeechRecognition: supportsSpeechRecognition,
-    createVoiceController: createVoiceController
+    debounce,
+    friendlyError,
+    supportsSpeechRecognition,
+    createVoiceController
   };
 })();

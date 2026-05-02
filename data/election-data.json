@@ -1,391 +1,240 @@
-{
-  "phases": [
-    {
-      "id": "registration",
-      "title": "Voter Registration",
-      "description": "Citizens confirm eligibility, verify their constituency, and submit or update voter registration details before the rolls are frozen.",
-      "duration": "Several weeks to several months before polling",
-      "keyFacts": [
-        "In India, eligible citizens can register once they turn 18 through the Election Commission of India and state electoral offices.",
-        "Special summary revisions help correct names, addresses, photographs, and polling station assignments before an election.",
-        "Many democracies set a final registration deadline, while some permit same-day or automatic registration."
-      ],
-      "details": [
-        "Collect identity, age, and residence proof as required in your jurisdiction.",
-        "Submit Form 6 in India for new voter enrolment, or the equivalent local process elsewhere.",
-        "Check the draft electoral roll and correct mistakes early to avoid election-day surprises."
-      ],
-      "icon": "how_to_reg",
-      "badge": "Phase 1"
-    },
-    {
-      "id": "nomination",
-      "title": "Candidate Nomination",
-      "description": "Political parties and independent candidates file nomination papers, affidavits, and deposits to enter the contest.",
-      "duration": "Usually 7 to 14 days after election notification",
-      "keyFacts": [
-        "Returning Officers scrutinize nomination papers to confirm that legal requirements are met.",
-        "Candidates in India must disclose criminal cases, assets, liabilities, and educational qualifications.",
-        "Other democracies may use primaries, party lists, or caucuses before final nomination."
-      ],
-      "details": [
-        "Nomination papers are filed within the statutory window announced in the election schedule.",
-        "Objections can be raised during scrutiny if a candidate is ineligible or paperwork is incomplete.",
-        "Candidates can usually withdraw within a short withdrawal period before the final list is published."
-      ],
-      "icon": "badge",
-      "badge": "Phase 2"
-    },
-    {
-      "id": "campaign",
-      "title": "Campaign Period",
-      "description": "Candidates and parties present their agendas, seek public support, and campaign under rules meant to keep the contest fair.",
-      "duration": "From final candidate list until campaigning closes",
-      "keyFacts": [
-        "In India, the Model Code of Conduct limits misuse of government machinery, hate speech, and improper inducements.",
-        "Spending caps and disclosure rules are used in many systems to improve transparency.",
-        "Campaign silence periods close to polling help voters reflect without last-minute pressure."
-      ],
-      "details": [
-        "Campaign material may include rallies, speeches, manifestos, media outreach, and door-to-door contact.",
-        "Observers and flying squads monitor possible violations such as bribery, misinformation, or intimidation.",
-        "Digital campaigns are increasingly regulated through ad disclosure and platform compliance rules."
-      ],
-      "icon": "campaign",
-      "badge": "Phase 3"
-    },
-    {
-      "id": "polling",
-      "title": "Election Day Voting",
-      "description": "Voters cast ballots at polling stations or through approved alternative methods such as postal or absentee ballots.",
-      "duration": "One day in many countries, multiple phases in large democracies like India",
-      "keyFacts": [
-        "Indian general elections may be held in several phases for security and logistics.",
-        "Polling officers verify voter identity, mark participation, and guide voters to cast a secret ballot.",
-        "Some countries offer early voting, mail voting, or extensive absentee options."
-      ],
-      "details": [
-        "Polling stations open and close at notified hours, with voters in line at closing usually still allowed to vote.",
-        "India uses Electronic Voting Machines with VVPAT in parliamentary and assembly elections.",
-        "Accessibility measures may include ramps, Braille ballots, companions for eligible voters, and home voting in select cases."
-      ],
-      "icon": "how_to_vote",
-      "badge": "Phase 4"
-    },
-    {
-      "id": "counting",
-      "title": "Vote Counting & Verification",
-      "description": "Ballots or machine records are counted, checked, and matched against seals, forms, and statutory procedures.",
-      "duration": "Hours to multiple days depending on size and method",
-      "keyFacts": [
-        "In India, EVM control units are opened under supervision on counting day and VVPAT slips may be verified as prescribed.",
-        "Postal ballots are often counted first in many jurisdictions.",
-        "Verification steps protect the integrity of totals before final declaration."
-      ],
-      "details": [
-        "Counting agents of candidates observe the process and can raise objections through formal channels.",
-        "Round-wise counting sheets are prepared and signed to build a transparent trail.",
-        "Close races may trigger recount requests or mandatory audits in some democracies."
-      ],
-      "icon": "fact_check",
-      "badge": "Phase 5"
-    },
-    {
-      "id": "results",
-      "title": "Results Declaration",
-      "description": "Authorities publish constituency-wise results, confirm winners, and compile the overall verdict.",
-      "duration": "Same day or shortly after counting concludes",
-      "keyFacts": [
-        "Returning Officers formally declare the winner in each constituency after verifying the final totals.",
-        "Seat totals determine which party or coalition can attempt to form government.",
-        "Official websites and gazette notifications serve as authoritative sources for certified outcomes."
-      ],
-      "details": [
-        "Media projections may appear early, but only official declarations are final.",
-        "Results dashboards often show vote share, turnout, margin of victory, and counting status.",
-        "Disputes can move into election petitions or court processes after declaration."
-      ],
-      "icon": "bar_chart",
-      "badge": "Phase 6"
-    },
-    {
-      "id": "government",
-      "title": "Oath Taking & Government Formation",
-      "description": "The winning leader or coalition proves majority support, forms the executive, and begins the new term.",
-      "duration": "A few days to a few weeks after results",
-      "keyFacts": [
-        "In parliamentary systems, the head of state invites the leader most likely to command majority support.",
-        "Cabinets are formed after negotiations, party meetings, or coalition agreements.",
-        "The transition from results to governance is a constitutional step, not just a ceremonial event."
-      ],
-      "details": [
-        "Winning representatives may receive certificates and complete formal seating procedures in the legislature.",
-        "The oath of office commits elected leaders to constitutional duties.",
-        "Hung parliaments can lead to coalition talks, support letters, or fresh mandates in some systems."
-      ],
-      "icon": "gavel",
-      "badge": "Phase 7"
-    }
-  ],
-  "faqs": [
-    {
-      "question": "What is the minimum age to vote in India?",
-      "answer": "A citizen of India can register to vote once they are 18 years old, subject to meeting residency and legal eligibility requirements."
-    },
-    {
-      "question": "What is an electoral roll?",
-      "answer": "An electoral roll is the official list of registered voters in a constituency. Only names on the roll can vote at the assigned polling station."
-    },
-    {
-      "question": "What is Form 6?",
-      "answer": "Form 6 is the standard application used in India for inclusion of a name in the electoral roll when registering as a new voter."
-    },
-    {
-      "question": "Can I vote if I recently moved house?",
-      "answer": "Usually yes, but you may need to update your address and constituency details before the revision deadline so your name appears on the correct roll."
-    },
-    {
-      "question": "What is the Model Code of Conduct?",
-      "answer": "It is a set of campaign behavior rules that comes into force after election dates are announced to promote fairness and reduce misuse of power."
-    },
-    {
-      "question": "What does a Returning Officer do?",
-      "answer": "A Returning Officer manages the election process in a constituency, including nominations, polling arrangements, counting, and declaration of results."
-    },
-    {
-      "question": "What is NOTA?",
-      "answer": "NOTA means None of the Above. It lets a voter record dissatisfaction with all listed candidates while still participating in the election."
-    },
-    {
-      "question": "What is an EVM?",
-      "answer": "An Electronic Voting Machine is the device used in Indian elections to record votes. It includes a ballot unit, control unit, and is paired with VVPAT."
-    },
-    {
-      "question": "What is VVPAT?",
-      "answer": "VVPAT stands for Voter Verifiable Paper Audit Trail. It briefly shows the chosen candidate symbol and stores a paper slip for verification."
-    },
-    {
-      "question": "Are postal ballots available in India?",
-      "answer": "Yes. Postal ballots are available for categories such as service voters and certain absentee voters as permitted under election rules."
-    },
-    {
-      "question": "What is voter turnout?",
-      "answer": "Voter turnout is the percentage of registered voters who actually cast their votes in an election."
-    },
-    {
-      "question": "Can someone force me to show whom I voted for?",
-      "answer": "No. Voting is secret. Any attempt to force disclosure or interfere with a voter can violate election law."
-    },
-    {
-      "question": "What happens if my name is missing from the voter list?",
-      "answer": "If your name is not on the final roll for that polling station, you may not be allowed to vote there, so it is important to verify your status well before polling day."
-    },
-    {
-      "question": "How are candidates chosen by parties?",
-      "answer": "It varies by country and party. In India, parties usually decide candidates internally, while some democracies use primaries or member ballots."
-    },
-    {
-      "question": "What is a polling booth?",
-      "answer": "A polling booth is the private area where a voter marks or records a vote without being seen by others."
-    },
-    {
-      "question": "Who monitors elections in India?",
-      "answer": "The Election Commission of India oversees elections, with Returning Officers, observers, polling staff, security personnel, and other officials supporting execution."
-    },
-    {
-      "question": "Why are some elections held in phases?",
-      "answer": "Large countries may use multiple phases to manage security, logistics, weather, personnel movement, and machine deployment."
-    },
-    {
-      "question": "What is a hung parliament?",
-      "answer": "A hung parliament happens when no single party or pre-poll alliance wins a clear majority, often leading to coalition talks."
-    },
-    {
-      "question": "Can election results be challenged?",
-      "answer": "Yes. Election results can usually be challenged through petitions, recount requests, or court processes depending on the legal system."
-    },
-    {
-      "question": "Do all democracies vote the same way?",
-      "answer": "No. Democracies use different systems such as first-past-the-post, proportional representation, ranked choice, runoffs, or mixed systems."
-    }
-  ],
-  "quiz": [
-    {
-      "question": "What is the main purpose of the electoral roll?",
-      "options": [
-        "To list approved campaign slogans",
-        "To record the names of registered voters",
-        "To publish unofficial exit polls",
-        "To rank political parties"
-      ],
-      "correctIndex": 1,
-      "explanation": "The electoral roll is the official voter list used to confirm who is eligible to vote in a specific constituency."
-    },
-    {
-      "question": "Which Indian election form is commonly used for new voter registration?",
-      "options": [
-        "Form 6",
-        "Form 12A",
-        "Form 49",
-        "Form 27B"
-      ],
-      "correctIndex": 0,
-      "explanation": "Form 6 is used for inclusion of a new name in the electoral roll."
-    },
-    {
-      "question": "Why is the campaign silence period important?",
-      "options": [
-        "It allows only one party to advertise",
-        "It helps voters reflect without last-minute pressure",
-        "It replaces the need for polling staff",
-        "It suspends the counting process"
-      ],
-      "correctIndex": 1,
-      "explanation": "Campaign silence rules are meant to reduce intense last-minute persuasion and give voters a calmer environment before polling."
-    },
-    {
-      "question": "What does NOTA stand for?",
-      "options": [
-        "Notice of Tally Approval",
-        "National Order for Transparent Administration",
-        "None of the Above",
-        "Nomination of Trusted Applicants"
-      ],
-      "correctIndex": 2,
-      "explanation": "NOTA lets voters reject all listed candidates while still exercising the right to participate."
-    },
-    {
-      "question": "Which statement about EVMs and VVPAT is correct in India?",
-      "options": [
-        "They are only used for local body elections",
-        "VVPAT gives voters a temporary visual confirmation of their choice",
-        "EVMs require internet access to record votes",
-        "VVPAT replaces the need for counting officers"
-      ],
-      "correctIndex": 1,
-      "explanation": "VVPAT displays the selected candidate briefly and stores a paper audit slip for verification."
-    },
-    {
-      "question": "Who usually scrutinizes nomination papers in a constituency?",
-      "options": [
-        "The Chief Minister",
-        "The local police station",
-        "The Returning Officer",
-        "Any voter from the constituency"
-      ],
-      "correctIndex": 2,
-      "explanation": "The Returning Officer checks whether nomination papers meet legal and procedural requirements."
-    },
-    {
-      "question": "What is voter turnout?",
-      "options": [
-        "The number of candidates who withdraw",
-        "The percentage of registered voters who cast a vote",
-        "The number of polling stations in a district",
-        "The total number of campaign speeches"
-      ],
-      "correctIndex": 1,
-      "explanation": "Turnout measures participation by comparing votes cast to the total number of registered voters."
-    },
-    {
-      "question": "Why might a country hold elections in multiple phases?",
-      "options": [
-        "To prevent all results from being announced",
-        "To reduce the number of registered voters",
-        "To manage large-scale logistics and security",
-        "To allow candidates to vote twice"
-      ],
-      "correctIndex": 2,
-      "explanation": "Large countries may split polling into phases to manage machines, staff, security, and geography."
-    },
-    {
-      "question": "What happens after vote counting is completed and verified?",
-      "options": [
-        "The campaign period reopens",
-        "Results are formally declared",
-        "The electoral roll is deleted",
-        "All candidates are automatically re-nominated"
-      ],
-      "correctIndex": 1,
-      "explanation": "Once totals are verified, the competent authority formally declares the winner and publishes certified results."
-    },
-    {
-      "question": "In a parliamentary democracy, what often follows election results?",
-      "options": [
-        "Government formation and oath taking",
-        "A second registration drive on polling day",
-        "A ban on all coalition talks",
-        "Immediate dissolution of the legislature"
-      ],
-      "correctIndex": 0,
-      "explanation": "After the results, the winning party or coalition attempts to prove majority support and form a government."
-    }
-  ],
-  "glossary": [
-    { "term": "Absentee Voting", "definition": "A method that allows eligible voters to vote without being physically present at their polling station." },
-    { "term": "Affidavit", "definition": "A sworn declaration submitted by candidates, often including details on assets, liabilities, and criminal cases." },
-    { "term": "Alliance", "definition": "A group of parties that agrees to cooperate before or after an election." },
-    { "term": "Booth Level Officer", "definition": "An official in India who helps maintain the voter list and assists with local electoral tasks." },
-    { "term": "Campaign Finance", "definition": "The money raised and spent to contest an election, usually under regulatory limits and reporting rules." },
-    { "term": "Constituency", "definition": "A geographical area represented by an elected official." },
-    { "term": "Control Unit", "definition": "The part of an Indian EVM operated by polling officials to enable each vote." },
-    { "term": "Delimitation", "definition": "The process of redrawing constituency boundaries to reflect population changes." },
-    { "term": "Election Commission of India", "definition": "The constitutional authority responsible for supervising elections in India." },
-    { "term": "Electoral Roll", "definition": "The official list of registered voters for a constituency." },
-    { "term": "Exit Poll", "definition": "A survey of voters conducted after they leave the polling station, used to estimate results." },
-    { "term": "First-Past-The-Post", "definition": "An electoral system where the candidate with the highest number of votes wins, even without an absolute majority." },
-    { "term": "Franchise", "definition": "The legal right to vote." },
-    { "term": "General Election", "definition": "An election held to choose representatives for a national or state legislature." },
-    { "term": "Hustings", "definition": "Public meetings where candidates address voters and answer questions." },
-    { "term": "Hung Parliament", "definition": "A legislature in which no single party or alliance has a majority." },
-    { "term": "Manifesto", "definition": "A document outlining a party's policies, promises, and priorities." },
-    { "term": "Model Code of Conduct", "definition": "Rules in India that guide campaign behavior after elections are announced." },
-    { "term": "Nomination Paper", "definition": "The official document filed by a person seeking to contest an election." },
-    { "term": "NOTA", "definition": "None of the Above, an option allowing voters to reject all listed candidates." },
-    { "term": "Observer", "definition": "An official or independent monitor who watches election procedures for fairness and compliance." },
-    { "term": "Opinion Poll", "definition": "A survey that measures public voting intentions before an election." },
-    { "term": "Polling Agent", "definition": "A candidate's representative who observes voting at a polling station." },
-    { "term": "Polling Booth", "definition": "The private voting compartment inside a polling station." },
-    { "term": "Postal Ballot", "definition": "A ballot cast by mail or through an approved absentee process." },
-    { "term": "Proportional Representation", "definition": "A system where seats are allocated roughly in proportion to the votes received." },
-    { "term": "Returning Officer", "definition": "The official in charge of conducting an election in a constituency." },
-    { "term": "Secret Ballot", "definition": "A voting method that protects the privacy of each voter's choice." },
-    { "term": "Voter Turnout", "definition": "The percentage of registered voters who actually vote." },
-    { "term": "VVPAT", "definition": "Voter Verifiable Paper Audit Trail, a paper-based verification system linked to EVM voting." }
-  ],
-  "timeline_india": [
-    {
-      "step": "Election schedule announcement",
-      "note": "The Election Commission announces the polling phases, counting date, and code of conduct activation."
-    },
-    {
-      "step": "Publication of election notification",
-      "note": "The legal process begins and nomination filing opens."
-    },
-    {
-      "step": "Nomination filing and scrutiny",
-      "note": "Candidates file papers, then the Returning Officer examines eligibility and documents."
-    },
-    {
-      "step": "Withdrawal of candidatures",
-      "note": "Candidates may withdraw within the notified window before the final contest list is frozen."
-    },
-    {
-      "step": "Campaigning under MCC",
-      "note": "Public outreach, debates, and speeches happen under spending and conduct rules."
-    },
-    {
-      "step": "Polling day or phased polling",
-      "note": "Voters cast their votes at assigned polling stations using EVMs and VVPAT."
-    },
-    {
-      "step": "Counting of votes",
-      "note": "Postal ballots, EVM rounds, and required verification steps are completed under supervision."
-    },
-    {
-      "step": "Result declaration and government formation",
-      "note": "Constituency winners are declared, seat totals are finalized, and the government formation process begins."
-    }
-  ]
+﻿{
+    "faqs":  [
+                 {
+                     "question":  "What is the minimum age to vote in India?",
+                     "answer":  "A citizen of India can register to vote once they are 18 years old, subject to meeting residency and legal eligibility requirements."
+                 },
+                 {
+                     "question":  "What is an electoral roll?",
+                     "answer":  "An electoral roll is the official list of registered voters in a constituency. Only names on the roll can vote at the assigned polling station."
+                 },
+                 {
+                     "question":  "What is Form 6?",
+                     "answer":  "Form 6 is the standard application used in India for inclusion of a name in the electoral roll when registering as a new voter."
+                 },
+                 {
+                     "question":  "Can I vote if I recently moved house?",
+                     "answer":  "Usually yes, but you may need to update your address and constituency details before the revision deadline so your name appears on the correct roll."
+                 },
+                 {
+                     "question":  "What is the Model Code of Conduct?",
+                     "answer":  "It is a set of campaign behavior rules that comes into force after election dates are announced to promote fairness and reduce misuse of power."
+                 },
+                 {
+                     "question":  "What does a Returning Officer do?",
+                     "answer":  "A Returning Officer manages the election process in a constituency, including nominations, polling arrangements, counting, and declaration of results."
+                 },
+                 {
+                     "question":  "What is NOTA?",
+                     "answer":  "NOTA means None of the Above. It lets a voter record dissatisfaction with all listed candidates while still participating in the election."
+                 },
+                 {
+                     "question":  "What is an EVM?",
+                     "answer":  "An Electronic Voting Machine is the device used in Indian elections to record votes. It includes a ballot unit, control unit, and is paired with VVPAT."
+                 },
+                 {
+                     "question":  "What is VVPAT?",
+                     "answer":  "VVPAT stands for Voter Verifiable Paper Audit Trail. It briefly shows the chosen candidate symbol and stores a paper slip for verification."
+                 },
+                 {
+                     "question":  "Are postal ballots available in India?",
+                     "answer":  "Yes. Postal ballots are available for categories such as service voters and certain absentee voters as permitted under election rules."
+                 },
+                 {
+                     "question":  "What is voter turnout?",
+                     "answer":  "Voter turnout is the percentage of registered voters who actually cast their votes in an election."
+                 },
+                 {
+                     "question":  "Can someone force me to show whom I voted for?",
+                     "answer":  "No. Voting is secret. Any attempt to force disclosure or interfere with a voter can violate election law."
+                 },
+                 {
+                     "question":  "What happens if my name is missing from the voter list?",
+                     "answer":  "If your name is not on the final roll for that polling station, you may not be allowed to vote there, so it is important to verify your status well before polling day."
+                 },
+                 {
+                     "question":  "How are candidates chosen by parties?",
+                     "answer":  "It varies by country and party. In India, parties usually decide candidates internally, while some democracies use primaries or member ballots."
+                 },
+                 {
+                     "question":  "What is a polling booth?",
+                     "answer":  "A polling booth is the private area where a voter marks or records a vote without being seen by others."
+                 },
+                 {
+                     "question":  "Who monitors elections in India?",
+                     "answer":  "The Election Commission of India oversees elections, with Returning Officers, observers, polling staff, security personnel, and other officials supporting execution."
+                 },
+                 {
+                     "question":  "Why are some elections held in phases?",
+                     "answer":  "Large countries may use multiple phases to manage security, logistics, weather, personnel movement, and machine deployment."
+                 },
+                 {
+                     "question":  "What is a hung parliament?",
+                     "answer":  "A hung parliament happens when no single party or pre-poll alliance wins a clear majority, often leading to coalition talks."
+                 },
+                 {
+                     "question":  "Can election results be challenged?",
+                     "answer":  "Yes. Election results can usually be challenged through petitions, recount requests, or court processes depending on the legal system."
+                 },
+                 {
+                     "question":  "Do all democracies vote the same way?",
+                     "answer":  "No. Democracies use different systems such as first-past-the-post, proportional representation, ranked choice, runoffs, or mixed systems."
+                 }
+             ],
+    "glossary":  [
+                     {
+                         "term":  "Absentee Voting",
+                         "definition":  "A method that allows eligible voters to vote without being physically present at their polling station."
+                     },
+                     {
+                         "term":  "Affidavit",
+                         "definition":  "A sworn declaration submitted by candidates, often including details on assets, liabilities, and criminal cases."
+                     },
+                     {
+                         "term":  "Alliance",
+                         "definition":  "A group of parties that agrees to cooperate before or after an election."
+                     },
+                     {
+                         "term":  "Booth Level Officer",
+                         "definition":  "An official in India who helps maintain the voter list and assists with local electoral tasks."
+                     },
+                     {
+                         "term":  "Campaign Finance",
+                         "definition":  "The money raised and spent to contest an election, usually under regulatory limits and reporting rules."
+                     },
+                     {
+                         "term":  "Constituency",
+                         "definition":  "A geographical area represented by an elected official."
+                     },
+                     {
+                         "term":  "Control Unit",
+                         "definition":  "The part of an Indian EVM operated by polling officials to enable each vote."
+                     },
+                     {
+                         "term":  "Delimitation",
+                         "definition":  "The process of redrawing constituency boundaries to reflect population changes."
+                     },
+                     {
+                         "term":  "Election Commission of India",
+                         "definition":  "The constitutional authority responsible for supervising elections in India."
+                     },
+                     {
+                         "term":  "Electoral Roll",
+                         "definition":  "The official list of registered voters for a constituency."
+                     },
+                     {
+                         "term":  "Exit Poll",
+                         "definition":  "A survey of voters conducted after they leave the polling station, used to estimate results."
+                     },
+                     {
+                         "term":  "First-Past-The-Post",
+                         "definition":  "An electoral system where the candidate with the highest number of votes wins, even without an absolute majority."
+                     },
+                     {
+                         "term":  "Franchise",
+                         "definition":  "The legal right to vote."
+                     },
+                     {
+                         "term":  "General Election",
+                         "definition":  "An election held to choose representatives for a national or state legislature."
+                     },
+                     {
+                         "term":  "Hustings",
+                         "definition":  "Public meetings where candidates address voters and answer questions."
+                     },
+                     {
+                         "term":  "Hung Parliament",
+                         "definition":  "A legislature in which no single party or alliance has a majority."
+                     },
+                     {
+                         "term":  "Manifesto",
+                         "definition":  "A document outlining a party\u0027s policies, promises, and priorities."
+                     },
+                     {
+                         "term":  "Model Code of Conduct",
+                         "definition":  "Rules in India that guide campaign behavior after elections are announced."
+                     },
+                     {
+                         "term":  "Nomination Paper",
+                         "definition":  "The official document filed by a person seeking to contest an election."
+                     },
+                     {
+                         "term":  "NOTA",
+                         "definition":  "None of the Above, an option allowing voters to reject all listed candidates."
+                     },
+                     {
+                         "term":  "Observer",
+                         "definition":  "An official or independent monitor who watches election procedures for fairness and compliance."
+                     },
+                     {
+                         "term":  "Opinion Poll",
+                         "definition":  "A survey that measures public voting intentions before an election."
+                     },
+                     {
+                         "term":  "Polling Agent",
+                         "definition":  "A candidate\u0027s representative who observes voting at a polling station."
+                     },
+                     {
+                         "term":  "Polling Booth",
+                         "definition":  "The private voting compartment inside a polling station."
+                     },
+                     {
+                         "term":  "Postal Ballot",
+                         "definition":  "A ballot cast by mail or through an approved absentee process."
+                     },
+                     {
+                         "term":  "Proportional Representation",
+                         "definition":  "A system where seats are allocated roughly in proportion to the votes received."
+                     },
+                     {
+                         "term":  "Returning Officer",
+                         "definition":  "The official in charge of conducting an election in a constituency."
+                     },
+                     {
+                         "term":  "Secret Ballot",
+                         "definition":  "A voting method that protects the privacy of each voter\u0027s choice."
+                     },
+                     {
+                         "term":  "Voter Turnout",
+                         "definition":  "The percentage of registered voters who actually vote."
+                     },
+                     {
+                         "term":  "VVPAT",
+                         "definition":  "Voter Verifiable Paper Audit Trail, a paper-based verification system linked to EVM voting."
+                     }
+                 ],
+    "timeline_india":  [
+                           {
+                               "step":  "Election schedule announcement",
+                               "note":  "The Election Commission announces the polling phases, counting date, and code of conduct activation."
+                           },
+                           {
+                               "step":  "Publication of election notification",
+                               "note":  "The legal process begins and nomination filing opens."
+                           },
+                           {
+                               "step":  "Nomination filing and scrutiny",
+                               "note":  "Candidates file papers, then the Returning Officer examines eligibility and documents."
+                           },
+                           {
+                               "step":  "Withdrawal of candidatures",
+                               "note":  "Candidates may withdraw within the notified window before the final contest list is frozen."
+                           },
+                           {
+                               "step":  "Campaigning under MCC",
+                               "note":  "Public outreach, debates, and speeches happen under spending and conduct rules."
+                           },
+                           {
+                               "step":  "Polling day or phased polling",
+                               "note":  "Voters cast their votes at assigned polling stations using EVMs and VVPAT."
+                           },
+                           {
+                               "step":  "Counting of votes",
+                               "note":  "Postal ballots, EVM rounds, and required verification steps are completed under supervision."
+                           },
+                           {
+                               "step":  "Result declaration and government formation",
+                               "note":  "Constituency winners are declared, seat totals are finalized, and the government formation process begins."
+                           }
+                       ]
 }
-

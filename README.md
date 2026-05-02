@@ -29,7 +29,7 @@ Public repository: [electiq-assistant](https://github.com/virajthukrul0404-stack
 - Dark/light theme with premium civic-tech styling.
 
 ## Approach & Logic
-The app is intentionally static and lightweight: HTML, CSS, and vanilla JavaScript only. Core civic data lives in `data/election-data.json`, while UI modules in `scripts/` handle timeline rendering, quiz logic, voice controls, chat rendering, and Gemini requests.
+The app uses a modular, component-based architecture relying exclusively on vanilla HTML, CSS, and JavaScript. Core civic data is split across specialized JSON files (`data/election-data.json`, `data/quiz.json`, `data/timeline.json`), which are loaded concurrently. UI components are isolated into individual modules within `scripts/components/` (e.g., hero, timeline, quiz, knowledge, footer), maintaining a clean separation of concerns without requiring a build step.
 
 Gemini is optional at runtime because public client-side keys can be revoked or restricted. If no valid key is saved, ElectIQ still answers using the local election knowledge base. This keeps the assistant usable during evaluation while preserving support for real Gemini streaming when the evaluator adds a fresh key through the key button in the chat header.
 
@@ -61,10 +61,10 @@ Sanitized answer rendered in chat, optionally read aloud by SpeechSynthesis
 ```
 
 ## Tech Stack
-- Vanilla HTML, CSS, and JavaScript
+- Vanilla HTML, CSS, and JavaScript with modular namespace components
 - Google Gemini REST streaming endpoint
 - Web Speech API
-- DOMPurify CDN for response sanitization
+- DOMPurify CDN for strict HTML input sanitization
 - Canvas Confetti CDN for perfect quiz scores
 - Browser localStorage for non-sensitive preferences and chat history
 - Browser sessionStorage for an optional user-provided Gemini key during the current tab session

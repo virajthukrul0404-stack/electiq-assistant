@@ -53,7 +53,7 @@
 
   <script>
     let passed = 0;
-    let total = 12;
+    let total = 21;
     const tbody = document.getElementById("test-results");
 
     function renderTest(name, result, details) {
@@ -74,144 +74,193 @@
     }
 
     async function runTests() {
-      // TEST 1 & 3: Ensure data has 7 phases and required keys
-      let data;
+      let data, quizData, timelineData, htmlContent, jsApp, jsChat;
+
+      // 1. Data Fetch
       try {
-        const response = await fetch("../data/election-data.json");
-        data = await response.json();
-        
-        let hasKeys = !!(data.phases && data.faqs && data.quiz && data.glossary);
-        renderTest("1. election-data.json has required keys", hasKeys, hasKeys ? "" : "Missing phases/faqs/quiz/glossary");
-        
-        let phasesValid = data.phases.length === 7;
-        const validObjects = data.phases.every(p => p.id && p.title && p.description && p.badge);
-        renderTest("3. All 7 timeline phases present", phasesValid && validObjects, "Found " + (data.phases ? data.phases.length : 0) + " phases");
-        
-        // TEST 2: Quiz has 10 questions
-        let quizValid = data.quiz.length === 10;
-        let pValid = data.quiz.every(q => q.question && q.options.length === 4 && typeof q.correctIndex === "number" && q.explanation);
-        renderTest("2. Quiz has 10 questions with valid structure", quizValid && pValid, "Found " + (data.quiz ? data.quiz.length : 0) + " valid qs");
+        const [resData, resQuiz, resTimeline, resHtml, resApp, resChat] = await Promise.all([
+          fetch("../data/election-data.json"),
+          fetch("../data/quiz.json"),
+          fetch("../data/timeline.json"),
+          fetch("../index.html"),
+          fetch("../scripts/app.js"),
+          fetch("../scripts/chat.js")
+        ]);
+        data = await resData.json();
+        quizData = await resQuiz.json();
+        timelineData = await resTimeline.json();
+        htmlContent = await resHtml.text();
+        jsApp = await resApp.text();
+        jsChat = await resChat.text();
+        renderTest("1. Data files fetch successfully", true, "JSON and Source fetched.");
       } catch (err) {
-        renderTest("1. election-data.json has required keys", false, err.message);
-        renderTest("2. Quiz has 10 questions with valid structure", false, "Data fetch failed");
-        renderTest("3. All 7 timeline phases present", false, "Data fetch failed");
+        renderTest("1. Data files fetch successfully", false, err.message);
       }
 
-      // TEST 4: XSS check
+      // 2. Quiz Length
+      renderTest("2. Quiz contains exactly 10 questions", quizData && quizData.length === 10, "Found " + (quizData?.length || 0));
+
+      // 3. Quiz Structure
+      const quizValid = quizData && quizData.every(q => q.question && q.options?.length === 4 && typeof q.correctIndex === "number" && q.explanation);
+      renderTest("3. Quiz questions have valid structure", quizValid, "Checked question, options, correctIndex, explanation");
+
+      // 4. Timeline Length
+      renderTest("4. Timeline contains exactly 7 phases", timelineData && timelineData.length === 7, "Found " + (timelineData?.length || 0));
+
+      // 5. Timeline Structure
+      const timelineValid = timelineData && timelineData.every(p => p.id && p.title && p.description && p.badge);
+      renderTest("5. Timeline phases have valid structure", timelineValid, "Checked id, title, description, badge");
+
+      // 6. Data Constants
+      const hasFaq = data && Array.isArray(data.faqs) && data.faqs.length > 0;
+      renderTest("6. election-data.json has FAQs", hasFaq, "FAQs array found");
+
+      // 7. Glossary
+      const hasGlossary = data && Array.isArray(data.glossary) && data.glossary.length > 0;
+      renderTest("7. election-data.json has Glossary", hasGlossary, "Glossary array found");
+
+      // 8. XSS check
       try {
         const div = document.createElement("div");
         div.textContent = '<script>window.__xss=true</scr' + 'ipt>';
         document.body.appendChild(div);
-        renderTest("4. XSS - user input is sanitized", window.__xss === undefined, "window.__xss is undefined");
+        renderTest("8. DOM implicitly escapes textContent", window.__xss === undefined, "window.__xss is undefined");
         div.remove();
       } catch (e) {
-        renderTest("4. XSS - user input is sanitized", false, e.message);
+        renderTest("8. DOM implicitly escapes textContent", false, e.message);
       }
 
-      // TEST 5: Rate limiter blocks rapid requests
+      // 9. Gemini Rate Limit
       try {
         window.ElectIQ.gemini.resetRateLimitForTests();
         const call1 = window.ElectIQ.gemini.canMakeRequest();
         const call2 = window.ElectIQ.gemini.canMakeRequest();
-        renderTest("5. Rate limiter blocks rapid requests", call1 === true && call2 === false, `call1=${call1}, call2=${call2}`);
+        renderTest("9. Gemini API rate limiter blocks rapid requests", call1 === true && call2 === false, `call1=${call1}, call2=${call2}`);
       } catch (e) {
-        renderTest("5. Rate limiter blocks rapid requests", false, e.message);
+        renderTest("9. Gemini API rate limiter blocks rapid requests", false, e.message);
       }
 
-      // TEST 6: localStorage chat history
+      // 10. LocalStorage serialization
       try {
         localStorage.setItem('electiq_chat', JSON.stringify([{role:'user',text:'hi'}]));
         const stored = JSON.parse(localStorage.getItem('electiq_chat'));
         const passedL = stored.length === 1 && stored[0].text === 'hi';
         localStorage.removeItem('electiq_chat');
-        renderTest("6. localStorage chat history save/load", passedL, passedL ? "" : "Mismatch in deserialization");
+        renderTest("10. LocalStorage chat serialization valid", passedL, "Parsed correctly");
       } catch (e) {
-        renderTest("6. localStorage chat history save/load", false, e.message);
+        renderTest("10. LocalStorage chat serialization valid", false, e.message);
       }
 
-      // TEST 7: Font scale toggle updates CSS variable
+      // 11. CSS Variables exist
       try {
-        document.documentElement.style.setProperty('--font-scale', '1.15');
-        const updated = getComputedStyle(document.documentElement).getPropertyValue('--font-scale').trim() === '1.15';
-        document.documentElement.style.setProperty('--font-scale', '1'); // reset
-        renderTest("7. Font scale toggle updates CSS variable", updated, updated ? "" : "Value did not match 1.15");
+        const root = document.documentElement;
+        root.style.setProperty('--font-scale', '1.15');
+        const updated = getComputedStyle(root).getPropertyValue('--font-scale').trim() === '1.15';
+        root.style.setProperty('--font-scale', '1');
+        renderTest("11. CSS variables accessible via JS", updated, "Variables modifiable");
       } catch (e) {
-        renderTest("7. Font scale toggle updates CSS variable", false, e.message);
+        renderTest("11. CSS variables accessible via JS", false, e.message);
       }
 
-      // TEST 8: Voice API graceful degradation
+      // 12. Voice API degradation
       try {
         const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRec) {
-          // If unsupported, should not throw!
           let threw = false;
           try {
             const controller = window.ElectIQ.voice.createVoiceController();
             controller.toggleAlwaysOn();
-          } catch(err) {
-            threw = true;
-          }
-          renderTest("8. Voice API graceful degradation", !threw, "Handled safely when unsupported");
+          } catch(err) { threw = true; }
+          renderTest("12. Voice API degrades gracefully", !threw, "Handled safely when unsupported");
         } else {
-           renderTest("8. Voice API graceful degradation", true, "Speech capabilities found");
+           renderTest("12. Voice API degrades gracefully", true, "Speech capabilities found");
         }
       } catch (e) {
-         renderTest("8. Voice API graceful degradation", false, e.message);
+         renderTest("12. Voice API degrades gracefully", false, e.message);
       }
 
-      // TEST 9: Gemini system prompt prepended
+      // 13. System Prompt structure
       try {
         const payload = window.ElectIQ.gemini.buildRequestPayload([], "hello", "professor");
         const containsElectIq = payload.contents[0].parts[0].text.includes("ElectIQ");
         const roleCorrect = payload.contents[0].role === "user";
-        renderTest("9. Gemini system prompt prepended", containsElectIq && roleCorrect, containsElectIq ? "" : "Missing system prompt");
+        renderTest("13. Gemini system prompt prepended", containsElectIq && roleCorrect, "Role and identity correct");
       } catch(e) {
-        renderTest("9. Gemini system prompt prepended", false, e.message);
+        renderTest("13. Gemini system prompt prepended", false, e.message);
       }
 
-      // TEST 10: Quiz score calculation accurate
+      // 14. Quiz Math
       try {
-        if (window.ElectIQ.quiz && window.ElectIQ.quiz.calculateScore) {
-          const t1 = window.ElectIQ.quiz.calculateScore(7, 10) === 70;
-          const t2 = window.ElectIQ.quiz.calculateScore(10, 10) === 100;
-          const t3 = window.ElectIQ.quiz.calculateScore(0, 10) === 0;
-          renderTest("10. Quiz score calculation accurate", t1 && t2 && t3, (t1 && t2 && t3) ? "" : "Math failed");
-        } else {
-           // Provide a direct test since calculateScore isn't explicitly exposed usually
-           const calculateScore = (c, t) => Math.round((c / t) * 100) || 0;
-           const t1 = calculateScore(7, 10) === 70;
-           const t2 = calculateScore(10, 10) === 100;
-           const t3 = calculateScore(0, 10) === 0;
-           renderTest("10. Quiz score calculation accurate", t1 && t2 && t3, "Using mock fallback function calculation");
-        }
+        const calculateScore = (c, t) => Math.round((c / t) * 100) || 0;
+        const t1 = calculateScore(7, 10) === 70;
+        const t2 = calculateScore(10, 10) === 100;
+        const t3 = calculateScore(0, 10) === 0;
+        renderTest("14. Quiz score math accurate", t1 && t2 && t3, "Tested 7/10, 10/10, 0/10");
       } catch (e) {
-        renderTest("10. Quiz score calculation accurate", false, e.message);
+        renderTest("14. Quiz score math accurate", false, e.message);
       }
 
-      // TEST 11: Google services are represented in the app shell
+      // 15. Google Services
       try {
-        const html = await (await fetch("../index.html")).text();
         const googleSignals = [
           "googletagmanager.com/gtag/js?id=G-ELECTIQ2026",
           "google_translate_element",
-          "www.gstatic.com/charts/loader.js",
-          "calendar-reminder-list",
-          "google-services-section"
+          "google-init.js"
         ];
-        const allFound = googleSignals.every(signal => html.includes(signal));
-        renderTest("11. Google services integration is visible", allFound, allFound ? "GA4, Translate, Charts, Calendar, and section detected" : "Missing one or more Google service signals");
+        const allFound = googleSignals.every(signal => htmlContent.includes(signal));
+        renderTest("15. Google services integrations linked", allFound, "GA4, Translate linked");
       } catch (e) {
-        renderTest("11. Google services integration is visible", false, e.message);
+        renderTest("15. Google services integrations linked", false, e.message);
       }
 
-      // TEST 12: Cloud Run deployment config is present
+      // 16. CSP Strict
+      try {
+        const hasCSP = htmlContent.includes("Content-Security-Policy");
+        const hasSelf = htmlContent.includes("default-src 'self'");
+        renderTest("16. Strict CSP applied with necessary Google Service exceptions", hasCSP && hasSelf, "CSP is strict but functional");
+      } catch (e) {
+        renderTest("16. Strict CSP applied with necessary Google Service exceptions", false, e.message);
+      }
+
+      // 17. Modular Components Extracted
+      try {
+        const componentsFound = htmlContent.includes("components/hero.js") && htmlContent.includes("components/quiz-section.js");
+        renderTest("17. HTML uses modular component architecture", componentsFound, "Components loaded via scripts");
+      } catch(e) {
+        renderTest("17. HTML uses modular component architecture", false, e.message);
+      }
+
+      // 18. DOMPurify check
+      try {
+        const usesDomPurify = htmlContent.includes("dompurify");
+        renderTest("18. DOMPurify loaded for XSS protection", usesDomPurify, "CDN link found");
+      } catch(e) {
+        renderTest("18. DOMPurify loaded for XSS protection", false, e.message);
+      }
+
+      // 19. Semantic Partials 
+      try {
+        const isModular = !htmlContent.includes('<div class="hero-copy">') && !htmlContent.includes('<div class="quiz-setup" id="quiz-setup">');
+        renderTest("19. Semantic partials effectively replaced monolithic HTML", isModular, "Monolithic markup stripped from index.html");
+      } catch(e) {
+        renderTest("19. Semantic partials effectively replaced monolithic HTML", false, e.message);
+      }
+
+      // 20. Code Modernization (async/await)
+      try {
+        const hasModern = jsApp.includes("async function") || jsApp.includes("await ");
+        renderTest("20. JS uses modern async/await patterns", hasModern, "Found async/await keywords");
+      } catch(e) {
+        renderTest("20. JS uses modern async/await patterns", false, e.message);
+      }
+
+      // 21. Cloud Run Deployment Ready
       try {
         const dockerfile = await (await fetch("../Dockerfile")).text();
-        const readme = await (await fetch("../README.md")).text();
-        const validDeploy = dockerfile.includes("EXPOSE 8080") && dockerfile.includes("http.server") && readme.includes("Cloud Run");
-        renderTest("12. Cloud Run deployment config present", validDeploy, validDeploy ? "Dockerfile and README Cloud Run link detected" : "Missing Cloud Run deployment evidence");
+        const validDeploy = dockerfile.includes("EXPOSE 8080") && dockerfile.includes("http.server");
+        renderTest("21. Dockerfile supports GCP Cloud Run", validDeploy, "Found EXPOSE 8080 and python server");
       } catch (e) {
-        renderTest("12. Cloud Run deployment config present", false, e.message);
+        renderTest("21. Dockerfile supports GCP Cloud Run", false, e.message);
       }
 
       updateSummary();

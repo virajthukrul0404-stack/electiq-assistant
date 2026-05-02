@@ -1,111 +1,62 @@
+/**
+ * @file app.js
+ * @description Main application logic for ElectIQ.
+ */
 (function () {
   const namespace = (window.ElectIQ = window.ElectIQ || {});
-  const STORAGE_KEYS = {
-    theme: "electiq-theme",
-    contrast: "electiq_high_contrast",
-    fontScale: "electiq_font_scale"
-  };
-  const DEMO_ELECTIONS = [
-    { name: "Bihar Assembly Election", date: "2026-10-28T08:00:00+05:30", note: "Demo date for the next major state-level election cycle." },
-    { name: "Delhi Municipal Cycle", date: "2027-04-18T08:00:00+05:30", note: "Hardcoded reminder to keep the countdown relevant." }
-  ];
-  const HERO_STATS = [
-    { icon: "groups", value: "968M", label: "Eligible voters (demo)" },
-    { icon: "lan", value: "1.05M", label: "Polling stations (demo)" },
-    { icon: "how_to_vote", value: "67.4%", label: "Turnout benchmark" },
-    { icon: "school", value: "24/7", label: "Civic learning access" }
-  ];
-  const TICKER_VALUES = [
-    "Registered voters: 968,000,000",
-    "Polling stations mapped: 1,050,000",
-    "EVMs prepared: 5,200,000",
-    "Demo turnout tracker: 67.4%",
-    "Observers deployed: 4,200",
-    "Assistance desks active: 11,800"
-  ];
-  const OFFICIAL_LINKS = [
-    { label: "Election Commission of India", href: "https://eci.gov.in/" },
-    { label: "Voter Helpline", href: "https://voters.eci.gov.in/" },
-    { label: "National Voters' Service Portal", href: "https://www.nvsp.in/" }
-  ];
-  const GOOGLE_SERVICE_CARDS = [
-    {
-      icon: "auto_awesome",
-      title: "Gemini Flash",
-      detail: "Streams neutral election explanations and quiz study tips with an offline civic fallback."
-    },
-    {
-      icon: "translate",
-      title: "Google Translate",
-      detail: "Footer widget supports Indian languages including Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, and Urdu."
-    },
-    {
-      icon: "analytics",
-      title: "GA4 Analytics",
-      detail: "Measurement ID G-ELECTIQ2026 is wired for product analytics and learning-flow insights."
-    },
-    {
-      icon: "monitoring",
-      title: "Google Charts",
-      detail: "Renders the civic statistics dashboard from local election metrics at runtime."
-    },
-    {
-      icon: "event",
-      title: "Google Calendar",
-      detail: "Creates reminder links for demo election milestones so learners can plan civic actions."
-    },
-    {
-      icon: "cloud_done",
-      title: "Google Cloud Run",
-      detail: "Production deployment is live on Cloud Run with a small static container."
-    },
-    {
-      icon: "font_download",
-      title: "Google Fonts",
-      detail: "Space Grotesk, Inter, and JetBrains Mono shape the premium civic-tech interface."
-    },
-    {
-      icon: "category",
-      title: "Material Symbols",
-      detail: "Google iconography powers recognizable actions across timeline, quiz, voice, and accessibility controls."
-    }
-  ];
+  const c = namespace.constants;
 
+  /**
+   * Normalizes a query string by removing special characters and lowercasing.
+   * @param {string} value - The input string.
+   * @returns {string} The normalized string.
+   */
   function normalizeQuery(value) {
-    return String(value || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+    if (!value) return "";
+    return String(value).toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
   }
 
+  /**
+   * Checks if a text includes any of the specified words.
+   * @param {string} text - The text to search within.
+   * @param {string[]} words - The words to search for.
+   * @returns {boolean} True if any word is found, false otherwise.
+   */
   function textIncludesAny(text, words) {
-    return words.some(function (word) {
-      return text.indexOf(word) !== -1;
-    });
+    if (!text || !words) return false;
+    return words.some((word) => text.indexOf(word) !== -1);
   }
 
+  /**
+   * Creates the local assistant handler.
+   * @param {Object} data - The election data containing phases, faqs, glossary.
+   * @returns {Object} An object with a respond method.
+   */
   function createLocalAssistant(data) {
     const phases = data.phases || [];
     const faqs = data.faqs || [];
     const glossary = data.glossary || [];
 
     function findPhase(query) {
-      return phases.find(function (phase) {
+      return phases.find((phase) => {
         const haystack = normalizeQuery([phase.title, phase.description, phase.id].join(" "));
-        return normalizeQuery(phase.title).split(" ").some(function (word) {
+        return normalizeQuery(phase.title).split(" ").some((word) => {
           return word.length > 3 && query.indexOf(word) !== -1;
         }) || haystack.indexOf(query) !== -1;
       });
     }
 
     function findFaq(query) {
-      return faqs.find(function (faq) {
+      return faqs.find((faq) => {
         const question = normalizeQuery(faq.question);
-        return query && (question.indexOf(query) !== -1 || query.split(" ").some(function (word) {
+        return query && (question.indexOf(query) !== -1 || query.split(" ").some((word) => {
           return word.length > 4 && question.indexOf(word) !== -1;
         }));
       });
     }
 
     function findTerm(query) {
-      return glossary.find(function (item) {
+      return glossary.find((item) => {
         return query.indexOf(normalizeQuery(item.term)) !== -1;
       });
     }
@@ -126,56 +77,46 @@
     function respond(message) {
       const query = normalizeQuery(message);
       const phase = findPhase(query);
-      if (phase) {
-        return phaseAnswer(phase);
-      }
+      if (phase) return phaseAnswer(phase);
 
       if (textIncludesAny(query, ["nota", "none of the above"])) {
-        return "NOTA means None of the Above. It lets a voter record that they do not support any listed candidate while still participating in the election. In India, NOTA is available on EVMs, but the candidate with the highest valid votes still wins under current rules.";
+        return c.FALLBACK_ANSWERS.NOTA;
       }
 
       if (textIncludesAny(query, ["count", "counted", "counting", "verification", "vvpat"])) {
-        return phaseAnswer(phases.find(function (item) { return item.id === "counting"; }) || phases[4]);
+        return phaseAnswer(phases.find((item) => item.id === "counting") || phases[4] || {});
       }
 
       if (textIncludesAny(query, ["register", "registration", "voter list", "electoral roll", "form 6"])) {
-        return phaseAnswer(phases.find(function (item) { return item.id === "registration"; }) || phases[0]);
+        return phaseAnswer(phases.find((item) => item.id === "registration") || phases[0] || {});
       }
 
       if (textIncludesAny(query, ["nomination", "candidate", "affidavit"])) {
-        return phaseAnswer(phases.find(function (item) { return item.id === "nomination"; }) || phases[1]);
+        return phaseAnswer(phases.find((item) => item.id === "nomination") || phases[1] || {});
       }
 
       if (textIncludesAny(query, ["election day", "polling", "vote", "voting"])) {
-        return phaseAnswer(phases.find(function (item) { return item.id === "polling"; }) || phases[3]);
+        return phaseAnswer(phases.find((item) => item.id === "polling") || phases[3] || {});
       }
 
       const faq = findFaq(query);
-      if (faq) {
-        return faq.answer;
-      }
+      if (faq) return faq.answer;
 
       const term = findTerm(query);
-      if (term) {
-        return term.term + ": " + term.definition;
-      }
+      if (term) return term.term + ": " + term.definition;
 
-      return [
-        "Here is the simple election-process view:",
-        "",
-        "1. Voters register and verify their name on the electoral roll.",
-        "2. Candidates file nominations and officials check eligibility.",
-        "3. Campaigning happens under conduct and spending rules.",
-        "4. Voters cast a secret ballot on polling day.",
-        "5. Votes are counted, verified, and results are officially declared.",
-        "",
-        "Ask me about registration, nomination, NOTA, EVM/VVPAT, polling day, counting, or government formation for a more focused answer."
-      ].join("\n");
+      return c.FALLBACK_ANSWERS.DEFAULT;
     }
 
-    return { respond: respond };
+    return { respond };
   }
 
+  /**
+   * Streams a local answer back character by character.
+   * @param {string} text - The answer text.
+   * @param {Function} onChunk - Callback executed per chunk.
+   * @returns {Promise<string>} Resolves with the full answer.
+   */
   async function streamLocalAnswer(text, onChunk) {
     const answer = String(text || "");
     let built = "";
@@ -184,13 +125,17 @@
       if (typeof onChunk === "function") {
         onChunk(answer[index], built);
       }
-      await new Promise(function (resolve) {
-        window.setTimeout(resolve, 3);
-      });
+      await new Promise((resolve) => window.setTimeout(resolve, 3));
     }
     return answer;
   }
 
+  /**
+   * Evaluates if a user is eligible to vote based on age and country.
+   * @param {string|number} age - The user's age.
+   * @param {string} country - The user's country.
+   * @returns {Object} Object containing eligibility status and message.
+   */
   function evaluateEligibility(age, country) {
     const normalizedCountry = String(country || "India");
     const votingAges = {
@@ -216,49 +161,75 @@
 
     const eligible = numericAge >= requiredAge;
     return {
-      eligible: eligible,
+      eligible,
       valid: true,
       title: eligible ? "Likely eligible to vote" : "Not eligible yet",
       message: eligible
-        ? "In " + normalizedCountry + ", the usual voting age is " + requiredAge + "+. Next, confirm citizenship, residence, and registration status with the official election authority."
-        : "In " + normalizedCountry + ", the usual voting age is " + requiredAge + "+. You can still learn the process now and register when you meet the official requirements.",
+        ? \`In \${normalizedCountry}, the usual voting age is \${requiredAge}+. Next, confirm citizenship, residence, and registration status with the official election authority.\`
+        : \`In \${normalizedCountry}, the usual voting age is \${requiredAge}+. You can still learn the process now and register when you meet the official requirements.\`,
       pills: [
         normalizedCountry,
-        "Voting age: " + requiredAge + "+",
+        \`Voting age: \${requiredAge}+\`,
         eligible ? "Registration check next" : "Learn before registration"
       ]
     };
   }
 
+  /**
+   * Utility for getting DOM element by ID.
+   * @param {string} id - The ID of the element.
+   * @returns {HTMLElement|null} The DOM element.
+   */
   function $(id) {
     return document.getElementById(id);
   }
 
-  function loadElectionData() {
-    return fetch("data/election-data.json")
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error("Unable to load election-data.json");
-        }
-        return response.json();
-      })
-      .catch(function () {
-        const fallback = $("electiq-data-fallback");
-        return fallback ? JSON.parse(fallback.textContent) : {};
-      });
+  /**
+   * Loads all JSON election data required for the app.
+   * @returns {Promise<Object>} An object combining general, quiz, and timeline data.
+   */
+  async function loadElectionData() {
+    try {
+      const [dataRes, quizRes, timelineRes] = await Promise.all([
+        fetch("data/election-data.json"),
+        fetch("data/quiz.json"),
+        fetch("data/timeline.json")
+      ]);
+      if (!dataRes.ok || !quizRes.ok || !timelineRes.ok) {
+        throw new Error("Unable to load data JSON files.");
+      }
+      const data = await dataRes.json();
+      const quiz = await quizRes.json();
+      const phases = await timelineRes.json();
+      return { ...data, quiz, phases };
+    } catch (error) {
+      console.error(error);
+      const fallback = $("electiq-data-fallback");
+      return fallback ? JSON.parse(fallback.textContent) : {};
+    }
   }
 
+  /**
+   * Applies the selected font scale to the document.
+   * @param {string} scaleValue - The font scale factor.
+   * @returns {string} The applied scale.
+   */
   function applyFontScale(scaleValue) {
     const value = String(scaleValue || "1");
     document.documentElement.style.setProperty("--font-scale", value);
-    window.localStorage.setItem(STORAGE_KEYS.fontScale, value);
+    window.localStorage.setItem(c.STORAGE_KEYS.fontScale, value);
     return value;
   }
 
+  /**
+   * Applies the selected theme (dark or light) to the document.
+   * @param {string} theme - 'dark' or 'light'.
+   * @returns {string} The applied theme.
+   */
   function applyTheme(theme) {
     const normalized = theme === "light" ? "light" : "dark";
     document.documentElement.dataset.theme = normalized;
-    window.localStorage.setItem(STORAGE_KEYS.theme, normalized);
+    window.localStorage.setItem(c.STORAGE_KEYS.theme, normalized);
     const themeToggle = $("theme-toggle");
     if (themeToggle) {
       themeToggle.innerHTML =
@@ -269,24 +240,37 @@
     return normalized;
   }
 
+  /**
+   * Applies high contrast mode to the document.
+   * @param {boolean} enabled - True to enable high contrast.
+   * @returns {boolean} The applied boolean state.
+   */
   function applyContrast(enabled) {
     const active = Boolean(enabled);
     document.documentElement.dataset.contrast = active ? "high" : "normal";
     document.body.classList.toggle("high-contrast", active);
-    window.localStorage.setItem(STORAGE_KEYS.contrast, active ? "high" : "normal");
+    window.localStorage.setItem(c.STORAGE_KEYS.contrast, active ? "high" : "normal");
     return active;
   }
 
+  /**
+   * Updates font control button active states.
+   * @param {string} value - The currently active font scale.
+   */
   function updateFontControlState(value) {
-    document.querySelectorAll("[data-font]").forEach(function (button) {
+    document.querySelectorAll("[data-font]").forEach((button) => {
       button.classList.toggle("is-active", button.dataset.font === String(value));
     });
   }
 
+  /**
+   * Seeds the hero stat cards.
+   */
   function seedHeroStats() {
     const host = $("hero-stats");
+    if (!host) return;
     host.innerHTML = "";
-    HERO_STATS.forEach(function (stat) {
+    c.HERO_STATS.forEach((stat) => {
       const card = document.createElement("article");
       card.className = "stat-card";
       card.innerHTML =
@@ -301,29 +285,34 @@
     });
   }
 
+  /**
+   * Starts the hero ticker animation with duplicate elements.
+   */
   function startTicker() {
     const ticker = $("vote-ticker");
-    const values = TICKER_VALUES.concat(TICKER_VALUES);
-    values.forEach(function (item) {
+    if (!ticker) return;
+    const values = c.TICKER_VALUES.concat(c.TICKER_VALUES);
+    values.forEach((item) => {
       const span = document.createElement("span");
       span.textContent = item;
       ticker.appendChild(span);
     });
   }
 
+  /**
+   * Renders official links in designated containers.
+   */
   function renderOfficialLinks() {
     const host = $("official-links");
     const footerHost = $("footer-links");
-    [host, footerHost].forEach(function (container) {
-      if (!container) {
-        return;
-      }
+    [host, footerHost].forEach((container) => {
+      if (!container) return;
       container.innerHTML = "";
-      OFFICIAL_LINKS.forEach(function (linkData) {
+      c.OFFICIAL_LINKS.forEach((linkData) => {
         const anchor = document.createElement("a");
         anchor.href = linkData.href;
         anchor.target = "_blank";
-        anchor.rel = "noreferrer";
+        anchor.rel = "noopener noreferrer";
         anchor.innerHTML =
           '<span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>' + linkData.label;
         container.appendChild(anchor);
@@ -331,10 +320,15 @@
     });
   }
 
+  /**
+   * Renders the FAQ list into its container.
+   * @param {Object[]} faqs - The FAQ objects array.
+   */
   function renderFAQs(faqs) {
     const host = $("faq-list");
+    if (!host) return;
     host.innerHTML = "";
-    faqs.slice(0, 8).forEach(function (faq) {
+    faqs.slice(0, 8).forEach((faq) => {
       const item = document.createElement("details");
       item.className = "faq-item";
       const summary = document.createElement("summary");
@@ -347,10 +341,15 @@
     });
   }
 
+  /**
+   * Renders the glossary terms grid.
+   * @param {Object[]} terms - The array of glossary items.
+   */
   function renderGlossary(terms) {
     const host = $("glossary-grid");
+    if (!host) return;
     host.innerHTML = "";
-    terms.forEach(function (term) {
+    terms.forEach((term) => {
       const card = document.createElement("article");
       card.className = "glossary-card";
       card.innerHTML = "<strong>" + term.term + "</strong><span>" + term.definition + "</span>";
@@ -358,10 +357,15 @@
     });
   }
 
+  /**
+   * Renders the India calendar snapshot sidebar.
+   * @param {Object[]} steps - The array of timeline steps.
+   */
   function renderIndiaCalendar(steps) {
     const host = $("india-calendar");
+    if (!host) return;
     host.innerHTML = "";
-    steps.forEach(function (step) {
+    steps.forEach((step) => {
       const card = document.createElement("article");
       card.className = "calendar-step";
       card.innerHTML = "<strong>" + step.step + "</strong><span>" + step.note + "</span>";
@@ -369,6 +373,11 @@
     });
   }
 
+  /**
+   * Formats a date for Google Calendar links.
+   * @param {string|Date} date - The date to format.
+   * @returns {string} The formatted date string.
+   */
   function formatCalendarDate(date) {
     return new Date(date)
       .toISOString()
@@ -376,6 +385,11 @@
       .replace(/\.\d{3}/, "");
   }
 
+  /**
+   * Builds the Google Calendar event URL.
+   * @param {Object} event - The event object details.
+   * @returns {string} The constructed URL.
+   */
   function buildGoogleCalendarUrl(event) {
     const start = new Date(event.date);
     const end = new Date(start.getTime() + 60 * 60 * 1000);
@@ -389,18 +403,19 @@
     return "https://calendar.google.com/calendar/render?" + params.toString();
   }
 
+  /**
+   * Renders the list of Google Calendar reminders.
+   */
   function renderGoogleCalendarReminders() {
     const host = $("calendar-reminder-list");
-    if (!host) {
-      return;
-    }
+    if (!host) return;
 
     host.innerHTML = "";
-    DEMO_ELECTIONS.forEach(function (event) {
+    c.DEMO_ELECTIONS.forEach((event) => {
       const link = document.createElement("a");
       link.href = buildGoogleCalendarUrl(event);
       link.target = "_blank";
-      link.rel = "noreferrer";
+      link.rel = "noopener noreferrer";
       link.className = "calendar-reminder";
 
       const date = new Date(event.date);
@@ -421,14 +436,15 @@
     });
   }
 
+  /**
+   * Renders the Google Service grid of cards.
+   */
   function renderGoogleServiceGrid() {
     const host = $("google-service-grid");
-    if (!host) {
-      return;
-    }
+    if (!host) return;
 
     host.innerHTML = "";
-    GOOGLE_SERVICE_CARDS.forEach(function (service) {
+    c.GOOGLE_SERVICE_CARDS.forEach((service) => {
       const card = document.createElement("article");
       card.className = "google-service-card";
 
@@ -448,18 +464,17 @@
     });
   }
 
+  /**
+   * Draws the Google Charts visualization.
+   */
   function drawGoogleCivicChart() {
     const chartHost = $("google-civic-chart");
     const fallback = $("google-chart-fallback");
-    if (!chartHost) {
-      return;
-    }
+    if (!chartHost) return;
 
     if (!window.google || !google.visualization || !google.visualization.DataTable) {
       chartHost.textContent = "Google Charts is unavailable.";
-      if (fallback) {
-        fallback.hidden = false;
-      }
+      if (fallback) fallback.hidden = false;
       return;
     }
 
@@ -497,11 +512,12 @@
     chart.draw(dataTable, options);
   }
 
+  /**
+   * Initializes the Google Charts loader.
+   */
   function initGoogleCharts() {
     const chartHost = $("google-civic-chart");
-    if (!chartHost) {
-      return;
-    }
+    if (!chartHost) return;
 
     if (!window.google || !google.charts) {
       drawGoogleCivicChart();
@@ -510,18 +526,20 @@
 
     google.charts.load("current", { packages: ["corechart"] });
     google.charts.setOnLoadCallback(drawGoogleCivicChart);
-    window.addEventListener("resize", function () {
+    window.addEventListener("resize", () => {
       window.clearTimeout(initGoogleCharts.resizeTimer);
       initGoogleCharts.resizeTimer = window.setTimeout(drawGoogleCivicChart, 200);
     });
   }
 
+  /**
+   * Updates the UI countdown ticker based on the nearest demo election.
+   */
   function updateCountdown() {
     const card = $("countdown-card");
+    if (!card) return;
     const now = new Date();
-    const upcoming = DEMO_ELECTIONS.find(function (entry) {
-      return new Date(entry.date) > now;
-    }) || DEMO_ELECTIONS[0];
+    const upcoming = c.DEMO_ELECTIONS.find((entry) => new Date(entry.date) > now) || c.DEMO_ELECTIONS[0];
     const target = new Date(upcoming.date);
     const diff = Math.max(0, target.getTime() - now.getTime());
     const days = Math.floor(diff / 86400000);
@@ -540,7 +558,7 @@
         { label: "Minutes", value: minutes },
         { label: "Seconds", value: seconds }
       ]
-        .map(function (unit) {
+        .map((unit) => {
           return (
             '<div class="countdown-unit"><strong>' +
             String(unit.value).padStart(2, "0") +
@@ -555,6 +573,9 @@
       "</p>";
   }
 
+  /**
+   * Binds events and logic to the eligibility checker form.
+   */
   function setupEligibilityChecker() {
     const form = $("eligibility-form");
     const ageInput = $("eligibility-age");
@@ -562,13 +583,19 @@
     const resultPanel = $("eligibility-result");
     const pillsHost = $("eligibility-pills");
 
-    if (!form || !ageInput || !countrySelect || !resultPanel || !pillsHost) {
-      return;
-    }
+    if (!form || !ageInput || !countrySelect || !resultPanel || !pillsHost) return;
 
-    form.addEventListener("submit", function (event) {
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const result = evaluateEligibility(ageInput.value, countrySelect.value);
+      let sanitizedAge = ageInput.value;
+      let sanitizedCountry = countrySelect.value;
+
+      if (window.DOMPurify) {
+        sanitizedAge = window.DOMPurify.sanitize(sanitizedAge);
+        sanitizedCountry = window.DOMPurify.sanitize(sanitizedCountry);
+      }
+
+      const result = evaluateEligibility(sanitizedAge, sanitizedCountry);
       resultPanel.classList.toggle("is-success", result.valid && result.eligible);
       resultPanel.classList.toggle("is-warning", result.valid && !result.eligible);
       resultPanel.innerHTML = "";
@@ -580,48 +607,58 @@
       resultPanel.append(title, message);
 
       pillsHost.innerHTML = "";
-      result.pills.forEach(function (pill) {
+      result.pills.forEach((pill) => {
         const item = document.createElement("span");
         item.textContent = pill;
         pillsHost.appendChild(item);
       });
 
       if (namespace.chatInstance) {
-        const prompt = "Explain voting eligibility and registration next steps in " + countrySelect.value + ".";
+        const prompt = \`Explain voting eligibility and registration next steps in \${sanitizedCountry}.\`;
         const askButton = document.createElement("button");
         askButton.type = "button";
         askButton.className = "ghost-button";
         askButton.textContent = "Ask ElectIQ about next steps";
-        askButton.addEventListener("click", function () {
+        askButton.addEventListener("click", () => {
           namespace.chatInstance.prefill(prompt, true);
         });
         pillsHost.appendChild(askButton);
       }
     });
   }
+
+  /**
+   * Binds accessibility and theme toggle controls.
+   */
   function setupThemeAndAccessibility() {
-    const storedTheme = window.localStorage.getItem(STORAGE_KEYS.theme) || "dark";
-    const storedContrast = window.localStorage.getItem(STORAGE_KEYS.contrast) === "high";
-    const storedFont = window.localStorage.getItem(STORAGE_KEYS.fontScale) || "1";
+    const storedTheme = window.localStorage.getItem(c.STORAGE_KEYS.theme) || "dark";
+    const storedContrast = window.localStorage.getItem(c.STORAGE_KEYS.contrast) === "high";
+    const storedFont = window.localStorage.getItem(c.STORAGE_KEYS.fontScale) || "1";
 
     applyTheme(storedTheme);
     applyContrast(storedContrast);
     applyFontScale(storedFont);
     updateFontControlState(storedFont);
-    $("contrast-toggle").classList.toggle("is-active", storedContrast);
 
-    $("theme-toggle").addEventListener("click", function () {
-      const nextTheme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
-      applyTheme(nextTheme);
-    });
+    const contrastToggle = $("contrast-toggle");
+    if (contrastToggle) {
+      contrastToggle.classList.toggle("is-active", storedContrast);
+      contrastToggle.addEventListener("click", function () {
+        const next = document.documentElement.dataset.contrast !== "high";
+        applyContrast(next);
+        this.classList.toggle("is-active", next);
+      });
+    }
 
-    $("contrast-toggle").addEventListener("click", function () {
-      const next = document.documentElement.dataset.contrast !== "high";
-      applyContrast(next);
-      this.classList.toggle("is-active", next);
-    });
+    const themeToggle = $("theme-toggle");
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        const nextTheme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+        applyTheme(nextTheme);
+      });
+    }
 
-    document.querySelectorAll("[data-font]").forEach(function (button) {
+    document.querySelectorAll("[data-font]").forEach((button) => {
       button.addEventListener("click", function () {
         const value = applyFontScale(this.dataset.font);
         updateFontControlState(value);
@@ -629,7 +666,21 @@
     });
   }
 
+  /**
+   * Main initializer function. Runs on DOMContentLoaded.
+   */
   async function init() {
+    // Render HTML Components
+    if (namespace.components) {
+      namespace.components.renderHero($("top"));
+      namespace.components.renderEligibility($("eligibility-section"));
+      namespace.components.renderTimelineSection($("timeline-section"));
+      namespace.components.renderQuizSection($("quiz-section"));
+      namespace.components.renderGoogleServices($("google-services-section"));
+      namespace.components.renderKnowledge($("knowledge-section"));
+      namespace.components.renderFooter($("footer"));
+    }
+
     localStorage.removeItem("electiq_gemini_key");
     const saved = sessionStorage.getItem("electiq_gemini_key");
     if (saved && typeof ELECTIQ_CONFIG !== "undefined") {
@@ -640,7 +691,14 @@
       return;
     }
 
-    const data = await loadElectionData();
+    let data;
+    try {
+      data = await loadElectionData();
+    } catch (e) {
+      console.warn("Failed to load election data", e);
+      return;
+    }
+
     seedHeroStats();
     startTicker();
     renderOfficialLinks();
@@ -657,14 +715,16 @@
 
     const localAssistant = createLocalAssistant(data);
     const chatWidget = namespace.chat.createChatWidget({
-      requestAI: function (payload) {
-        return namespace.gemini.streamGenerate(payload).catch(function (error) {
+      requestAI: async function (payload) {
+        try {
+          return await namespace.gemini.streamGenerate(payload);
+        } catch (error) {
           if (error && (error.code === "api_key_revoked" || error.code === "api_key_invalid" || error.code === "api_key_forbidden")) {
             namespace.gemini.clearApiKey();
           }
           const answer = localAssistant.respond(payload.message);
           return streamLocalAnswer(answer, payload.onChunk);
-        });
+        }
       }
     });
     namespace.chatInstance = chatWidget;
@@ -675,57 +735,64 @@
       }
     });
 
-    $("open-chat-hero").addEventListener("click", function () {
-      chatWidget.open();
-    });
-    $("ask-timeline-overview").addEventListener("click", function () {
-      chatWidget.prefill("Give me a phase-by-phase overview of the election timeline.", true);
-    });
-    $("voice-shortcut").addEventListener("click", function () {
-      chatWidget.open();
-      chatWidget.setVoiceModeEnabled(true);
-    });
+    const openChatHero = $("open-chat-hero");
+    if (openChatHero) {
+      openChatHero.addEventListener("click", () => chatWidget.open());
+    }
+
+    const askTimelineOverview = $("ask-timeline-overview");
+    if (askTimelineOverview) {
+      askTimelineOverview.addEventListener("click", () => {
+        chatWidget.prefill("Give me a phase-by-phase overview of the election timeline.", true);
+      });
+    }
+
+    const voiceShortcut = $("voice-shortcut");
+    if (voiceShortcut) {
+      voiceShortcut.addEventListener("click", () => {
+        chatWidget.open();
+        chatWidget.setVoiceModeEnabled(true);
+      });
+    }
 
     namespace.quiz.createQuiz($("quiz-app"), data.quiz || [], {
-      getPersonalizedFeedback: function (result) {
+      getPersonalizedFeedback: async function (result) {
         const message = [
           "A learner finished the ElectIQ election quiz.",
-          "Score: " + result.score + " out of " + result.total + ".",
+          \`Score: \${result.score} out of \${result.total}.\`,
           "Wrong answers: " +
             (result.wrongAnswers.length
               ? result.wrongAnswers
-                  .map(function (item) {
-                    return item.question + " | Correct answer: " + item.correctAnswer;
-                  })
+                  .map((item) => \`\${item.question} | Correct answer: \${item.correctAnswer}\`)
                   .join(" || ")
               : "None."),
           "Give short, practical study tips in a warm neutral tone."
         ].join("\n");
 
-        return namespace.gemini
-          .streamGenerate({
+        try {
+          return await namespace.gemini.streamGenerate({
             history: [],
             message: message,
             persona: "professor"
-          })
-          .catch(function () {
-            return "Focus on voter registration, nomination checks, election-day voting steps, and how counting leads to official declaration. Review any wrong answers, then ask ElectIQ for that topic again.";
           });
+        } catch (e) {
+          return "Focus on voter registration, nomination checks, election-day voting steps, and how counting leads to official declaration. Review any wrong answers, then ask ElectIQ for that topic again.";
+        }
       }
     });
   }
 
   document.addEventListener("DOMContentLoaded", init);
 
+  // Expose methods to namespace for tests and other files
   namespace.app = {
-    STORAGE_KEYS: STORAGE_KEYS,
-    loadElectionData: loadElectionData,
-    applyFontScale: applyFontScale,
-    applyTheme: applyTheme,
-    applyContrast: applyContrast,
-    evaluateEligibility: evaluateEligibility,
-    buildGoogleCalendarUrl: buildGoogleCalendarUrl,
-    renderGoogleServiceGrid: renderGoogleServiceGrid,
-    createLocalAssistant: createLocalAssistant
+    loadElectionData,
+    applyFontScale,
+    applyTheme,
+    applyContrast,
+    evaluateEligibility,
+    buildGoogleCalendarUrl,
+    renderGoogleServiceGrid,
+    createLocalAssistant
   };
 })();
