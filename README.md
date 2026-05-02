@@ -13,6 +13,8 @@ Election Process Education.
 ElectIQ is a non-partisan civic learning assistant focused on election processes, voter registration, polling, vote counting, and democratic participation. The content is India-first, with notes that rules vary across democracies.
 
 ## Live Demo
+Live app: [ElectIQ on Google Cloud Run](https://electiq-assistant-719215730592.asia-south1.run.app)
+
 Public repository: [electiq-assistant](https://github.com/virajthukrul0404-stack/electiq-assistant)
 
 ## Features
