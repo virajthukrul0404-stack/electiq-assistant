@@ -1,4 +1,2 @@
 User-agent: *
 Allow: /
-Disallow: /data/
-Disallow: /tests/

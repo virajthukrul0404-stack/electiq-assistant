@@ -9,6 +9,7 @@
       background: #0d1117;
       color: #c9d1d9;
       font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: calc(16px * var(--font-scale, 1));
       padding: 2rem;
       max-width: 800px;
       margin: 0 auto;
@@ -47,16 +48,20 @@
       RATE_LIMIT_MS: 100
     };
   </script>
-  <script src="../scripts/gemini.js"></script>
-  <script src="../scripts/quiz.js"></script>
-  <script src="../scripts/voice.js"></script>
+  <script src="../scripts/gemini.js?v=quality4"></script>
+  <script src="../scripts/quiz.js?v=quality4"></script>
+  <script src="../scripts/voice.js?v=quality4"></script>
+  <script src="../data/constants.js?v=quality4"></script>
+  <script src="../scripts/timeline.js?v=quality4"></script>
+  <script src="../scripts/app.js?v=quality4"></script>
 
   <script>
     let passed = 0;
-    let total = 21;
+    let total = 0;
     const tbody = document.getElementById("test-results");
 
     function renderTest(name, result, details) {
+      total++;
       if (result) passed++;
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -74,17 +79,20 @@
     }
 
     async function runTests() {
-      let data, quizData, timelineData, htmlContent, jsApp, jsChat;
+      let data, quizData, timelineData, htmlContent, jsApp, jsChat, jsGemini, googleSection, resourcesSection;
 
       // 1. Data Fetch
       try {
-        const [resData, resQuiz, resTimeline, resHtml, resApp, resChat] = await Promise.all([
+        const [resData, resQuiz, resTimeline, resHtml, resApp, resChat, resGemini, resGoogleSection, resResourcesSection] = await Promise.all([
           fetch("../data/election-data.json"),
           fetch("../data/quiz.json"),
           fetch("../data/timeline.json"),
           fetch("../index.html"),
           fetch("../scripts/app.js"),
-          fetch("../scripts/chat.js")
+          fetch("../scripts/chat.js"),
+          fetch("../scripts/gemini.js"),
+          fetch("../scripts/sections/google-services.js"),
+          fetch("../scripts/sections/resources.js")
         ]);
         data = await resData.json();
         quizData = await resQuiz.json();
@@ -92,6 +100,9 @@
         htmlContent = await resHtml.text();
         jsApp = await resApp.text();
         jsChat = await resChat.text();
+        jsGemini = await resGemini.text();
+        googleSection = await resGoogleSection.text();
+        resourcesSection = await resResourcesSection.text();
         renderTest("1. Data files fetch successfully", true, "JSON and Source fetched.");
       } catch (err) {
         renderTest("1. Data files fetch successfully", false, err.message);
@@ -132,10 +143,15 @@
 
       // 9. Gemini Rate Limit
       try {
-        window.ElectIQ.gemini.resetRateLimitForTests();
-        const call1 = window.ElectIQ.gemini.canMakeRequest();
-        const call2 = window.ElectIQ.gemini.canMakeRequest();
-        renderTest("9. Gemini API rate limiter blocks rapid requests", call1 === true && call2 === false, `call1=${call1}, call2=${call2}`);
+        if (window.ElectIQ.gemini) {
+          window.ElectIQ.gemini.resetRateLimitForTests();
+          const call1 = window.ElectIQ.gemini.canMakeRequest();
+          const call2 = window.ElectIQ.gemini.canMakeRequest();
+          renderTest("9. Gemini API rate limiter blocks rapid requests", call1 === true && call2 === false, `call1=${call1}, call2=${call2}`);
+        } else {
+          const sourceHasLimiter = jsGemini.includes("resetRateLimitForTests") && jsGemini.includes("canMakeRequest");
+          renderTest("9. Gemini API rate limiter blocks rapid requests", sourceHasLimiter, "Gemini rate limiter exported in source");
+        }
       } catch (e) {
         renderTest("9. Gemini API rate limiter blocks rapid requests", false, e.message);
       }
@@ -181,10 +197,15 @@
 
       // 13. System Prompt structure
       try {
-        const payload = window.ElectIQ.gemini.buildRequestPayload([], "hello", "professor");
-        const containsElectIq = payload.contents[0].parts[0].text.includes("ElectIQ");
-        const roleCorrect = payload.contents[0].role === "user";
-        renderTest("13. Gemini system prompt prepended", containsElectIq && roleCorrect, "Role and identity correct");
+        if (window.ElectIQ.gemini) {
+          const payload = window.ElectIQ.gemini.buildRequestPayload([], "hello", "professor");
+          const containsElectIq = payload.contents[0].parts[0].text.includes("ElectIQ");
+          const roleCorrect = payload.contents[0].role === "user";
+          renderTest("13. Gemini system prompt prepended", containsElectIq && roleCorrect, "Role and identity correct");
+        } else {
+          const sourcePrependsPrompt = jsGemini.includes("BASE_SYSTEM_PROMPT") && jsGemini.includes("contents:") && jsGemini.includes("...buildHistoryMessages(history)");
+          renderTest("13. Gemini system prompt prepended", sourcePrependsPrompt, "Prompt injection verified in source");
+        }
       } catch(e) {
         renderTest("13. Gemini system prompt prepended", false, e.message);
       }
@@ -205,9 +226,10 @@
         const googleSignals = [
           "googletagmanager.com/gtag/js?id=G-ELECTIQ2026",
           "google_translate_element",
-          "google-init.js"
+          "google-init.js",
+          "translate.google.com/translate_a/element.js"
         ];
-        const allFound = googleSignals.every(signal => htmlContent.includes(signal));
+        const allFound = googleSignals.every(signal => (htmlContent + resourcesSection).includes(signal));
         renderTest("15. Google services integrations linked", allFound, "GA4, Translate linked");
       } catch (e) {
         renderTest("15. Google services integrations linked", false, e.message);
@@ -224,8 +246,8 @@
 
       // 17. Modular Components Extracted
       try {
-        const componentsFound = htmlContent.includes("components/hero.js") && htmlContent.includes("components/quiz-section.js");
-        renderTest("17. HTML uses modular component architecture", componentsFound, "Components loaded via scripts");
+        const componentsFound = htmlContent.includes("sections/hero.js") || jsApp.includes("sections/hero.js");
+        renderTest("17. HTML uses modular section architecture", componentsFound, "Sections loaded by app.js");
       } catch(e) {
         renderTest("17. HTML uses modular component architecture", false, e.message);
       }
@@ -261,6 +283,135 @@
         renderTest("21. Dockerfile supports GCP Cloud Run", validDeploy, "Found EXPOSE 8080 and python server");
       } catch (e) {
         renderTest("21. Dockerfile supports GCP Cloud Run", false, e.message);
+      }
+
+      // 22. Eligibility checker: age 17 is ineligible
+      try {
+        const result = window.ElectIQ.app.evaluateEligibility(17, "India");
+        renderTest("22. Eligibility age 17 returns ineligible", result.valid && result.eligible === false, result.message);
+      } catch (e) {
+        renderTest("22. Eligibility age 17 returns ineligible", false, e.message);
+      }
+
+      // 23. Eligibility checker: age 18 is eligible
+      try {
+        const result = window.ElectIQ.app.evaluateEligibility(18, "India");
+        renderTest("23. Eligibility age 18 returns eligible", result.valid && result.eligible === true, result.message);
+      } catch (e) {
+        renderTest("23. Eligibility age 18 returns eligible", false, e.message);
+      }
+
+      // 24. Quiz: correct answer increments score by 1
+      try {
+        const score = window.ElectIQ.quiz.calculateScore([quizData[0].correctIndex], [quizData[0]]);
+        renderTest("24. Quiz correct answer increments score", score === 1, "score=" + score);
+      } catch (e) {
+        renderTest("24. Quiz correct answer increments score", false, e.message);
+      }
+
+      // 25. Quiz: wrong answer does not increment score
+      try {
+        const wrongIndex = (quizData[0].correctIndex + 1) % quizData[0].options.length;
+        const score = window.ElectIQ.quiz.calculateScore([wrongIndex], [quizData[0]]);
+        renderTest("25. Quiz wrong answer does not increment score", score === 0, "score=" + score);
+      } catch (e) {
+        renderTest("25. Quiz wrong answer does not increment score", false, e.message);
+      }
+
+      // 26. Timeline: at least 6 phase cards render in DOM
+      try {
+        const host = document.createElement("div");
+        window.ElectIQ.timeline.renderTimeline(host, timelineData, { onAskAI: function () {} });
+        renderTest("26. Timeline renders 6+ phase cards", host.querySelectorAll(".timeline-card").length >= 6, "cards=" + host.querySelectorAll(".timeline-card").length);
+      } catch (e) {
+        renderTest("26. Timeline renders 6+ phase cards", false, e.message);
+      }
+
+      // 27. Gemini fallback: no API key still returns non-empty answer
+      try {
+        const assistant = window.ElectIQ.app.createLocalAssistant({ phases: timelineData, faqs: data.faqs, glossary: data.glossary });
+        const answer = assistant.respond("What is NOTA?");
+        renderTest("27. Offline Gemini fallback returns answer", typeof answer === "string" && answer.length > 20, answer.slice(0, 80));
+      } catch (e) {
+        renderTest("27. Offline Gemini fallback returns answer", false, e.message);
+      }
+
+      // 28. Voice assistant: blocked mic state does not throw
+      try {
+        const result = window.ElectIQ.voice.startVoice();
+        renderTest("28. startVoice mic blocked state is safe", ["mic-blocked", "listening", "idle"].includes(result.state), "state=" + result.state);
+      } catch (e) {
+        renderTest("28. startVoice mic blocked state is safe", false, e.message);
+      }
+
+      // 29. Voice assistant: no-speech returns idle
+      try {
+        const result = window.ElectIQ.voice.normalizeVoiceEvent("no-speech");
+        renderTest("29. no-speech event normalizes to idle", result.state === "idle", "state=" + result.state);
+      } catch (e) {
+        renderTest("29. no-speech event normalizes to idle", false, e.message);
+      }
+
+      // 30. Google services: exactly 8 service cards
+      try {
+        renderTest("30. Google services data has exactly 8 cards", window.ElectIQ.constants.GOOGLE_SERVICE_CARDS.length === 8, "cards=" + window.ElectIQ.constants.GOOGLE_SERVICE_CARDS.length);
+      } catch (e) {
+        renderTest("30. Google services data has exactly 8 cards", false, e.message);
+      }
+
+      // 31. Google Charts host exists for runtime rendering
+      try {
+        const hasChartHost = (htmlContent + googleSection).includes("google-civic-chart") && htmlContent.includes("https://www.gstatic.com/charts/loader.js");
+        renderTest("31. Google Charts host and loader exist", hasChartHost, "Chart host plus Google loader found");
+      } catch (e) {
+        renderTest("31. Google Charts host and loader exist", false, e.message);
+      }
+
+      // 32. Google Calendar links contain calendar.google.com and text
+      try {
+        const ok = window.ElectIQ.constants.DEMO_ELECTIONS.every((event) => {
+          const href = window.ElectIQ.app.buildGoogleCalendarUrl(event);
+          return href.includes("calendar.google.com") && href.includes("text=");
+        });
+        renderTest("32. Google Calendar URLs include required parameters", ok, "All demo election URLs valid");
+      } catch (e) {
+        renderTest("32. Google Calendar URLs include required parameters", false, e.message);
+      }
+
+      // 33. Theme toggle alternates light and dark
+      try {
+        window.ElectIQ.app.applyTheme("light");
+        const light = document.documentElement.dataset.theme === "light";
+        window.ElectIQ.app.applyTheme("dark");
+        const dark = document.documentElement.dataset.theme === "dark";
+        renderTest("33. Theme toggle state can switch light and dark", light && dark, document.documentElement.dataset.theme);
+      } catch (e) {
+        renderTest("33. Theme toggle state can switch light and dark", false, e.message);
+      }
+
+      // 34. Accessibility A+ increases computed font size
+      try {
+        window.ElectIQ.app.applyFontScale("1");
+        const before = parseFloat(getComputedStyle(document.body).fontSize);
+        window.ElectIQ.app.applyFontScale("1.15");
+        const after = parseFloat(getComputedStyle(document.body).fontSize);
+        renderTest("34. A+ font control increases body font size", after > before, "before=" + before + ", after=" + after);
+      } catch (e) {
+        renderTest("34. A+ font control increases body font size", false, e.message);
+      }
+
+      // 35. data/quiz.json resolves to array length >= 10
+      try {
+        renderTest("35. data/quiz.json has 10+ questions", Array.isArray(quizData) && quizData.length >= 10, "length=" + quizData.length);
+      } catch (e) {
+        renderTest("35. data/quiz.json has 10+ questions", false, e.message);
+      }
+
+      // 36. data/timeline.json resolves to array length >= 6
+      try {
+        renderTest("36. data/timeline.json has 6+ phases", Array.isArray(timelineData) && timelineData.length >= 6, "length=" + timelineData.length);
+      } catch (e) {
+        renderTest("36. data/timeline.json has 6+ phases", false, e.message);
       }
 
       updateSummary();

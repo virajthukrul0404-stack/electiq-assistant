@@ -12,6 +12,22 @@ Election Process Education.
 
 ElectIQ is a non-partisan civic learning assistant focused on election processes, voter registration, polling, vote counting, and democratic participation. The content is India-first, with notes that rules vary across democracies.
 
+## Problem Statement Alignment
+ElectIQ is built for the Google H2S Virtual PromptWars challenge vertical: Election Process Education, with a focus on using Google technologies to create a smart, dynamic, practical civic assistant.
+
+The civic education gap ElectIQ solves is that election information is often scattered across official portals, legal notices, media explainers, and school-level civics material. A first-time voter may know voting matters but still feel unsure about registration, nomination, polling-day rules, counting, NOTA, EVM/VVPAT verification, or where to find official reminders. ElectIQ turns that fragmented process into a guided, neutral, multilingual learning experience with voice, quiz practice, timeline exploration, and always-available fallback answers.
+
+| Feature | Google Technology | Civic Education Gap Addressed |
+| --- | --- | --- |
+| Streaming election assistant | Gemini Flash API | Converts complex election procedures into simple, neutral explanations. |
+| Multilingual footer support | Google Translate Widget | Helps learners who prefer Indian languages beyond English. |
+| Civic stats dashboard | Google Charts | Makes election scale and turnout concepts easier to understand visually. |
+| Election reminder links | Google Calendar | Helps citizens remember registration and election-cycle milestones. |
+| Learning analytics hook | Google Analytics GA4 | Supports product iteration around real learning flows. |
+| Premium typography and icons | Google Fonts and Material Symbols | Makes civic education feel approachable instead of bureaucratic. |
+| Production hosting | Google Cloud Run | Provides a reliable public URL for evaluators and learners. |
+| Voice-ready interaction | Web Speech API in Chrome | Supports hands-free civic Q&A and accessibility-friendly learning. |
+
 ## Live Demo
 Live app: [ElectIQ on Google Cloud Run](https://electiq-assistant-5acpuyx6fa-el.a.run.app)
 
@@ -29,7 +45,7 @@ Public repository: [electiq-assistant](https://github.com/virajthukrul0404-stack
 - Dark/light theme with premium civic-tech styling.
 
 ## Approach & Logic
-The app uses a modular, component-based architecture relying exclusively on vanilla HTML, CSS, and JavaScript. Core civic data is split across specialized JSON files (`data/election-data.json`, `data/quiz.json`, `data/timeline.json`), which are loaded concurrently. UI components are isolated into individual modules within `scripts/components/` (e.g., hero, timeline, quiz, knowledge, footer), maintaining a clean separation of concerns without requiring a build step.
+The app uses a modular, component-based architecture relying exclusively on vanilla HTML, CSS, and JavaScript. Core civic data is split across specialized JSON files (`data/election-data.json`, `data/quiz.json`, `data/timeline.json`), which are loaded concurrently. Page sections are isolated into ES modules within `scripts/sections/` (hero, timeline, quiz, eligibility, Google services, and resources), maintaining a clean separation of concerns without requiring a build step.
 
 Gemini is optional at runtime because public client-side keys can be revoked or restricted. If no valid key is saved, ElectIQ still answers using the local election knowledge base. This keeps the assistant usable during evaluation while preserving support for real Gemini streaming when the evaluator adds a fresh key through the key button in the chat header.
 

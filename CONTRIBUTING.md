@@ -1,25 +1,29 @@
 # Contributing to ElectIQ
 
-We welcome contributions to ElectIQ! Please follow these guidelines to help keep the project structured and secure.
+## Run Locally
+From the repository root:
 
-## Code Standards
-- **JavaScript**: Use modern JS features (`const`/`let`, `async`/`await`, arrow functions). Include JSDoc comments for all functions. Ensure strict null-checks before accessing DOM elements.
-- **CSS**: Use variables for colors and spacing. Group related styles under clear section comments. Do not use inline styles.
-- **HTML**: Maintain semantic structure. Ensure accessibility (`aria-labels`, `role` attributes, focus states) on interactive elements.
+```bash
+python3 -m http.server 8080
+```
 
-## Security
-- Always sanitize dynamic HTML content using `DOMPurify`.
-- Do not commit API keys or sensitive data.
-- Ensure all external links include `rel="noopener noreferrer"`.
-- Validate changes against the Content Security Policy (CSP).
+Then open `http://localhost:8080/index.html`.
 
-## Testing
-- Add tests to `tests/test.html` for any new logic or components.
-- Ensure the existing test suite passes before submitting a pull request.
+## Run Tests
+Start the local server and open:
 
-## Submitting Changes
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes with descriptive messages.
-4. Run the test suite (`tests/test.html`).
-5. Open a Pull Request detailing the purpose and scope of your changes.
+```text
+http://localhost:8080/tests/test.html
+```
+
+The browser test table should show every test as `PASS`.
+
+## Branch Policy
+This challenge repository uses `main` only. Do not create extra branches for submission work.
+
+## Pull Request Checklist
+- Browser test suite passes.
+- No API keys or secrets are committed.
+- Repository size stays under 10 MB.
+- `node_modules` and build artifacts are not committed.
+- Accessibility, fallback chat, and voice flows are manually smoke-tested.

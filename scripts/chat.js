@@ -116,7 +116,7 @@
    */
   function buildDownloadText(messages) {
     return (messages || [])
-      .map((message) => \`[\${timestampLabel(message.timestamp)}] \${message.role.toUpperCase()}: \${message.content}\`)
+      .map((message) => `[${timestampLabel(message.timestamp)}] ${message.role.toUpperCase()}: ${message.content}`)
       .join("\n\n");
   }
 
@@ -134,7 +134,7 @@
     button.setAttribute("aria-label", label);
     button.textContent = label;
     if (iconName) {
-      button.innerHTML = \`<span class="material-symbols-outlined" aria-hidden="true">\${iconName}</span>\`;
+      button.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">${iconName}</span>`;
       button.title = label;
     }
     return button;
@@ -538,7 +538,7 @@
         }
         const errorMessage =
           error && error.retryAfter
-            ? \`Please wait \${Math.ceil(error.retryAfter / 1000)} more second(s) before sending another question.\`
+            ? `Please wait ${Math.ceil(error.retryAfter / 1000)} more second(s) before sending another question.`
             : error.message || "Something went wrong while contacting Gemini.";
         appendMessage("assistant", errorMessage);
         status.textContent = errorMessage;
@@ -592,7 +592,7 @@
     const charCounter = document.getElementById("char-counter");
     if (charCounter) {
       input.addEventListener("input", () => {
-        charCounter.textContent = \`\${input.value.length} / 500\`;
+        charCounter.textContent = `${input.value.length} / 500`;
       });
     }
 

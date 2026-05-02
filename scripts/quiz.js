@@ -70,7 +70,10 @@
         questions.length +
         "</div>";
       container.appendChild(header);
-      animateScoreBar(header.querySelector(".progress-bar"), progress);
+      const progressBar = header.querySelector(".progress-bar");
+      if (progressBar) {
+        animateScoreBar(progressBar, progress);
+      }
 
       const cardWrap = document.createElement("div");
       cardWrap.className = "quiz-card-wrap";
@@ -178,7 +181,7 @@
       }
     }
 
-    function renderResults() {
+    async function renderResults() {
       const total = questions.length;
       const score = calculateScore(selectedAnswers, questions);
       const scorePercent = Math.round((score / total) * 100);
@@ -240,21 +243,19 @@
       });
       summary.appendChild(restart);
 
-      Promise.resolve(
-        typeof config.getPersonalizedFeedback === "function"
-          ? config.getPersonalizedFeedback({
-              score: score,
-              total: total,
-              wrongAnswers: wrongAnswers
-            })
-          : "Review voter registration, election-day procedures, and vote counting. Those topics improve overall election literacy quickly."
-      )
-        .then(function (feedbackText) {
-          aiPanel.textContent = String(feedbackText || "Study tips were unavailable. Try asking ElectIQ in the chat.");
-        })
-        .catch(function () {
-          aiPanel.textContent = "Study tips were unavailable. Try asking ElectIQ in the chat.";
-        });
+      try {
+        const feedbackText =
+          typeof config.getPersonalizedFeedback === "function"
+            ? await config.getPersonalizedFeedback({
+                score: score,
+                total: total,
+                wrongAnswers: wrongAnswers
+              })
+            : "Review voter registration, election-day procedures, and vote counting. Those topics improve overall election literacy quickly.";
+        aiPanel.textContent = String(feedbackText || "Study tips were unavailable. Try asking ElectIQ in the chat.");
+      } catch (error) {
+        aiPanel.textContent = "Study tips were unavailable. Try asking ElectIQ in the chat.";
+      }
     }
 
     renderQuestion();

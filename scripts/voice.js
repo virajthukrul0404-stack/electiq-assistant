@@ -330,10 +330,52 @@
     };
   }
 
+  /**
+   * Test-friendly start helper that reports microphone-blocked states without throwing.
+   * @param {Object} [options] - Optional controller callbacks.
+   * @returns {Object} Voice state summary.
+   */
+  function startVoice(options) {
+    const states = [];
+    const controller = createVoiceController(
+      Object.assign({}, options || {}, {
+        onStateChange: (state) => {
+          states.push(state);
+          if (options && typeof options.onStateChange === "function") {
+            options.onStateChange(state);
+          }
+        }
+      })
+    );
+    try {
+      const started = controller.toggleAlwaysOn();
+      const state = controller.getState();
+      if (!started || state.error === "unsupported" || state.error === "not-allowed") {
+        return { state: "mic-blocked", details: state, history: states };
+      }
+      return { state: state.listening || state.starting ? "listening" : "idle", details: state, history: states };
+    } catch (error) {
+      return { state: "mic-blocked", error: error.message, history: states };
+    }
+  }
+
+  /**
+   * Converts speech recognition events into stable UI state names for tests.
+   * @param {string} errorCode - Speech recognition error code.
+   * @returns {Object} Normalized state.
+   */
+  function normalizeVoiceEvent(errorCode) {
+    if (errorCode === "no-speech") return { state: "idle" };
+    if (errorCode === "not-allowed" || errorCode === "service-not-allowed") return { state: "mic-blocked" };
+    return { state: "idle" };
+  }
+
   namespace.voice = {
     debounce,
     friendlyError,
     supportsSpeechRecognition,
-    createVoiceController
+    createVoiceController,
+    startVoice,
+    normalizeVoiceEvent
   };
 })();

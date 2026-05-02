@@ -70,7 +70,7 @@
    */
   function getSystemPrompt(persona) {
     const personaPrompt = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS.professor;
-    return \`\${BASE_SYSTEM_PROMPT}\n\n\${personaPrompt}\`;
+    return `${BASE_SYSTEM_PROMPT}\n\n${personaPrompt}`;
   }
 
   /**
@@ -245,7 +245,7 @@
    * @returns {string} The constructed URL.
    */
   function buildEndpoint(modelName, apiKey) {
-    return \`\${API_ROOT}\${encodeURIComponent(modelName)}:streamGenerateContent?alt=sse&key=\${encodeURIComponent(apiKey)}\`;
+    return `${API_ROOT}${encodeURIComponent(modelName)}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
   }
 
   /**
@@ -281,7 +281,7 @@
   function buildUserFacingApiError(statusCode, errorText) {
     const apiError = parseApiError(errorText);
     const apiMessage = apiError && apiError.error && apiError.error.message ? apiError.error.message : String(errorText || "");
-    const friendlyError = new Error(\`Gemini request failed: \${apiMessage}\`);
+    const friendlyError = new Error(`Gemini request failed: ${apiMessage}`);
     friendlyError.statusCode = statusCode;
 
     if (/reported as leaked|use another api key/i.test(apiMessage)) {
@@ -376,7 +376,7 @@
     if (!response || !response.ok) {
       throw buildUserFacingApiError(
         response ? response.status : 500,
-        lastErrorText || \`No compatible Gemini Flash model responded successfully after trying \${modelsToTry.join(", ")}.\`
+        lastErrorText || `No compatible Gemini Flash model responded successfully after trying ${modelsToTry.join(", ")}.`
       );
     }
 

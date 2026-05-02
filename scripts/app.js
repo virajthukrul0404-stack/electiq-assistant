@@ -165,11 +165,11 @@
       valid: true,
       title: eligible ? "Likely eligible to vote" : "Not eligible yet",
       message: eligible
-        ? \`In \${normalizedCountry}, the usual voting age is \${requiredAge}+. Next, confirm citizenship, residence, and registration status with the official election authority.\`
-        : \`In \${normalizedCountry}, the usual voting age is \${requiredAge}+. You can still learn the process now and register when you meet the official requirements.\`,
+        ? `In ${normalizedCountry}, the usual voting age is ${requiredAge}+. Next, confirm citizenship, residence, and registration status with the official election authority.`
+        : `In ${normalizedCountry}, the usual voting age is ${requiredAge}+. You can still learn the process now and register when you meet the official requirements.`,
       pills: [
         normalizedCountry,
-        \`Voting age: \${requiredAge}+\`,
+        `Voting age: ${requiredAge}+`,
         eligible ? "Registration check next" : "Learn before registration"
       ]
     };
@@ -182,6 +182,64 @@
    */
   function $(id) {
     return document.getElementById(id);
+  }
+
+  /**
+   * Escapes text before using it in HTML template strings.
+   * @param {string} value - Raw text value.
+   * @returns {string} Escaped HTML-safe text.
+   */
+  function sanitize(value) {
+    if (namespace.utils && typeof namespace.utils.sanitize === "function") {
+      return namespace.utils.sanitize(String(value || ""));
+    }
+    const node = document.createElement("div");
+    node.textContent = String(value || "");
+    return node.innerHTML;
+  }
+
+  /**
+   * Mounts page sections from ES modules into the thin HTML shell.
+   * @returns {Promise<void>} Resolves when section templates are mounted.
+   */
+  async function renderPageSections() {
+    const [
+      heroSection,
+      eligibilitySection,
+      timelineSection,
+      quizSection,
+      googleServicesSection,
+      resourcesSection
+    ] = await Promise.all([
+      import("./sections/hero.js"),
+      import("./sections/eligibility.js"),
+      import("./sections/timeline.js"),
+      import("./sections/quiz.js"),
+      import("./sections/google-services.js"),
+      import("./sections/resources.js")
+    ]);
+
+    const heroHost = $("top");
+    if (heroHost) heroHost.innerHTML = heroSection.heroTemplate();
+
+    const eligibilityHost = $("eligibility-section");
+    if (eligibilityHost) eligibilityHost.innerHTML = eligibilitySection.eligibilityTemplate();
+
+    const timelineHost = $("timeline-section");
+    if (timelineHost) timelineHost.innerHTML = timelineSection.timelineTemplate();
+
+    const quizHost = $("quiz-section");
+    if (quizHost) quizHost.innerHTML = quizSection.quizTemplate();
+
+    const googleHost = $("google-services-section");
+    if (googleHost) googleHost.innerHTML = googleServicesSection.googleServicesTemplate();
+
+    const resources = resourcesSection.resourcesTemplate();
+    const knowledgeHost = $("knowledge-section");
+    if (knowledgeHost) knowledgeHost.innerHTML = resources.knowledge;
+
+    const footerHost = $("footer");
+    if (footerHost) footerHost.innerHTML = resources.footer;
   }
 
   /**
@@ -275,11 +333,11 @@
       card.className = "stat-card";
       card.innerHTML =
         '<span class="material-symbols-outlined" aria-hidden="true">' +
-        stat.icon +
+        sanitize(stat.icon) +
         "</span><strong>" +
-        stat.value +
+        sanitize(stat.value) +
         "</strong><span>" +
-        stat.label +
+        sanitize(stat.label) +
         "</span>";
       host.appendChild(card);
     });
@@ -314,7 +372,7 @@
         anchor.target = "_blank";
         anchor.rel = "noopener noreferrer";
         anchor.innerHTML =
-          '<span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>' + linkData.label;
+          '<span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>' + sanitize(linkData.label);
         container.appendChild(anchor);
       });
     });
@@ -333,7 +391,7 @@
       item.className = "faq-item";
       const summary = document.createElement("summary");
       summary.innerHTML =
-        "<span>" + faq.question + '</span><span class="material-symbols-outlined" aria-hidden="true">expand_more</span>';
+        "<span>" + sanitize(faq.question) + '</span><span class="material-symbols-outlined" aria-hidden="true">expand_more</span>';
       const answer = document.createElement("p");
       answer.textContent = faq.answer;
       item.append(summary, answer);
@@ -352,7 +410,7 @@
     terms.forEach((term) => {
       const card = document.createElement("article");
       card.className = "glossary-card";
-      card.innerHTML = "<strong>" + term.term + "</strong><span>" + term.definition + "</span>";
+      card.innerHTML = "<strong>" + sanitize(term.term) + "</strong><span>" + sanitize(term.definition) + "</span>";
       host.appendChild(card);
     });
   }
@@ -368,7 +426,7 @@
     steps.forEach((step) => {
       const card = document.createElement("article");
       card.className = "calendar-step";
-      card.innerHTML = "<strong>" + step.step + "</strong><span>" + step.note + "</span>";
+      card.innerHTML = "<strong>" + sanitize(step.step) + "</strong><span>" + sanitize(step.note) + "</span>";
       host.appendChild(card);
     });
   }
@@ -549,7 +607,7 @@
 
     card.innerHTML =
       '<div class="countdown-header"><div><strong>Election countdown</strong><p>' +
-      upcoming.name +
+      sanitize(upcoming.name) +
       "</p></div><span class=\"phase-chip\">Demo clock</span></div>" +
       '<div class="countdown-grid">' +
       [
@@ -569,7 +627,7 @@
         })
         .join("") +
       "</div><p>" +
-      upcoming.note +
+      sanitize(upcoming.note) +
       "</p>";
   }
 
@@ -614,7 +672,7 @@
       });
 
       if (namespace.chatInstance) {
-        const prompt = \`Explain voting eligibility and registration next steps in \${sanitizedCountry}.\`;
+        const prompt = `Explain voting eligibility and registration next steps in ${sanitizedCountry}.`;
         const askButton = document.createElement("button");
         askButton.type = "button";
         askButton.className = "ghost-button";
@@ -670,16 +728,7 @@
    * Main initializer function. Runs on DOMContentLoaded.
    */
   async function init() {
-    // Render HTML Components
-    if (namespace.components) {
-      namespace.components.renderHero($("top"));
-      namespace.components.renderEligibility($("eligibility-section"));
-      namespace.components.renderTimelineSection($("timeline-section"));
-      namespace.components.renderQuizSection($("quiz-section"));
-      namespace.components.renderGoogleServices($("google-services-section"));
-      namespace.components.renderKnowledge($("knowledge-section"));
-      namespace.components.renderFooter($("footer"));
-    }
+    await renderPageSections();
 
     localStorage.removeItem("electiq_gemini_key");
     const saved = sessionStorage.getItem("electiq_gemini_key");
@@ -759,11 +808,11 @@
       getPersonalizedFeedback: async function (result) {
         const message = [
           "A learner finished the ElectIQ election quiz.",
-          \`Score: \${result.score} out of \${result.total}.\`,
+          `Score: ${result.score} out of ${result.total}.`,
           "Wrong answers: " +
             (result.wrongAnswers.length
               ? result.wrongAnswers
-                  .map((item) => \`\${item.question} | Correct answer: \${item.correctAnswer}\`)
+                  .map((item) => `${item.question} | Correct answer: ${item.correctAnswer}`)
                   .join(" || ")
               : "None."),
           "Give short, practical study tips in a warm neutral tone."
@@ -793,6 +842,7 @@
     evaluateEligibility,
     buildGoogleCalendarUrl,
     renderGoogleServiceGrid,
+    renderPageSections,
     createLocalAssistant
   };
 })();

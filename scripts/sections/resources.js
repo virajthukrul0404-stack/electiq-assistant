@@ -1,14 +1,47 @@
 /**
- * @file footer.js
- * @description Footer component
+ * Render knowledge hub and footer resource sections.
+ * @returns {{knowledge: string, footer: string}} Knowledge and footer HTML strings.
  */
-(function () {
-  const namespace = (window.ElectIQ = window.ElectIQ || {});
-  namespace.components = namespace.components || {};
-
-  namespace.components.renderFooter = function (container) {
-    if (!container) return;
-    container.innerHTML = `
+export function resourcesTemplate() {
+  return {
+    knowledge: `
+      <div class="section-heading">
+        <div>
+          <h2>Election Knowledge Hub</h2>
+          <p class="section-subtitle">
+            Quick answers, essential terms, and an India-specific calendar snapshot for civic learners, first-time voters, and curious citizens.
+          </p>
+        </div>
+      </div>
+      <div class="knowledge-layout">
+        <article class="faq-shell">
+          <div class="section-heading">
+            <div>
+              <h2>Frequently Asked Questions</h2>
+              <p>Common election questions answered in neutral, simple language.</p>
+            </div>
+          </div>
+          <div class="faq-list" id="faq-list"></div>
+        </article>
+        <aside class="faq-shell">
+          <div class="section-heading">
+            <div>
+              <h2>India Election Snapshot</h2>
+              <p>How a typical Indian election schedule unfolds after dates are announced.</p>
+            </div>
+          </div>
+          <div class="india-calendar" id="india-calendar"></div>
+        </aside>
+      </div>
+      <div class="section-heading mt-large">
+        <div>
+          <h2>Glossary</h2>
+          <p>Thirty key terms to help you decode election news and official notices.</p>
+        </div>
+      </div>
+      <div class="glossary-grid" id="glossary-grid"></div>
+    `,
+    footer: `
       <div class="footer-shell footer-grid">
         <article class="footer-card">
           <h3>Translate & Explore</h3>
@@ -38,6 +71,6 @@
         <span>Built as a non-partisan educational assistant for election literacy.</span>
         <span>Made with vanilla HTML, CSS, JavaScript, and Google Gemini.</span>
       </div>
-    `;
+    `
   };
-})();
+}
